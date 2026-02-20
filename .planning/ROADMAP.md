@@ -32,7 +32,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can log out and their session is invalidated immediately
   4. OpenAPI documentation is accessible at /api/docs and reflects all current endpoints
   5. The application deploys successfully to Azure Container Apps with a healthy status check
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Backend scaffold, async DB layer, User/UserSession models, Alembic, admin seed script
+- [ ] 01-02-PLAN.md — JWT auth API: login, refresh, logout, /auth/me endpoints + get_current_user dependency
+- [ ] 01-03-PLAN.md — React app shell: Vite + shadcn/ui, sidebar nav, topbar, login page, dashboard placeholder
+- [ ] 01-04-PLAN.md — Containerization: production Dockerfiles, docker-compose, GitHub Actions CI, README
 
 ### Phase 2: Data Ingestion
 **Goal**: Azure billing data flows into the database reliably on schedule, with backfill for historical analysis
@@ -108,7 +114,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/4 | Planned | - |
 | 2. Data Ingestion | 0/TBD | Not started | - |
 | 3. Cost Monitoring | 0/TBD | Not started | - |
 | 4. Anomaly Detection | 0/TBD | Not started | - |
