@@ -13,12 +13,29 @@ services:
       test: ["CMD-SHELL", "pg_isready -U cloudcost"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: alembic upgrade head
+    environment:
+      DATABASE_URL: postgresql+asyncpg://cloudcost:localdev@db:5432/cloudcost
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
 
   api:
     build:
@@ -30,27 +47,40 @@ services:
       REDIS_URL: redis://redis:6379/0
       APP_ENV: development
       DEBUG: "true"
+      JWT_SECRET_KEY: dev-secret-change-in-production
+      CORS_ORIGINS: '["http://localhost:3000"]'
     env_file:
-      - .env.local
+      - path: .env.local
+        required: false
     ports:
       - "8000:8000"
     volumes:
       - ./backend/app:/code/app
     depends_on:
-      db:
+      migrate:
+        condition: service_completed_successfully
+      redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    command: npm run dev
+      target: builder  # Use node build stage for dev; nginx stage is production-only
+    command: npm run dev -- --host 0.0.0.0
     ports:
       - "3000:3000"
     volumes:
       - ./frontend/src:/app/src
     environment:
       VITE_API_BASE_URL: http://localhost:8000/api/v1
+    depends_on:
+      - api
 
 volumes:
   postgres_data:

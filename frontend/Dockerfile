@@ -1,6 +1,15 @@
-FROM node:20-slim
+# Stage 1: build
+FROM node:20-slim AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+RUN npm run build
+
+# Stage 2: serve built assets
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+# SPA routing: fallback all paths to index.html for React Router
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
