@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 1 of 7 (Foundation)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-20 — Completed 01-01 (backend structure, DB models, migration, docker-compose)
+Last activity: 2026-02-20 — Completed 01-02 (JWT auth API: login/refresh/logout/me endpoints, HttpOnly cookie, DB session revocation)
 
-Progress: [█░░░░░░░░░] 5%
+Progress: [██░░░░░░░░] 10%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 15 min
-- Total execution time: 15 min
+- Total plans completed: 2
+- Average duration: 9 min
+- Total execution time: 17 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 1 | 15 min | 15 min |
+| 01-foundation | 2 | 17 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 15 min
-- Trend: Baseline established
+- Last 5 plans: 15 min, 2 min
+- Trend: Auth plan executed quickly (existing foundation solid)
 
 *Updated after each plan completion*
 
@@ -50,6 +50,9 @@ Recent decisions affecting current work:
 - pwdlib[argon2] not passlib — passlib unmaintained, breaks Python 3.12+; pwdlib is FastAPI-recommended replacement
 - Admin bootstrap via env vars (FIRST_ADMIN_EMAIL + FIRST_ADMIN_PASSWORD) — simplest for solo developer first-run
 - docs_url="/api/docs" in FastAPI() constructor directly — NOT via router prefix — prevents 404
+- Cookie path scoped to /api/v1/auth — reduces CSRF attack surface vs path=/
+- JWT type claim ('access'/'refresh') enforced at decode time — prevents token misuse across endpoints
+- oauth2_scheme tokenUrl=/api/v1/auth/login — FastAPI auto-generates OAuth2 lock icons in Swagger UI
 
 ### Pending Todos
 
@@ -62,5 +65,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 01-01-PLAN.md (backend foundation + DB models + docker-compose)
+Stopped at: Completed 01-02-PLAN.md (JWT auth endpoints: login/refresh/logout/me)
 Resume file: None

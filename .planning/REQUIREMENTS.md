@@ -9,9 +9,9 @@ Requirements for initial release. Each maps to a roadmap phase.
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can log in with email and password and receive a JWT access token
-- [ ] **AUTH-02**: User session persists via 7-day refresh token across browser restarts
-- [ ] **AUTH-03**: User can log out and invalidate their current session
+- [x] **AUTH-01**: User can log in with email and password and receive a JWT access token
+- [x] **AUTH-02**: User session persists via 7-day refresh token across browser restarts
+- [x] **AUTH-03**: User can log out and invalidate their current session
 
 ### Ingestion
 
@@ -55,8 +55,8 @@ Requirements for initial release. Each maps to a roadmap phase.
 ### REST API
 
 - [ ] **API-01**: Authenticated REST API exposes endpoints for costs, anomalies, recommendations, and tenant attribution
-- [ ] **API-02**: API requires JWT bearer token authentication
-- [ ] **API-03**: OpenAPI documentation auto-generated and accessible at /api/docs
+- [x] **API-02**: API requires JWT bearer token authentication
+- [x] **API-03**: OpenAPI documentation auto-generated and accessible at /api/docs
 
 ### Audit Logging
 
