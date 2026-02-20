@@ -12,7 +12,7 @@ CloudCost delivers Azure cost visibility and AI-powered savings recommendations 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Deployable project skeleton with database, auth, and API infrastructure
+- [x] **Phase 1: Foundation** - Deployable project skeleton with database, auth, and API infrastructure (completed 2026-02-20)
 - [ ] **Phase 2: Data Ingestion** - Azure billing pipeline with scheduling, backfill, and reliability guarantees
 - [ ] **Phase 3: Cost Monitoring** - Dashboard with spend views, trend analysis, breakdowns, and CSV export
 - [ ] **Phase 4: Anomaly Detection** - Rolling-baseline anomaly detection with severity and dollar impact
@@ -114,7 +114,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/4 | In progress | - |
+| 1. Foundation | 4/4 | Complete   | 2026-02-20 |
 | 2. Data Ingestion | 0/TBD | Not started | - |
 | 3. Cost Monitoring | 0/TBD | Not started | - |
 | 4. Anomaly Detection | 0/TBD | Not started | - |

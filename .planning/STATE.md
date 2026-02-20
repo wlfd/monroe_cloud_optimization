@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 1 of 7 (Foundation)
-Plan: 3 of 5 in current phase
-Status: In progress
-Last activity: 2026-02-20 — Completed 01-03 (React frontend: Vite + shadcn/ui auth shell, login page, authenticated layout)
+Plan: 4 of 5 in current phase
+Status: In progress — awaiting checkpoint:human-verify for Plan 04
+Last activity: 2026-02-20 — Completed 01-04 Task 1 (Dockerfiles, docker-compose, CI, README); awaiting human verification
 
-Progress: [███░░░░░░░] 15%
+Progress: [████░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 14 min
-- Total execution time: 42 min
+- Total plans completed: 4 (Plan 04 Task 1 auto-complete; checkpoint pending)
+- Average duration: 12 min
+- Total execution time: 47 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 3 | 42 min | 14 min |
+| 01-foundation | 4 | 47 min | 12 min |
 
 **Recent Trend:**
-- Last 5 plans: 15 min, 2 min, 25 min
-- Trend: Frontend scaffold heavier than auth API due to tooling setup (shadcn/ui preflight)
+- Last 5 plans: 15 min, 2 min, 25 min, 5 min
+- Trend: Infra/containerization plans are fast (5 min) since code was already in place
 
 *Updated after each plan completion*
 
@@ -57,6 +57,8 @@ Recent decisions affecting current work:
 - useAuth file uses .tsx extension (not .ts) — contains JSX (AuthContext.Provider) requiring JSX transform
 - Sidebar locked to 5 nav items: Dashboard, Anomalies, Recommendations, Attribution, Settings (LOCKED DECISION)
 - shadcn/ui paths alias must be in both tsconfig.json and tsconfig.app.json — shadcn preflight reads root tsconfig
+- [Phase 01-foundation]: Multi-stage frontend Dockerfile with target:builder in docker-compose — single Dockerfile serves dev (node) and production (nginx)
+- [Phase 01-foundation]: Health probe path is /api/v1/health not /health — routes registered under /api/v1 prefix in FastAPI main.py
 
 ### Pending Todos
 
@@ -69,5 +71,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 01-03-PLAN.md (React frontend: Vite + shadcn/ui, auth shell, login page, dashboard placeholder)
-Resume file: None
+Stopped at: 01-04-PLAN.md Task 2 checkpoint:human-verify — full Phase 1 stack running, awaiting human sign-off
+Resume file: None (human must verify browser login flow then signal "approved")
