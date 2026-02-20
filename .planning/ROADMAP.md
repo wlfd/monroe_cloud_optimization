@@ -38,7 +38,7 @@ Plans:
 - [x] 01-01-PLAN.md — Backend scaffold, async DB layer, User/UserSession models, Alembic, admin seed script
 - [x] 01-02-PLAN.md — JWT auth API: login, refresh, logout, /auth/me endpoints + get_current_user dependency
 - [x] 01-03-PLAN.md — React app shell: Vite + shadcn/ui, sidebar nav, topbar, login page, dashboard placeholder
-- [ ] 01-04-PLAN.md — Containerization: production Dockerfiles, docker-compose, GitHub Actions CI, README
+- [x] 01-04-PLAN.md — Containerization: production Dockerfiles, docker-compose, GitHub Actions CI, README
 
 ### Phase 2: Data Ingestion
 **Goal**: Azure billing data flows into the database reliably on schedule, with backfill for historical analysis
