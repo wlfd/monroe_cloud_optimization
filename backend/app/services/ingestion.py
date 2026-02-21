@@ -102,12 +102,21 @@ def _map_record(raw: dict) -> dict:
     usage_date = _parse_usage_date(int(usage_date_raw)) if usage_date_raw is not None else None
 
     now = datetime.now(timezone.utc)
+
+    # Derive resource_name from the last segment of ResourceId path
+    resource_id = raw.get("ResourceId", "")
+    resource_name = resource_id.split("/")[-1] if resource_id else ""
+
     return {
         "usage_date": usage_date,
         "subscription_id": raw.get("SubscriptionId", ""),
         "resource_group": raw.get("ResourceGroup", ""),
         "service_name": raw.get("ServiceName", ""),
         "meter_category": raw.get("MeterCategory", ""),
+        "region": raw.get("ResourceLocation", ""),
+        "tag": raw.get("tenant_id", ""),
+        "resource_id": resource_id,
+        "resource_name": resource_name,
         "pre_tax_cost": raw.get("PreTaxCost", 0.0),
         "currency": raw.get("Currency", "USD"),
         "ingested_at": now,
