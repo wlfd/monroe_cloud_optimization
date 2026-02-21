@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   Card,
@@ -33,7 +34,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertTriangle } from "lucide-react";
 import { useSpendSummary, useSpendTrend, useSpendBreakdown, useTopResources } from "@/services/cost";
+import { useAnomalySummary } from "@/services/anomaly";
 import api from "@/services/api";
 
 const chartConfig = {
@@ -74,6 +78,7 @@ export function DashboardPage() {
   const trendQuery = useSpendTrend(days);
   const breakdownQuery = useSpendBreakdown(dimension, days);
   const topResourcesQuery = useTopResources(days);
+  const anomalySummary = useAnomalySummary();
 
   const trendData = trendQuery.data ?? [];
 
@@ -106,7 +111,7 @@ export function DashboardPage() {
         <p className="text-destructive">Failed to load cost data</p>
       )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Month-to-Date Spend */}
         <Card>
           <CardHeader className="pb-2">
@@ -178,6 +183,51 @@ export function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Active Anomalies */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              Active Anomalies
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {anomalySummary.isLoading ? (
+              <div className="space-y-1">
+                <Skeleton className="h-8 w-12" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+            ) : (
+              <>
+                <p className={`text-2xl font-bold ${(anomalySummary.data?.active_count ?? 0) > 0 ? "text-destructive" : "text-foreground"}`}>
+                  {anomalySummary.data?.active_count ?? 0}
+                </p>
+                {anomalySummary.data && (anomalySummary.data.active_count ?? 0) > 0 && (
+                  <p className={`text-xs font-medium mt-0.5 ${
+                    (anomalySummary.data.critical_count ?? 0) > 0
+                      ? "text-red-600"
+                      : (anomalySummary.data.high_count ?? 0) > 0
+                      ? "text-orange-500"
+                      : "text-blue-600"
+                  }`}>
+                    {(anomalySummary.data.critical_count ?? 0) > 0
+                      ? `${anomalySummary.data.critical_count} Critical`
+                      : (anomalySummary.data.high_count ?? 0) > 0
+                      ? `${anomalySummary.data.high_count} High`
+                      : `${anomalySummary.data.medium_count} Medium`}
+                  </p>
+                )}
+                <Link
+                  to="/anomalies"
+                  className="text-xs text-muted-foreground hover:underline hover:text-foreground transition-colors"
+                >
+                  View anomalies →
+                </Link>
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Trend Chart */}
@@ -201,11 +251,11 @@ export function DashboardPage() {
         </CardHeader>
         <CardContent>
           {trendQuery.isLoading ? (
-            <div className="min-h-[300px] flex items-center justify-center">
+            <div className="h-[180px] flex items-center justify-center">
               <p className="text-muted-foreground">Loading chart...</p>
             </div>
           ) : (
-            <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+            <ChartContainer config={chartConfig} className="h-[180px] w-full">
               <AreaChart data={trendData}>
                 <CartesianGrid vertical={false} />
                 <XAxis
