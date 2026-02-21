@@ -9,32 +9,34 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 ## Current Position
 
-Phase: 2 of 7 (Data Ingestion)
-Plan: 3 of 5 in current phase (02-02 complete — azure_client.py + ingestion.py built)
-Status: Phase 2 plan 02 complete; ready for 02-03 (Scheduler + Ingestion API endpoints)
-Last activity: 2026-02-20 — Completed 02-02 — Azure Cost Management client, ingestion orchestration service
+**Phase:** 2 of 7 (Data Ingestion)
+**Current Plan:** 4
+**Total Plans in Phase:** 5
+**Status:** Ready to execute
+**Last Activity:** 2026-02-20 — Completed 02-03 — Scheduler singleton + FastAPI lifespan + ingestion admin API
 
-Progress: [████░░░░░░] 30%
+**Progress:** [█████████░] 88%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7 (Plans 01-01 through 02-02 fully complete)
+- Total plans completed: 8 (Plans 01-01 through 02-03 fully complete)
 - Average duration: 9 min
-- Total execution time: 50 min
+- Total execution time: 58 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 5 | 47 min | 12 min |
-| 02-data-ingestion | 2 | 5 min | 2.5 min |
+| 02-data-ingestion | 3 | 13 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min, 3 min, 25 min, 5 min, 2 min
-- Trend: Service layer implementation is fast (3 min) when models + config established by prior plan
+- Last 5 plans: 3 min, 25 min, 5 min, 2 min, 8 min
+- Trend: API wiring (scheduler + endpoints) averages 8 min when service layer already established
 
 *Updated after each plan completion*
+| Phase 02 P03 | 8min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -67,6 +69,10 @@ Recent decisions affecting current work:
 - [Phase 02-data-ingestion]: get_settings() called at function-call time in services (not module-level) — required for test cache invalidation
 - [Phase 02-data-ingestion]: AsyncSessionLocal used directly in service layer — scheduler jobs run outside request context (Pattern 7)
 - [Phase 02-data-ingestion]: Fresh error session opened in _do_ingestion exception handler — avoids using dirty/rolled-back session for error logging
+- [Phase 02-data-ingestion]: scheduler.shutdown(wait=False) on FastAPI shutdown — avoids blocking shutdown for up to 4 hours if job in flight; asyncio.Lock handles in-flight concurrency
+- [Phase 02-data-ingestion]: asyncio.create_task for manual /run trigger — fire-and-forget pattern keeps HTTP response immediate while ingestion runs in background
+- [Phase 02-data-ingestion]: require_admin as a dependency function (not decorator) — composable with get_current_user, consistent with FastAPI DI patterns
+- [Phase 02]: scheduler.shutdown(wait=False) on FastAPI shutdown — avoids blocking shutdown for up to 4 hours if job in flight; asyncio.Lock handles in-flight concurrency
 
 ### Pending Todos
 
@@ -78,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Completed 02-02-PLAN.md — azure_client.py (fetch, retry, mock) + ingestion.py (orchestration, delta window, upsert, backfill, alerts, run logging)
-Resume file: None — advance to 02-03
+**Last session:** 2026-02-21T01:07:39.426Z
+**Stopped at:** Completed 02-03-PLAN.md — scheduler.py (APScheduler singleton), main.py lifespan, ingestion API (/run /status /runs /alerts), schemas/ingestion.py
+**Resume file:** None
