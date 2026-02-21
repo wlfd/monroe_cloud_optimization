@@ -6,6 +6,7 @@ import { DashboardPage } from '@/pages/DashboardPage';
 import { IngestionPage } from '@/pages/IngestionPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import AnomaliesPage from '@/pages/AnomaliesPage';
+import RecommendationsPage from '@/pages/RecommendationsPage';
 
 const router = createBrowserRouter([
   {
@@ -23,8 +24,8 @@ const router = createBrowserRouter([
       { path: '/dashboard', element: <DashboardPage /> },
       { path: '/ingestion', element: <IngestionPage /> },
       { path: '/anomalies', element: <AnomaliesPage /> },
-      // Phase 3+ routes slot in here:
-      // { path: '/recommendations', element: <RecommendationsPage /> },
+      { path: '/recommendations', element: <RecommendationsPage /> },
+      // Phase 6+ routes slot in here:
       // { path: '/attribution', element: <AttributionPage /> },
       // { path: '/settings', element: <SettingsPage /> },
     ],
