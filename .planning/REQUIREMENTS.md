@@ -41,7 +41,7 @@ Requirements for initial release. Each maps to a roadmap phase.
 ### AI Recommendations
 
 - [x] **AI-01**: System generates LLM-powered optimization recommendations on a daily schedule (Azure OpenAI primary, Anthropic Claude fallback)
-- [ ] **AI-02**: Each recommendation includes: category (right-sizing/idle/reserved/storage), plain-language explanation, estimated monthly savings, and confidence score (0–100)
+- [x] **AI-02**: Each recommendation includes: category (right-sizing/idle/reserved/storage), plain-language explanation, estimated monthly savings, and confidence score (0–100)
 - [x] **AI-03**: LLM responses are cached in Redis with 24-hour TTL to minimize API costs
 - [x] **AI-04**: System enforces a configurable daily LLM call limit (default: 100 calls/day)
 
@@ -143,7 +143,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANOMALY-03 | Phase 4 | Complete |
 | ANOMALY-04 | Phase 4 | Complete |
 | AI-01 | Phase 5 | Complete |
-| AI-02 | Phase 5 | Pending |
+| AI-02 | Phase 5 | Complete |
 | AI-03 | Phase 5 | Complete |
 | AI-04 | Phase 5 | Complete |
 | ATTR-01 | Phase 6 | Pending |

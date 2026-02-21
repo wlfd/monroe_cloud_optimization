@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 5 of 7 (AI Recommendations)
-**Current Plan:** 1 of 5
+**Current Plan:** 2
 **Total Plans in Phase:** 5
-**Status:** In progress
+**Status:** Ready to execute
 **Last Activity:** 2026-02-21
 
-**Progress:** [██░░░░░░░░] 20%
+**Progress:** [█████████░] 91%
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 04-anomaly-detection P05 | 525598min | 1 tasks | 4 files |
 | Phase 04-anomaly-detection P05 | 15min | 1 tasks | 4 files |
 | Phase 05-ai-recommendations P01 | 2 | 2 tasks | 6 files |
+| Phase 05-ai-recommendations P02 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,9 @@ Recent decisions affecting current work:
 - [Phase 05-ai-recommendations]: get_redis returns app.state.redis — Redis client initialized in main.py lifespan, injected via get_redis(request: Request) dependency
 - [Phase 05-ai-recommendations]: generated_date as Date (not DateTime) in recommendations — daily-replace semantics; service queries WHERE generated_date = MAX(generated_date)
 - [Phase 05-ai-recommendations]: migrations/env.py must import all model modules — alembic autogenerate only detects models loaded at import time (lesson from Task 2)
+- [Phase 05-ai-recommendations]: require_admin imported from app.api.v1.ingestion (not app.api.v1.auth) — that is where require_admin is defined in this codebase
+- [Phase 05-ai-recommendations]: Azure OpenAI fallback is graceful no-op when AZURE_OPENAI_ENDPOINT/KEY unset — logs warning and returns None, app works without it
+- [Phase 05-ai-recommendations]: Daily limit counter incremented before LLM call (not after) — prevents races; cache hits bypass counter entirely
 
 ### Pending Todos
 
@@ -129,6 +133,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T16:37:36.813Z
-**Stopped at:** Completed 05-01-PLAN.md
+**Last session:** 2026-02-21T16:42:37.617Z
+**Stopped at:** Completed 05-02-PLAN.md
 **Resume file:** None
