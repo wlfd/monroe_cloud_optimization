@@ -53,8 +53,8 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — BillingRecord/IngestionRun/IngestionAlert models, Alembic migration, Azure config settings
-- [ ] 02-02-PLAN.md — Azure client (retry, pagination, mock mode) + ingestion service (delta window, upsert, backfill, alerts)
+- [x] 02-01-PLAN.md — BillingRecord/IngestionRun/IngestionAlert models, Alembic migration, Azure config settings
+- [x] 02-02-PLAN.md — Azure client (retry, pagination, mock mode) + ingestion service (delta window, upsert, backfill, alerts)
 - [ ] 02-03-PLAN.md — APScheduler lifespan integration (4-hour job) + ingestion admin API (/run, /status, /runs, /alerts)
 - [ ] 02-04-PLAN.md — Admin ingestion UI (status indicator, Run Now button, alert banner, run history table) + human verify
 
@@ -121,7 +121,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete    | 2026-02-20 |
-| 2. Data Ingestion | 1/4 | In Progress|  |
+| 2. Data Ingestion | 2/4 | In Progress|  |
 | 3. Cost Monitoring | 0/TBD | Not started | - |
 | 4. Anomaly Detection | 0/TBD | Not started | - |
 | 5. AI Recommendations | 0/TBD | Not started | - |

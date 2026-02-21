@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** AI-powered optimization recommendations that identify savings Fileread actually implements
-**Current focus:** Phase 1 - Foundation
+**Current focus:** Phase 2 - Data Ingestion
 
 ## Current Position
 
 Phase: 2 of 7 (Data Ingestion)
-Plan: 2 of 5 in current phase (02-01 complete — billing models + migration done)
-Status: Phase 2 plan 01 complete; ready for 02-02 (AzureCostClient)
-Last activity: 2026-02-20 — Completed 02-01 — billing models, Alembic migration, Azure config settings, ingestion dependencies
+Plan: 3 of 5 in current phase (02-02 complete — azure_client.py + ingestion.py built)
+Status: Phase 2 plan 02 complete; ready for 02-03 (Scheduler + Ingestion API endpoints)
+Last activity: 2026-02-20 — Completed 02-02 — Azure Cost Management client, ingestion orchestration service
 
-Progress: [████░░░░░░] 25%
+Progress: [████░░░░░░] 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5 (Plans 01-01 through 01-04 fully complete including human-verified checkpoint)
-- Average duration: 12 min
-- Total execution time: 47 min
+- Total plans completed: 7 (Plans 01-01 through 02-02 fully complete)
+- Average duration: 9 min
+- Total execution time: 50 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 5 | 47 min | 12 min |
-| 02-data-ingestion | 1 | 2 min | 2 min |
+| 02-data-ingestion | 2 | 5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 15 min, 2 min, 25 min, 5 min, 2 min
-- Trend: Database model + migration plans are very fast (2 min) when following established patterns
+- Last 5 plans: 2 min, 3 min, 25 min, 5 min, 2 min
+- Trend: Service layer implementation is fast (3 min) when models + config established by prior plan
 
 *Updated after each plan completion*
 
@@ -63,6 +63,10 @@ Recent decisions affecting current work:
 - [Phase 02-data-ingestion]: AZURE_SUBSCRIPTION_SCOPE as plain empty-string field — ingestion service computes /subscriptions/{ID} at runtime (avoids pydantic model_validator complexity)
 - [Phase 02-data-ingestion]: MOCK_AZURE bool flag in Settings allows local dev without real Azure credentials
 - [Phase 02-data-ingestion]: utcnow() helper redefined per model file (billing.py, user.py) — keeps model files decoupled, no cross-file imports
+- [Phase 02-data-ingestion]: 24h overlap applied to delta window start — catches late-arriving Azure records (Pattern 6 from research)
+- [Phase 02-data-ingestion]: get_settings() called at function-call time in services (not module-level) — required for test cache invalidation
+- [Phase 02-data-ingestion]: AsyncSessionLocal used directly in service layer — scheduler jobs run outside request context (Pattern 7)
+- [Phase 02-data-ingestion]: Fresh error session opened in _do_ingestion exception handler — avoids using dirty/rolled-back session for error logging
 
 ### Pending Todos
 
@@ -75,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 02-01-PLAN.md — billing models, Alembic migration 55bda49dc4a2 applied, Azure config settings added
-Resume file: None — advance to 02-02
+Stopped at: Completed 02-02-PLAN.md — azure_client.py (fetch, retry, mock) + ingestion.py (orchestration, delta window, upsert, backfill, alerts, run logging)
+Resume file: None — advance to 02-03

@@ -15,9 +15,9 @@ Requirements for initial release. Each maps to a roadmap phase.
 
 ### Ingestion
 
-- [ ] **INGEST-01**: System ingests Azure billing data from Cost Management API on a 4-hour schedule
-- [ ] **INGEST-02**: System performs 24-month historical data backfill on first account setup
-- [ ] **INGEST-03**: System retries failed API calls with exponential backoff (3 retries: 5s, 30s, 120s)
+- [x] **INGEST-01**: System ingests Azure billing data from Cost Management API on a 4-hour schedule
+- [x] **INGEST-02**: System performs 24-month historical data backfill on first account setup
+- [x] **INGEST-03**: System retries failed API calls with exponential backoff (3 retries: 5s, 30s, 120s)
 - [x] **INGEST-04**: Ingestion is idempotent — re-runs do not create duplicate billing records
 - [x] **INGEST-05**: Failed ingestion runs generate an admin alert notification
 - [x] **INGEST-06**: All ingestion runs are logged with status, row count, and duration
@@ -126,9 +126,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 1 | Complete |
 | API-02 | Phase 1 | Complete |
 | API-03 | Phase 1 | Complete |
-| INGEST-01 | Phase 2 | Pending |
-| INGEST-02 | Phase 2 | Pending |
-| INGEST-03 | Phase 2 | Pending |
+| INGEST-01 | Phase 2 | Complete |
+| INGEST-02 | Phase 2 | Complete |
+| INGEST-03 | Phase 2 | Complete |
 | INGEST-04 | Phase 2 | Complete |
 | INGEST-05 | Phase 2 | Complete |
 | INGEST-06 | Phase 2 | Complete |
