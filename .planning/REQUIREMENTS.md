@@ -27,8 +27,8 @@ Requirements for initial release. Each maps to a roadmap phase.
 - [ ] **COST-01**: User can view total month-to-date Azure spend with projected month-end figure
 - [ ] **COST-02**: User can compare current period spend to previous period (MoM)
 - [ ] **COST-03**: User can view daily spend trend chart with selectable 30, 60, and 90-day views
-- [ ] **COST-04**: User can break down costs by service, resource group, region, and tag
-- [ ] **COST-05**: User can view top 10 most expensive resources for any selected period
+- [x] **COST-04**: User can break down costs by service, resource group, region, and tag
+- [x] **COST-05**: User can view top 10 most expensive resources for any selected period
 - [ ] **COST-06**: User can export cost breakdown data to CSV
 
 ### Anomaly Detection
@@ -135,8 +135,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COST-01 | Phase 3 | Pending |
 | COST-02 | Phase 3 | Pending |
 | COST-03 | Phase 3 | Pending |
-| COST-04 | Phase 3 | Pending |
-| COST-05 | Phase 3 | Pending |
+| COST-04 | Phase 3 | Complete |
+| COST-05 | Phase 3 | Complete |
 | COST-06 | Phase 3 | Pending |
 | ANOMALY-01 | Phase 4 | Pending |
 | ANOMALY-02 | Phase 4 | Pending |
