@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** AI-powered optimization recommendations that identify savings Fileread actually implements
-**Current focus:** Phase 4 - Anomaly Detection
+**Current focus:** Phase 5 - AI Recommendations
 
 ## Current Position
 
-**Phase:** 4 of 7 (Anomaly Detection)
-**Current Plan:** Not started
+**Phase:** 5 of 7 (AI Recommendations)
+**Current Plan:** 1 of 5
 **Total Plans in Phase:** 5
-**Status:** Milestone complete
+**Status:** In progress
 **Last Activity:** 2026-02-21
 
-**Progress:** [██████████] 100%
+**Progress:** [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 04-anomaly-detection P04 | 12 | 2 tasks | 2 files |
 | Phase 04-anomaly-detection P05 | 525598min | 1 tasks | 4 files |
 | Phase 04-anomaly-detection P05 | 15min | 1 tasks | 4 files |
+| Phase 05-ai-recommendations P01 | 2 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,10 @@ Recent decisions affecting current work:
 - [Phase 04-anomaly-detection]: AnomalyCard defined inline in AnomaliesPage.tsx — keeps mutation hooks co-located with render, no prop-drilling
 - [Phase 04-anomaly-detection]: Context-sensitive action buttons (show/hide by status) preferred over disabled buttons for anomaly card UX
 - [Phase 04-anomaly-detection]: Toggle endpoint for anomaly expected flag: PATCH /{id}/expected accepts {expected: bool} — single endpoint for both mark and unmark
+- [Phase 05-ai-recommendations]: utcnow() helper redefined locally in recommendation.py — keeps model files decoupled, consistent with billing.py pattern
+- [Phase 05-ai-recommendations]: get_redis returns app.state.redis — Redis client initialized in main.py lifespan, injected via get_redis(request: Request) dependency
+- [Phase 05-ai-recommendations]: generated_date as Date (not DateTime) in recommendations — daily-replace semantics; service queries WHERE generated_date = MAX(generated_date)
+- [Phase 05-ai-recommendations]: migrations/env.py must import all model modules — alembic autogenerate only detects models loaded at import time (lesson from Task 2)
 
 ### Pending Todos
 
@@ -124,6 +129,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T10:52:11.575Z
-**Stopped at:** Phase 5 context gathered
-**Resume file:** .planning/phases/05-ai-recommendations/05-CONTEXT.md
+**Last session:** 2026-02-21T16:37:36.813Z
+**Stopped at:** Completed 05-01-PLAN.md
+**Resume file:** None
