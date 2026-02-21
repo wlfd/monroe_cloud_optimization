@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 4 of 7 (Anomaly Detection)
-**Current Plan:** 2
+**Current Plan:** 3
 **Total Plans in Phase:** 5
-**Status:** In Progress
+**Status:** Ready to execute
 **Last Activity:** 2026-02-21
 
-**Progress:** [████████░░] 78%
+**Progress:** [████████░░] 83%
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 03-cost-monitoring P04 | 2 | 2 tasks | 4 files |
 | Phase 03-cost-monitoring P05 | 1 | 1 tasks | 0 files |
 | Phase 04-anomaly-detection P01 | 7 | 1 tasks | 2 files |
+| Phase 04-anomaly-detection P02 | 6 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,9 @@ Recent decisions affecting current work:
 - [Phase 03-cost-monitoring]: Blob download pattern: responseType: blob + createObjectURL + link.click() + revokeObjectURL — established for any future CSV/PDF exports
 - [Phase 03-cost-monitoring]: Phase 3 dashboard verified end-to-end by human — no defects found, no remediation required
 - [Phase 04-anomaly-detection]: server_default='new' on status and server_default='false' on expected added to anomalies migration — allows direct SQL inserts without Python layer; follows Phase 3 precedent
+- [Phase 04-anomaly-detection]: check_date uses MAX(usage_date) from billing_records rather than today-1 — robust to Azure data latency
+- [Phase 04-anomaly-detection]: GET /filter-options returns combined {services, resource_groups} dict instead of two separate endpoints — one round-trip for UI dropdowns
+- [Phase 04-anomaly-detection]: Detection accuracy: (total_non_dismissed - expected_count) / total_non_dismissed * 100; returns None when total_detected=0 (same null pattern as mom_delta_pct)
 
 ### Pending Todos
 
@@ -110,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T09:55:26.381Z
-**Stopped at:** Completed 04-01-PLAN.md
+**Last session:** 2026-02-21T10:00:32.496Z
+**Stopped at:** Completed 04-02-PLAN.md
 **Resume file:** None
