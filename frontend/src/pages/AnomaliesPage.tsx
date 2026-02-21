@@ -10,6 +10,7 @@ import {
   useAnomalySummary,
   useUpdateAnomalyStatus,
   useMarkAnomalyExpected,
+  useUnmarkAnomalyExpected,
   exportAnomalies,
   type Anomaly,
 } from '@/services/anomaly';
@@ -40,6 +41,7 @@ const statusBadgeClass: Record<string, string> = {
 function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
   const updateStatus = useUpdateAnomalyStatus();
   const markExpected = useMarkAnomalyExpected();
+  const unmarkExpected = useUnmarkAnomalyExpected();
 
   const detectedDate = new Date(anomaly.detected_date).toLocaleDateString('en-US', {
     month: 'short',
@@ -54,9 +56,15 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
     maximumFractionDigits: 0,
   });
 
+  const isNew = anomaly.status === 'new';
   const isInvestigating = anomaly.status === 'investigating';
   const isResolved = anomaly.status === 'resolved';
   const isDismissed = anomaly.status === 'dismissed';
+  const isExpected = anomaly.expected;
+
+  // Derive whether any mutation is in progress
+  const isMutating =
+    updateStatus.isPending || markExpected.isPending || unmarkExpected.isPending;
 
   return (
     <Card>
@@ -77,7 +85,7 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
                 {anomaly.severity.charAt(0).toUpperCase() + anomaly.severity.slice(1)}
               </Badge>
               <Badge className={statusBadgeClass[anomaly.status] ?? ''}>
-                {anomaly.status.charAt(0).toUpperCase() + anomaly.status.slice(1)}
+                {isExpected ? 'Expected' : anomaly.status.charAt(0).toUpperCase() + anomaly.status.slice(1)}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mb-1">{anomaly.description}</p>
@@ -86,32 +94,82 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
               <span>Detected: {detectedDate}</span>
             </div>
 
-            {/* Action buttons */}
+            {/* Context-sensitive action buttons */}
             <div className="flex flex-wrap gap-2 mt-3">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={isInvestigating || isResolved || isDismissed || updateStatus.isPending}
-                onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'investigating' })}
-              >
-                Investigate
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={isDismissed || isResolved || updateStatus.isPending}
-                onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'dismissed' })}
-              >
-                Dismiss
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={anomaly.expected || markExpected.isPending}
-                onClick={() => markExpected.mutate({ id: anomaly.id })}
-              >
-                Mark as Expected
-              </Button>
+              {/* New status: show all three primary actions */}
+              {isNew && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isMutating}
+                    onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'investigating' })}
+                  >
+                    Investigate
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isMutating}
+                    onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'dismissed' })}
+                  >
+                    Dismiss
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={isMutating}
+                    onClick={() => markExpected.mutate({ id: anomaly.id })}
+                  >
+                    Mark as Expected
+                  </Button>
+                </>
+              )}
+
+              {/* Investigating status: show revert */}
+              {isInvestigating && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isMutating}
+                  onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'new' })}
+                >
+                  Revert to New
+                </Button>
+              )}
+
+              {/* Dismissed but NOT expected: show revert */}
+              {isDismissed && !isExpected && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isMutating}
+                  onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'new' })}
+                >
+                  Revert to New
+                </Button>
+              )}
+
+              {/* Expected (dismissed + expected=true): show unmark */}
+              {isExpected && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isMutating}
+                  onClick={() => unmarkExpected.mutate({ id: anomaly.id })}
+                >
+                  Unmark Expected
+                </Button>
+              )}
+
+              {/* Resolved: no actions (terminal state) */}
+              {isResolved && (
+                <span className="text-xs text-muted-foreground self-center">
+                  Auto-resolved — no further action needed
+                </span>
+              )}
+
+              {/* View Resources always visible */}
               <Button
                 variant="ghost"
                 size="sm"

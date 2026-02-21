@@ -450,6 +450,30 @@ async def mark_anomaly_expected(
     return anomaly
 
 
+async def unmark_anomaly_expected(
+    session: AsyncSession,
+    anomaly_id: uuid.UUID,
+) -> Anomaly | None:
+    """Clear the expected flag and reset status to 'new'.
+
+    Sets expected=False and status='new'. Returns the updated Anomaly
+    object, or None if not found.
+    """
+    stmt = select(Anomaly).where(Anomaly.id == anomaly_id)
+    result = await session.execute(stmt)
+    anomaly = result.scalar_one_or_none()
+
+    if anomaly is None:
+        return None
+
+    anomaly.expected = False
+    anomaly.status = "new"
+    anomaly.updated_at = datetime.now(timezone.utc)
+    await session.commit()
+    await session.refresh(anomaly)
+    return anomaly
+
+
 async def get_anomalies_for_export(
     session: AsyncSession,
     *,

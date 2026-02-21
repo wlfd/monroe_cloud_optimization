@@ -84,7 +84,20 @@ export function useMarkAnomalyExpected() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
-      await api.patch(`/anomalies/${id}/expected`);
+      await api.patch(`/anomalies/${id}/expected`, { expected: true });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['anomalies'] });
+      queryClient.invalidateQueries({ queryKey: ['anomaly-summary'] });
+    },
+  });
+}
+
+export function useUnmarkAnomalyExpected() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      await api.patch(`/anomalies/${id}/expected`, { expected: false });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anomalies'] });

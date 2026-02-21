@@ -19,12 +19,13 @@ from app.services.anomaly import (
     get_anomalies_for_export,
     get_anomaly_summary,
     mark_anomaly_expected,
+    unmark_anomaly_expected,
     update_anomaly_status,
 )
 
 router = APIRouter(tags=["anomalies"])
 
-_VALID_STATUSES = {"investigating", "resolved", "dismissed"}
+_VALID_STATUSES = {"new", "investigating", "resolved", "dismissed"}
 
 
 @router.get("/", response_model=list[AnomalyResponse])
@@ -141,11 +142,19 @@ async def update_status(
 @router.patch("/{anomaly_id}/expected", response_model=AnomalyResponse)
 async def mark_expected(
     anomaly_id: uuid.UUID,
+    body: AnomalyMarkExpectedRequest = AnomalyMarkExpectedRequest(),
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_user),
 ):
-    """Mark an anomaly as expected (false positive) — sets expected=True and status=dismissed."""
-    anomaly = await mark_anomaly_expected(db, anomaly_id)
+    """Toggle an anomaly's expected flag.
+
+    - expected=True (default): sets expected=True and status='dismissed'
+    - expected=False: clears expected=False and resets status='new'
+    """
+    if body.expected:
+        anomaly = await mark_anomaly_expected(db, anomaly_id)
+    else:
+        anomaly = await unmark_anomaly_expected(db, anomaly_id)
     if anomaly is None:
         raise HTTPException(status_code=404, detail="Anomaly not found")
     return AnomalyResponse.model_validate(anomaly)
