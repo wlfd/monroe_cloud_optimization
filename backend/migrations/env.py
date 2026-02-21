@@ -9,6 +9,7 @@ from alembic import context
 from app.core.database import Base
 from app.models import user  # noqa: F401
 from app.models import billing  # noqa: F401
+from app.models import recommendation  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
