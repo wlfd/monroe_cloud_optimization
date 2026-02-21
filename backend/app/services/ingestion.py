@@ -18,6 +18,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from app.core.config import get_settings
 from app.core.database import AsyncSessionLocal
 from app.models.billing import BillingRecord, IngestionRun, IngestionAlert
+from app.services.anomaly import run_anomaly_detection
 from app.services.azure_client import fetch_with_retry
 
 logger = logging.getLogger(__name__)
@@ -331,6 +332,7 @@ async def _do_ingestion(triggered_by: str) -> None:
             )
             records = await fetch_with_retry(scope=scope, start=start, end=end)
             count = await upsert_billing_records(session, records)
+            await run_anomaly_detection(session)
             await clear_active_alerts(session)
             await log_ingestion_run(
                 session,
