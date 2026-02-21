@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 2 of 7 (Data Ingestion)
-**Current Plan:** 4
+**Current Plan:** 5
 **Total Plans in Phase:** 5
 **Status:** Ready to execute
-**Last Activity:** 2026-02-20 — Completed 02-03 — Scheduler singleton + FastAPI lifespan + ingestion admin API
+**Last Activity:** 2026-02-21
 
-**Progress:** [█████████░] 88%
+**Progress:** [██████████] 100%
 
 ## Performance Metrics
 
@@ -37,6 +37,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 *Updated after each plan completion*
 | Phase 02 P03 | 8min | 2 tasks | 5 files |
+| Phase 02-data-ingestion P04 | 15min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,9 @@ Recent decisions affecting current work:
 - [Phase 02-data-ingestion]: asyncio.create_task for manual /run trigger — fire-and-forget pattern keeps HTTP response immediate while ingestion runs in background
 - [Phase 02-data-ingestion]: require_admin as a dependency function (not decorator) — composable with get_current_user, consistent with FastAPI DI patterns
 - [Phase 02]: scheduler.shutdown(wait=False) on FastAPI shutdown — avoids blocking shutdown for up to 4 hours if job in flight; asyncio.Lock handles in-flight concurrency
+- [Phase 02-data-ingestion]: No dismiss button on alert banner — auto-clears on next successful run per locked decision INGEST-05
+- [Phase 02-data-ingestion]: Admin nav items in separate adminNavItems array (not mixed into navItems) — keeps standard nav stable per locked sidebar decision
+- [Phase 02-data-ingestion]: 5-second polling interval cleared via useRef on unmount — prevents memory leaks and phantom API calls after navigation
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T01:07:39.426Z
-**Stopped at:** Completed 02-03-PLAN.md — scheduler.py (APScheduler singleton), main.py lifespan, ingestion API (/run /status /runs /alerts), schemas/ingestion.py
+**Last session:** 2026-02-21T01:26:09.331Z
+**Stopped at:** Completed 02-04-PLAN.md — IngestionPage, App.tsx route, AppSidebar admin nav link, human verification passed
 **Resume file:** None
