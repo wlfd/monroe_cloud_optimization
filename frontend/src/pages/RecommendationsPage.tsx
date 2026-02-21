@@ -13,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, ArrowRight, Loader2, Lightbulb } from 'lucide-react';
@@ -200,12 +199,10 @@ export default function RecommendationsPage() {
 
       {/* Daily limit reached banner */}
       {summaryData?.daily_limit_reached && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Daily recommendation limit reached. New recommendations will generate tomorrow.
-          </AlertDescription>
-        </Alert>
+        <div className="flex items-center gap-2 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>Daily recommendation limit reached. New recommendations will generate tomorrow.</span>
+        </div>
       )}
 
       {/* Filter bar */}
