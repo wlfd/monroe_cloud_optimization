@@ -126,16 +126,26 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
                 </>
               )}
 
-              {/* Investigating status: show revert */}
+              {/* Investigating status: mark resolved or revert */}
               {isInvestigating && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isMutating}
-                  onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'new' })}
-                >
-                  Revert to New
-                </Button>
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isMutating}
+                    onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'resolved' })}
+                  >
+                    Mark as Resolved
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isMutating}
+                    onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'new' })}
+                  >
+                    Revert to New
+                  </Button>
+                </>
               )}
 
               {/* Dismissed but NOT expected: show revert */}
@@ -162,11 +172,16 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
                 </Button>
               )}
 
-              {/* Resolved: no actions (terminal state) */}
+              {/* Resolved: allow revert to new */}
               {isResolved && (
-                <span className="text-xs text-muted-foreground self-center">
-                  Auto-resolved — no further action needed
-                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isMutating}
+                  onClick={() => updateStatus.mutate({ id: anomaly.id, status: 'new' })}
+                >
+                  Revert to New
+                </Button>
               )}
 
               {/* View Resources always visible */}
