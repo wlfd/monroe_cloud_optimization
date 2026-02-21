@@ -171,7 +171,7 @@ export default function RecommendationsPage() {
 
       {/* Summary stat row */}
       {summaryData && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
           <Card className="col-span-2 sm:col-span-1 lg:col-span-2 bg-green-50 dark:bg-green-950 border-green-200">
             <CardContent className="p-4">
               <p className="text-xs text-muted-foreground">Potential Monthly Savings</p>

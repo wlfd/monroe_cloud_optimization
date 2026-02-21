@@ -120,6 +120,17 @@ None - no external service configuration required.
 - All ANOMALY-01 through ANOMALY-04 requirements satisfied
 - Ready for Phase 5: Recommendations
 
+## Self-Check: PASSED
+
+- FOUND: backend/app/api/v1/anomaly.py
+- FOUND: backend/app/services/anomaly.py
+- FOUND: frontend/src/services/anomaly.ts
+- FOUND: frontend/src/pages/AnomaliesPage.tsx
+- FOUND: .planning/phases/04-anomaly-detection/04-05-SUMMARY.md
+- FOUND: commit fe6b9a3 (feat: undo/revert buttons)
+- FOUND: commit c962cb7 (docs: plan complete)
+- TypeScript: tsc --noEmit passed with no errors
+
 ---
 *Phase: 04-anomaly-detection*
 *Completed: 2026-02-21*

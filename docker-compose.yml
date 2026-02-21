@@ -32,6 +32,8 @@ services:
     command: alembic upgrade head
     environment:
       DATABASE_URL: postgresql+asyncpg://cloudcost:localdev@db:5432/cloudcost
+    volumes:
+      - ./backend/migrations:/code/migrations
     depends_on:
       db:
         condition: service_healthy
@@ -56,6 +58,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/app:/code/app
+      - ./backend/migrations:/code/migrations
     depends_on:
       migrate:
         condition: service_completed_successfully
