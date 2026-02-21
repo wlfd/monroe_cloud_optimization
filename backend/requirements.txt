@@ -11,3 +11,5 @@ APScheduler==3.11.2
 azure-mgmt-costmanagement
 azure-identity
 tenacity
+anthropic>=0.40
+redis>=5.0
