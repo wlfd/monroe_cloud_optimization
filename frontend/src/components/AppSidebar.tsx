@@ -14,8 +14,10 @@ import {
   Lightbulb,
   Users,
   Settings,
+  Database,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -25,7 +27,13 @@ const navItems = [
   { title: 'Settings', url: '/settings', icon: Settings },
 ];
 
+const adminNavItems = [
+  { title: 'Ingestion', url: '/ingestion', icon: Database },
+];
+
 export function AppSidebar() {
+  const { user } = useAuth();
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3">
@@ -50,6 +58,22 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {user?.role === 'admin' &&
+                adminNavItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.url}
+                        className={({ isActive }) =>
+                          isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
+                        }
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
