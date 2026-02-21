@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GripVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -203,39 +204,37 @@ function AllocationRulesTab() {
   const [isAddingRule, setIsAddingRule] = useState(false);
   const [form, setForm] = useState<NewRuleForm>(EMPTY_FORM);
 
-  // Track per-row priority edit values
-  const [priorityEdits, setPriorityEdits] = useState<Record<string, string>>({});
+  // Drag state
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-  function handlePriorityBlur(rule: AllocationRule, newPriorityStr: string) {
-    const newPriority = parseInt(newPriorityStr, 10);
-    if (isNaN(newPriority) || newPriority === rule.priority) {
-      // Reset to original
-      setPriorityEdits((prev) => {
-        const next = { ...prev };
-        delete next[rule.id];
-        return next;
-      });
+  function handleDragStart(index: number) {
+    setDragIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    setDragOverIndex(index);
+  }
+
+  function handleDrop(e: React.DragEvent, dropIndex: number) {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === dropIndex) {
+      setDragIndex(null);
+      setDragOverIndex(null);
       return;
     }
+    const reordered = [...rules];
+    const [moved] = reordered.splice(dragIndex, 1);
+    reordered.splice(dropIndex, 0, moved);
+    reorderRules.mutate({ rule_ids: reordered.map((r) => r.id) });
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }
 
-    // Re-sort rules by new priority, re-number 1..N, call reorder endpoint
-    const updated = rules
-      .map((r) => (r.id === rule.id ? { ...r, priority: newPriority } : r))
-      .sort((a, b) => a.priority - b.priority)
-      .map((r, idx) => ({ ...r, priority: idx + 1 }));
-
-    reorderRules.mutate(
-      { rule_ids: updated.map((r) => r.id) },
-      {
-        onSuccess: () => {
-          setPriorityEdits((prev) => {
-            const next = { ...prev };
-            delete next[rule.id];
-            return next;
-          });
-        },
-      },
-    );
+  function handleDragEnd() {
+    setDragIndex(null);
+    setDragOverIndex(null);
   }
 
   function handleDelete(rule: AllocationRule) {
@@ -302,7 +301,8 @@ function AllocationRulesTab() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-20">Priority</TableHead>
+            <TableHead className="w-8" />
+            <TableHead className="w-16">Priority</TableHead>
             <TableHead>Target Type</TableHead>
             <TableHead>Target Value</TableHead>
             <TableHead>Method</TableHead>
@@ -311,19 +311,20 @@ function AllocationRulesTab() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rules.map((rule) => (
-            <TableRow key={rule.id}>
-              <TableCell>
-                <Input
-                  type="number"
-                  className="h-7 w-16 text-sm"
-                  value={priorityEdits[rule.id] ?? String(rule.priority)}
-                  onChange={(e) =>
-                    setPriorityEdits((prev) => ({ ...prev, [rule.id]: e.target.value }))
-                  }
-                  onBlur={(e) => handlePriorityBlur(rule, e.target.value)}
-                />
+          {rules.map((rule, index) => (
+            <TableRow
+              key={rule.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              className={dragOverIndex === index && dragIndex !== index ? 'border-t-2 border-primary' : ''}
+            >
+              <TableCell className="pr-0">
+                <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
               </TableCell>
+              <TableCell className="text-sm text-muted-foreground">{rule.priority}</TableCell>
               <TableCell className="text-sm">{rule.target_type}</TableCell>
               <TableCell className="text-sm font-mono">{rule.target_value}</TableCell>
               <TableCell className="text-sm">{rule.method}</TableCell>
@@ -347,6 +348,7 @@ function AllocationRulesTab() {
           {/* Inline add row */}
           {isAddingRule && (
             <TableRow>
+              <TableCell />
               <TableCell>
                 <Input
                   type="number"
