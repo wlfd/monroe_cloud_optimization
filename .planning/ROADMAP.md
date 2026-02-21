@@ -86,7 +86,14 @@ Plans:
   2. Each anomaly displayed to the user shows a severity label (Critical, High, or Medium) and the estimated monthly dollar impact
   3. User can view a list of current anomalies filtered by the affected service and resource group
   4. A spend spike that crosses the Critical threshold ($1K+ estimated impact) appears in the anomaly list after the next ingestion run
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Anomaly SQLAlchemy model (billing.py) + Alembic migration creating anomalies table
+- [ ] 04-02-PLAN.md — Detection service (run_anomaly_detection, upsert, auto-resolve, CRUD) + post-ingestion hook + Pydantic schemas + FastAPI router (6 endpoints)
+- [ ] 04-03-PLAN.md — Frontend anomaly.ts service hooks + shadcn Badge install + App.tsx /anomalies route wiring
+- [ ] 04-04-PLAN.md — AnomaliesPage.tsx (card list, KPI row, filters, actions, export, detection config) + DashboardPage anomaly summary card (4th KPI)
+- [ ] 04-05-PLAN.md — Human verification checkpoint: all 4 ANOMALY requirements verified end-to-end
 
 ### Phase 5: AI Recommendations
 **Goal**: The system generates daily LLM-powered cost optimization recommendations that engineers and finance can act on
