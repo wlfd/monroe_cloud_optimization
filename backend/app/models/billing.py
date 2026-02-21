@@ -20,6 +20,10 @@ class BillingRecord(Base):
     resource_group: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     service_name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     meter_category: Mapped[str] = mapped_column(String(255), nullable=False, default="")
+    region: Mapped[str] = mapped_column(String(100), nullable=False, default="")
+    tag: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    resource_id: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    resource_name: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     pre_tax_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
     currency: Mapped[str] = mapped_column(String(10), nullable=False, default="USD")
     ingested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
@@ -34,6 +38,7 @@ class BillingRecord(Base):
         Index("idx_billing_subscription", "subscription_id"),
         Index("idx_billing_resource_group", "resource_group"),
         Index("idx_billing_service_name", "service_name"),
+        Index("idx_billing_region", "region"),
     )
 
 
