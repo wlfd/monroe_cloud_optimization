@@ -55,8 +55,8 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — BillingRecord/IngestionRun/IngestionAlert models, Alembic migration, Azure config settings
 - [x] 02-02-PLAN.md — Azure client (retry, pagination, mock mode) + ingestion service (delta window, upsert, backfill, alerts)
-- [ ] 02-03-PLAN.md — APScheduler lifespan integration (4-hour job) + ingestion admin API (/run, /status, /runs, /alerts)
-- [ ] 02-04-PLAN.md — Admin ingestion UI (status indicator, Run Now button, alert banner, run history table) + human verify
+- [x] 02-03-PLAN.md — APScheduler lifespan integration (4-hour job) + ingestion admin API (/run, /status, /runs, /alerts)
+- [x] 02-04-PLAN.md — Admin ingestion UI (status indicator, Run Now button, alert banner, run history table) + human verify
 
 ### Phase 3: Cost Monitoring
 **Goal**: Users can see total Azure spend, trends, breakdowns, and top-cost resources through a live dashboard
@@ -68,7 +68,14 @@ Plans:
   3. User can switch between 30, 60, and 90-day daily spend trend views and see the chart update
   4. User can break down costs by service, resource group, region, or tag and see updated figures
   5. User can export a cost breakdown to a CSV file that opens correctly in a spreadsheet application
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Schema migration (region, tag, resource_id, resource_name cols) + Azure client QueryGrouping update + _map_record
+- [ ] 03-02-PLAN.md — Cost service layer (5 aggregate query functions) + 6 FastAPI endpoints + router registration
+- [ ] 03-03-PLAN.md — shadcn chart/tabs install + cost hooks (cost.ts) + DashboardPage KPI cards + AreaChart with day-range toggle
+- [ ] 03-04-PLAN.md — shadcn select/table install + breakdown dimension table + top-10 resources table + CSV export button
+- [ ] 03-05-PLAN.md — Human verification checkpoint: all 6 COST requirements verified end-to-end in browser
 
 ### Phase 4: Anomaly Detection
 **Goal**: The system automatically surfaces unusual spending spikes with severity ratings and dollar impact so users can investigate quickly
@@ -122,7 +129,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete    | 2026-02-20 |
 | 2. Data Ingestion | 4/4 | Complete   | 2026-02-21 |
-| 3. Cost Monitoring | 0/TBD | Not started | - |
+| 3. Cost Monitoring | 0/5 | Not started | - |
 | 4. Anomaly Detection | 0/TBD | Not started | - |
 | 5. AI Recommendations | 0/TBD | Not started | - |
 | 6. Multi-Tenant Attribution | 0/TBD | Not started | - |
