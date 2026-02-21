@@ -19,6 +19,7 @@ from app.core.config import get_settings
 from app.core.database import AsyncSessionLocal
 from app.models.billing import BillingRecord, IngestionRun, IngestionAlert
 from app.services.anomaly import run_anomaly_detection
+from app.services.attribution import run_attribution
 from app.services.azure_client import fetch_with_retry
 
 logger = logging.getLogger(__name__)
@@ -333,6 +334,12 @@ async def _do_ingestion(triggered_by: str) -> None:
             records = await fetch_with_retry(scope=scope, start=start, end=end)
             count = await upsert_billing_records(session, records)
             await run_anomaly_detection(session)
+            try:
+                await run_attribution()
+                logger.info("Attribution run completed after ingestion")
+            except Exception as exc:
+                logger.error("Attribution run failed after ingestion: %s", exc)
+                # Non-fatal — attribution failure does not fail the ingestion run record
             await clear_active_alerts(session)
             await log_ingestion_run(
                 session,
