@@ -395,8 +395,15 @@ export default function AnomaliesPage() {
       {/* Section header with severity summary */}
       <div className="flex items-center gap-3">
         <h2 className="text-lg font-semibold">Anomalies</h2>
-        <span className="text-sm text-muted-foreground">
-          {summaryParts || 'No active anomalies'}
+        <span className="text-sm font-medium truncate">
+          {severityBreakdownParts.length > 0
+            ? severityBreakdownParts.map((p, i) => (
+                <span key={p.label}>
+                  {i > 0 && <span className="text-muted-foreground"> · </span>}
+                  <span className={p.cls}>{p.label}</span>
+                </span>
+              ))
+            : <span className="text-muted-foreground">No active anomalies</span>}
         </span>
       </div>
 
