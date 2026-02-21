@@ -45,7 +45,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b px-4 py-3">
+      <SidebarHeader className="border-b px-4 py-3 h-14">
         <span className="text-lg font-bold tracking-tight">CloudCost</span>
       </SidebarHeader>
       <SidebarContent>
