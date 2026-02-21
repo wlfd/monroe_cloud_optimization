@@ -16,6 +16,14 @@ class Settings(BaseSettings):
     FIRST_ADMIN_EMAIL: str = ""
     FIRST_ADMIN_PASSWORD: str = ""
 
+    # -- Azure Cost Management -----------------------------------------
+    AZURE_SUBSCRIPTION_ID: str = ""
+    AZURE_CLIENT_ID: str = ""
+    AZURE_TENANT_ID: str = ""
+    AZURE_CLIENT_SECRET: str = ""
+    AZURE_SUBSCRIPTION_SCOPE: str = ""  # Computed: /subscriptions/{AZURE_SUBSCRIPTION_ID}
+    MOCK_AZURE: bool = False  # Set True for local dev without real Azure credentials
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -7,3 +7,7 @@ pwdlib[argon2]>=0.2
 pydantic-settings>=2.0
 python-multipart>=0.0.9
 uvicorn>=0.30
+APScheduler==3.11.2
+azure-mgmt-costmanagement
+azure-identity
+tenacity
