@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation)
-Plan: 5 of 5 in current phase (Phase 1 COMPLETE — awaiting 01-05 plan execution)
-Status: Phase 1 plans 01-04 all complete; ready for 01-05
-Last activity: 2026-02-20 — Completed 01-04 Task 2 checkpoint — human verified full Phase 1 stack end-to-end (all 10 steps passed)
+Phase: 2 of 7 (Data Ingestion)
+Plan: 2 of 5 in current phase (02-01 complete — billing models + migration done)
+Status: Phase 2 plan 01 complete; ready for 02-02 (AzureCostClient)
+Last activity: 2026-02-20 — Completed 02-01 — billing models, Alembic migration, Azure config settings, ingestion dependencies
 
-Progress: [████░░░░░░] 20%
+Progress: [████░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -28,10 +28,11 @@ Progress: [████░░░░░░] 20%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 5 | 47 min | 12 min |
+| 02-data-ingestion | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 15 min, 2 min, 25 min, 5 min
-- Trend: Infra/containerization plans are fast (5 min) since code was already in place
+- Last 5 plans: 15 min, 2 min, 25 min, 5 min, 2 min
+- Trend: Database model + migration plans are very fast (2 min) when following established patterns
 
 *Updated after each plan completion*
 
@@ -59,6 +60,9 @@ Recent decisions affecting current work:
 - shadcn/ui paths alias must be in both tsconfig.json and tsconfig.app.json — shadcn preflight reads root tsconfig
 - [Phase 01-foundation]: Multi-stage frontend Dockerfile with target:builder in docker-compose — single Dockerfile serves dev (node) and production (nginx)
 - [Phase 01-foundation]: Health probe path is /api/v1/health not /health — routes registered under /api/v1 prefix in FastAPI main.py
+- [Phase 02-data-ingestion]: AZURE_SUBSCRIPTION_SCOPE as plain empty-string field — ingestion service computes /subscriptions/{ID} at runtime (avoids pydantic model_validator complexity)
+- [Phase 02-data-ingestion]: MOCK_AZURE bool flag in Settings allows local dev without real Azure credentials
+- [Phase 02-data-ingestion]: utcnow() helper redefined per model file (billing.py, user.py) — keeps model files decoupled, no cross-file imports
 
 ### Pending Todos
 
@@ -71,5 +75,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 01-04-PLAN.md — Phase 1 foundation complete (human verified all 10 checkpoint steps)
-Resume file: None — advance to 01-05
+Stopped at: Completed 02-01-PLAN.md — billing models, Alembic migration 55bda49dc4a2 applied, Azure config settings added
+Resume file: None — advance to 02-02
