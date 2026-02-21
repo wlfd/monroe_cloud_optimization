@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useAnomalySummary } from '@/services/anomaly';
 
 const navItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -33,6 +34,12 @@ const adminNavItems = [
 
 export function AppSidebar() {
   const { user } = useAuth();
+  const anomalySummary = useAnomalySummary();
+  const anomalyCount = anomalySummary.data?.active_count ?? 0;
+  const anomalyBadgeColor =
+    (anomalySummary.data?.critical_count ?? 0) > 0 ? 'bg-red-500' :
+    (anomalySummary.data?.high_count ?? 0) > 0 ? 'bg-orange-400' :
+    'bg-blue-500';
 
   return (
     <Sidebar>
@@ -54,6 +61,11 @@ export function AppSidebar() {
                     >
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
+                      {item.title === 'Anomalies' && anomalyCount > 0 && (
+                        <span className={`ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-white ${anomalyBadgeColor}`}>
+                          {anomalyCount > 99 ? '99+' : anomalyCount}
+                        </span>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

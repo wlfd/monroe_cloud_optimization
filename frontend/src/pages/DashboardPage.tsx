@@ -203,19 +203,23 @@ export function DashboardPage() {
                 <p className={`text-2xl font-bold ${(anomalySummary.data?.active_count ?? 0) > 0 ? "text-destructive" : "text-foreground"}`}>
                   {anomalySummary.data?.active_count ?? 0}
                 </p>
-                {anomalySummary.data && (anomalySummary.data.active_count ?? 0) > 0 && (
-                  <p className={`text-xs font-medium mt-0.5 ${
-                    (anomalySummary.data.critical_count ?? 0) > 0
-                      ? "text-red-600"
-                      : (anomalySummary.data.high_count ?? 0) > 0
-                      ? "text-orange-500"
-                      : "text-blue-600"
-                  }`}>
-                    {(anomalySummary.data.critical_count ?? 0) > 0
-                      ? `${anomalySummary.data.critical_count} Critical`
-                      : (anomalySummary.data.high_count ?? 0) > 0
-                      ? `${anomalySummary.data.high_count} High`
-                      : `${anomalySummary.data.medium_count} Medium`}
+                {anomalySummary.data && (
+                  <p className="text-xs font-medium mt-0.5 truncate">
+                    {(() => {
+                      const parts = [
+                        (anomalySummary.data.critical_count ?? 0) > 0 ? { label: `${anomalySummary.data.critical_count} Critical`, cls: "text-red-600" } : null,
+                        (anomalySummary.data.high_count ?? 0) > 0 ? { label: `${anomalySummary.data.high_count} High`, cls: "text-orange-500" } : null,
+                        (anomalySummary.data.medium_count ?? 0) > 0 ? { label: `${anomalySummary.data.medium_count} Medium`, cls: "text-blue-600" } : null,
+                      ].filter(Boolean) as { label: string; cls: string }[];
+                      return parts.length > 0
+                        ? parts.map((p, i) => (
+                            <span key={p.label}>
+                              {i > 0 && <span className="text-muted-foreground"> · </span>}
+                              <span className={p.cls}>{p.label}</span>
+                            </span>
+                          ))
+                        : <span className="text-muted-foreground">No active anomalies</span>;
+                    })()}
                   </p>
                 )}
                 <Link

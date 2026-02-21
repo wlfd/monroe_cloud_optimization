@@ -228,11 +228,11 @@ export default function AnomaliesPage() {
     }
   };
 
-  const summaryParts = [
-    summary?.critical_count ? `${summary.critical_count} Critical` : null,
-    summary?.high_count ? `${summary.high_count} High` : null,
-    summary?.medium_count ? `${summary.medium_count} Medium` : null,
-  ].filter(Boolean).join(' · ');
+  const severityBreakdownParts = [
+    (summary?.critical_count ?? 0) > 0 ? { label: `${summary!.critical_count} Critical`, cls: 'text-red-600' } : null,
+    (summary?.high_count ?? 0) > 0 ? { label: `${summary!.high_count} High`, cls: 'text-orange-500' } : null,
+    (summary?.medium_count ?? 0) > 0 ? { label: `${summary!.medium_count} Medium`, cls: 'text-blue-600' } : null,
+  ].filter(Boolean) as { label: string; cls: string }[];
 
   return (
     <div className="space-y-6">
@@ -271,8 +271,15 @@ export default function AnomaliesPage() {
                 <p className={`text-2xl font-bold ${(summary.active_count ?? 0) > 0 ? 'text-destructive' : 'text-foreground'}`}>
                   {summary.active_count ?? 0}
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {summaryParts || 'No active anomalies'}
+                <p className="text-xs font-medium mt-0.5 truncate">
+                  {severityBreakdownParts.length > 0
+                    ? severityBreakdownParts.map((p, i) => (
+                        <span key={p.label}>
+                          {i > 0 && <span className="text-muted-foreground"> · </span>}
+                          <span className={p.cls}>{p.label}</span>
+                        </span>
+                      ))
+                    : <span className="text-muted-foreground">No active anomalies</span>}
                 </p>
               </>
             )}
