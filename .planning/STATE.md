@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 6 of 7 (Multi-Tenant Attribution)
-**Current Plan:** 2 of 5
+**Current Plan:** 3
 **Total Plans in Phase:** 5
-**Status:** In progress
+**Status:** Ready to execute
 **Last Activity:** 2026-02-21
 
-**Progress:** [██░░░░░░░░] 20%
+**Progress:** [█████████░] 92%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 05-ai-recommendations P03 | 2min | 2 tasks | 3 files |
 | Phase 05-ai-recommendations P04 | 0 | 1 tasks | 0 files |
 | Phase 06-multi-tenant-attribution P01 | 1 | 2 tasks | 3 files |
+| Phase 06-multi-tenant-attribution P02 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,10 @@ Recent decisions affecting current work:
 - [Phase 05-ai-recommendations]: Phase 5 verified end-to-end by human — no defects found, no remediation required
 - [Phase 06-multi-tenant-attribution]: Docker volume mount only covers backend/app — migrations/ dir must be docker cp'd into container for alembic autogenerate and upgrade commands
 - [Phase 06-multi-tenant-attribution]: server_default='true' added on is_new Boolean in attribution migration — follows Phase 4 precedent for boolean server_defaults; new table so no backfill needed but keeps pattern consistent
+- [Phase 06-multi-tenant-attribution]: _AttributionWithDisplayName wrapper class used for two-step join — TenantAttribution has no ORM relationship to TenantProfile; Python dict merge avoids JOIN complexity
+- [Phase 06-multi-tenant-attribution]: apply_allocation_rule() is a pure function (not async) — takes cost + method + manual_pct + tenant_costs, returns dict; clean separation from DB layer
+- [Phase 06-multi-tenant-attribution]: by_usage falls back to by_count when sum(tenant_costs) == 0 — prevents division-by-zero on first billing period
+- [Phase 06-multi-tenant-attribution]: Non-fatal post-ingestion attribution hook with try/except — attribution failure does not fail the ingestion run record
 
 ### Pending Todos
 
@@ -140,6 +145,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T21:26:48.822Z
-**Stopped at:** Completed 06-multi-tenant-attribution-01-PLAN.md
+**Last session:** 2026-02-21T21:32:01.303Z
+**Stopped at:** Completed 06-multi-tenant-attribution-02-PLAN.md
 **Resume file:** None
