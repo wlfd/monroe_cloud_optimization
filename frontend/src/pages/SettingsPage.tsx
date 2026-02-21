@@ -204,17 +204,36 @@ function AllocationRulesTab() {
   const [isAddingRule, setIsAddingRule] = useState(false);
   const [form, setForm] = useState<NewRuleForm>(EMPTY_FORM);
 
-  // Drag state — refs hold source/target so the pointerup closure is never stale
+  // Drag state — refs avoid stale-closure problems across re-renders
   const dragFromRef = useRef<number | null>(null);
   const dragToRef = useRef<number | null>(null);
+  const tbodyRef = useRef<HTMLTableSectionElement | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   function startDrag(e: React.PointerEvent, index: number) {
-    e.preventDefault(); // prevent text selection while dragging
+    e.preventDefault(); // prevent text selection
     dragFromRef.current = index;
     dragToRef.current = index;
     setDragIndex(index);
+
+    function onPointerMove(ev: PointerEvent) {
+      // Determine which row the cursor is over by checking bounding rects.
+      // This works even when browsers suppress pointerenter on sibling elements.
+      const rows = tbodyRef.current?.querySelectorAll<HTMLElement>('tr[data-rule-index]');
+      if (!rows) return;
+      for (const row of rows) {
+        const rect = row.getBoundingClientRect();
+        if (ev.clientY >= rect.top && ev.clientY <= rect.bottom) {
+          const i = parseInt(row.dataset.ruleIndex ?? '', 10);
+          if (!isNaN(i) && dragToRef.current !== i) {
+            dragToRef.current = i;
+            setDragOverIndex(i);
+          }
+          break;
+        }
+      }
+    }
 
     function onPointerUp() {
       const from = dragFromRef.current;
@@ -229,17 +248,12 @@ function AllocationRulesTab() {
       dragToRef.current = null;
       setDragIndex(null);
       setDragOverIndex(null);
+      document.removeEventListener('pointermove', onPointerMove);
       document.removeEventListener('pointerup', onPointerUp);
     }
 
+    document.addEventListener('pointermove', onPointerMove);
     document.addEventListener('pointerup', onPointerUp);
-  }
-
-  function handleRowPointerEnter(index: number) {
-    if (dragFromRef.current !== null) {
-      dragToRef.current = index;
-      setDragOverIndex(index);
-    }
   }
 
   function handleDelete(rule: AllocationRule) {
@@ -315,11 +329,11 @@ function AllocationRulesTab() {
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody ref={tbodyRef}>
           {rules.map((rule, index) => (
             <TableRow
               key={rule.id}
-              onPointerEnter={() => handleRowPointerEnter(index)}
+              data-rule-index={index}
               className={dragOverIndex === index && dragIndex !== index ? 'border-t-2 border-primary' : ''}
             >
               <TableCell
