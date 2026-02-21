@@ -1,35 +1,19 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import api from '@/services/api';
 import { useAuth } from '@/hooks/useAuth';
+import { useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-
-// ---- Types ----
-
-interface IngestionStatus {
-  running: boolean;
-}
-
-interface IngestionRun {
-  id: string;
-  started_at: string;
-  completed_at: string | null;
-  status: 'success' | 'failed' | 'running' | 'interrupted';
-  records_ingested: number | null;
-  triggered_by: 'scheduled' | 'manual' | 'backfill';
-  error_detail: string | null;
-}
-
-interface IngestionAlert {
-  id: string;
-  error_message: string;
-  retry_count: number;
-  failed_at: string;
-  is_active: boolean;
-}
+import {
+  useIngestionStatus,
+  useIngestionRuns,
+  useIngestionAlerts,
+  useRunIngestionNow,
+  ingestionKeys,
+} from '@/services/ingestion';
+import type { IngestionRun, IngestionAlert } from '@/services/ingestion';
 
 // ---- Helpers ----
 
@@ -94,19 +78,82 @@ interface Toast {
   variant: 'success' | 'error';
 }
 
+// ---- Sub-components ----
+
+function RunHistoryTable({ runs }: { runs: IngestionRun[] }) {
+  if (runs.length === 0) {
+    return <p className="text-sm text-muted-foreground">No runs yet.</p>;
+  }
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b text-muted-foreground">
+            <th className="pb-2 pr-4 text-left font-medium">Timestamp</th>
+            <th className="pb-2 pr-4 text-left font-medium">Status</th>
+            <th className="pb-2 pr-4 text-left font-medium">Triggered By</th>
+            <th className="pb-2 pr-4 text-right font-medium">Records</th>
+            <th className="pb-2 pr-4 text-left font-medium">Duration</th>
+            <th className="pb-2 text-left font-medium">Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {runs.map((run) => (
+            <tr key={run.id} className="border-b last:border-0">
+              <td className="py-2 pr-4 whitespace-nowrap text-muted-foreground">
+                {formatLocalDateTime(run.started_at)}
+              </td>
+              <td className="py-2 pr-4">
+                <StatusBadge status={run.status} />
+              </td>
+              <td className="py-2 pr-4">
+                <TriggerPill value={run.triggered_by} />
+              </td>
+              <td className="py-2 pr-4 text-right tabular-nums">
+                {run.records_ingested ?? '—'}
+              </td>
+              <td className="py-2 pr-4 whitespace-nowrap">
+                {formatDuration(run.started_at, run.completed_at)}
+              </td>
+              <td
+                className="py-2 text-muted-foreground"
+                title={run.error_detail ?? undefined}
+              >
+                {truncate(run.error_detail)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function AlertBanner({ alert }: { alert: IngestionAlert }) {
+  return (
+    <div className="rounded-lg border border-red-500 bg-red-50 p-4 text-red-900">
+      <div className="flex items-start gap-3">
+        <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0 text-red-600" />
+        <div className="flex flex-col gap-1">
+          <p className="font-semibold">Ingestion Failure</p>
+          <p className="text-sm">Error: {alert.error_message}</p>
+          <p className="text-xs text-red-700">
+            Retries attempted: {alert.retry_count} | Failed at:{' '}
+            {formatLocalDateTime(alert.failed_at)}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ---- Main page ----
 
 export function IngestionPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const [status, setStatus] = useState<IngestionStatus | null>(null);
-  const [runs, setRuns] = useState<IngestionRun[]>([]);
-  const [alerts, setAlerts] = useState<IngestionAlert[]>([]);
-  const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const prevRunningRef = useRef<boolean | null>(null);
   const toastCounterRef = useRef(0);
 
   // ---- Admin guard ----
@@ -129,91 +176,30 @@ export function IngestionPage() {
     }, 4000);
   }, []);
 
-  // ---- Data fetching ----
+  // ---- Queries — each card has its own independent loading state ----
 
-  const fetchRuns = useCallback(async () => {
-    try {
-      const { data } = await api.get<IngestionRun[]>('/ingestion/runs?limit=20');
-      setRuns(data);
-    } catch {
-      // non-fatal
-    }
-  }, []);
+  const statusQuery = useIngestionStatus();
+  const runsQuery = useIngestionRuns();
+  const alertsQuery = useIngestionAlerts();
 
-  const fetchAlerts = useCallback(async () => {
-    try {
-      const { data } = await api.get<IngestionAlert[]>('/ingestion/alerts?active_only=true');
-      setAlerts(data);
-    } catch {
-      // non-fatal
-    }
-  }, []);
+  // Track previous running state so we can trigger a refresh of runs + alerts
+  // when a pipeline run completes (running flips from true → false).
+  const prevRunningRef = useRef<boolean | null>(null);
+  const currentRunning = statusQuery.data?.running ?? null;
+  if (prevRunningRef.current === true && currentRunning === false) {
+    queryClient.invalidateQueries({ queryKey: ingestionKeys.runs });
+    queryClient.invalidateQueries({ queryKey: ingestionKeys.alerts });
+  }
+  prevRunningRef.current = currentRunning;
 
-  const fetchStatus = useCallback(async () => {
-    try {
-      const { data } = await api.get<IngestionStatus>('/ingestion/status');
-      setStatus((_prev) => {
-        // Transition: running → idle — refresh runs + alerts
-        if (prevRunningRef.current === true && data.running === false) {
-          fetchRuns();
-          fetchAlerts();
-        }
-        prevRunningRef.current = data.running;
-        return data;
-      });
-    } catch {
-      // non-fatal — keep last known status
-    }
-  }, [fetchRuns, fetchAlerts]);
+  // ---- Mutation ----
 
-  // Initial load
-  useEffect(() => {
-    let cancelled = false;
-
-    const init = async () => {
-      try {
-        const [statusRes, runsRes, alertsRes] = await Promise.all([
-          api.get<IngestionStatus>('/ingestion/status'),
-          api.get<IngestionRun[]>('/ingestion/runs?limit=20'),
-          api.get<IngestionAlert[]>('/ingestion/alerts?active_only=true'),
-        ]);
-        if (!cancelled) {
-          prevRunningRef.current = statusRes.data.running;
-          setStatus(statusRes.data);
-          setRuns(runsRes.data);
-          setAlerts(alertsRes.data);
-        }
-      } catch {
-        // leave loading=true skeleton visible; errors shown inline
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    init();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Poll status every 5 seconds
-  useEffect(() => {
-    intervalRef.current = setInterval(fetchStatus, 5000);
-    return () => {
-      if (intervalRef.current !== null) clearInterval(intervalRef.current);
-    };
-  }, [fetchStatus]);
-
-  // ---- Run Now ----
+  const runNow = useRunIngestionNow();
 
   const handleRunNow = useCallback(async () => {
     try {
-      await api.post('/ingestion/run');
+      await runNow.mutateAsync(undefined);
       addToast('Ingestion started', 'success');
-      // Optimistically mark running
-      setStatus({ running: true });
-      prevRunningRef.current = true;
-      await fetchRuns();
     } catch (err) {
       const axiosErr = err as AxiosError;
       if (axiosErr.response?.status === 409) {
@@ -222,11 +208,12 @@ export function IngestionPage() {
         addToast('Failed to trigger ingestion', 'error');
       }
     }
-  }, [addToast, fetchRuns]);
+  }, [runNow, addToast]);
 
-  // ---- Active alert ----
+  // ---- Derived values ----
 
-  const activeAlert = alerts.find((a) => a.is_active) ?? null;
+  const activeAlert =
+    (alertsQuery.data ?? []).find((a) => a.is_active) ?? null;
 
   // ---- Render ----
 
@@ -256,30 +243,16 @@ export function IngestionPage() {
         </div>
       )}
 
-      {/* Alert banner */}
-      {activeAlert && (
-        <div className="rounded-lg border border-red-500 bg-red-50 p-4 text-red-900">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0 text-red-600" />
-            <div className="flex flex-col gap-1">
-              <p className="font-semibold">Ingestion Failure</p>
-              <p className="text-sm">Error: {activeAlert.error_message}</p>
-              <p className="text-xs text-red-700">
-                Retries attempted: {activeAlert.retry_count} | Failed at:{' '}
-                {formatLocalDateTime(activeAlert.failed_at)}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Alert banner — renders as soon as alertsQuery resolves */}
+      {activeAlert && <AlertBanner alert={activeAlert} />}
 
-      {/* Status + Run Now */}
+      {/* Status + Run Now — renders as soon as statusQuery resolves */}
       <Card>
         <CardHeader>
           <CardTitle>Pipeline Status</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {statusQuery.isPending ? (
             <div className="flex items-center gap-4">
               <Skeleton className="h-5 w-24" />
               <Skeleton className="h-9 w-28" />
@@ -289,16 +262,16 @@ export function IngestionPage() {
               <div className="flex items-center gap-2">
                 <span
                   className={`h-2.5 w-2.5 rounded-full ${
-                    status?.running ? 'bg-green-500' : 'bg-gray-400'
+                    statusQuery.data?.running ? 'bg-green-500' : 'bg-gray-400'
                   }`}
                 />
                 <span className="text-sm font-medium">
-                  {status?.running ? 'Running' : 'Idle'}
+                  {statusQuery.data?.running ? 'Running' : 'Idle'}
                 </span>
               </div>
               <Button
                 onClick={handleRunNow}
-                disabled={status?.running === true}
+                disabled={statusQuery.data?.running === true || runNow.isPending}
               >
                 Run Now
               </Button>
@@ -307,62 +280,20 @@ export function IngestionPage() {
         </CardContent>
       </Card>
 
-      {/* Run history */}
+      {/* Run history — renders as soon as runsQuery resolves */}
       <Card>
         <CardHeader>
           <CardTitle>Run History</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {runsQuery.isPending ? (
             <div className="flex flex-col gap-2">
               {[...Array(3)].map((_, i) => (
                 <Skeleton key={i} className="h-8 w-full" />
               ))}
             </div>
-          ) : runs.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No runs yet.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-muted-foreground">
-                    <th className="pb-2 pr-4 text-left font-medium">Timestamp</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Status</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Triggered By</th>
-                    <th className="pb-2 pr-4 text-right font-medium">Records</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Duration</th>
-                    <th className="pb-2 text-left font-medium">Error</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {runs.map((run) => (
-                    <tr key={run.id} className="border-b last:border-0">
-                      <td className="py-2 pr-4 whitespace-nowrap text-muted-foreground">
-                        {formatLocalDateTime(run.started_at)}
-                      </td>
-                      <td className="py-2 pr-4">
-                        <StatusBadge status={run.status} />
-                      </td>
-                      <td className="py-2 pr-4">
-                        <TriggerPill value={run.triggered_by} />
-                      </td>
-                      <td className="py-2 pr-4 text-right tabular-nums">
-                        {run.records_ingested ?? '—'}
-                      </td>
-                      <td className="py-2 pr-4 whitespace-nowrap">
-                        {formatDuration(run.started_at, run.completed_at)}
-                      </td>
-                      <td
-                        className="py-2 text-muted-foreground"
-                        title={run.error_detail ?? undefined}
-                      >
-                        {truncate(run.error_detail)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <RunHistoryTable runs={runsQuery.data ?? []} />
           )}
         </CardContent>
       </Card>
