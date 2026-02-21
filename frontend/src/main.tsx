@@ -5,7 +5,16 @@ import { AuthProvider } from '@/hooks/useAuth';
 import App from './App';
 import './index.css';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Treat server responses as fresh for 30 s by default.
+      // Individual hooks can override this (e.g. ingestion status uses 4 s).
+      // This prevents immediate re-fetches when navigating between pages.
+      staleTime: 30_000,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
