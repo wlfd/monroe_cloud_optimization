@@ -17,7 +17,24 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useSpendSummary, useSpendTrend } from "@/services/cost";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useSpendSummary, useSpendTrend, useSpendBreakdown, useTopResources } from "@/services/cost";
+import api from "@/services/api";
 
 const chartConfig = {
   total_cost: {
@@ -50,10 +67,35 @@ function MomDeltaBadge({ delta }: { delta: number | null }) {
 
 export function DashboardPage() {
   const [days, setDays] = useState<number>(30);
+  const [dimension, setDimension] = useState<string>("service_name");
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+
   const summaryQuery = useSpendSummary();
   const trendQuery = useSpendTrend(days);
+  const breakdownQuery = useSpendBreakdown(dimension, days);
+  const topResourcesQuery = useTopResources(days);
 
   const trendData = trendQuery.data ?? [];
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const response = await api.get("/costs/export", {
+        params: { dimension, days },
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `cost-breakdown-${dimension}-${days}d.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -193,6 +235,117 @@ export function DashboardPage() {
               </AreaChart>
             </ChartContainer>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Cost Breakdown */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-base font-semibold">
+              Cost Breakdown
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <Select value={dimension} onValueChange={setDimension}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Dimension" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="service_name">Service</SelectItem>
+                  <SelectItem value="resource_group">Resource Group</SelectItem>
+                  <SelectItem value="region">Region</SelectItem>
+                  <SelectItem value="tag">Tag</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExport}
+                disabled={isExporting}
+              >
+                {isExporting ? "Exporting..." : "Export CSV"}
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Dimension</TableHead>
+                <TableHead className="text-right">Total Cost (USD)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {breakdownQuery.data && breakdownQuery.data.length > 0 ? (
+                breakdownQuery.data.map((item, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{item.dimension_value || "(untagged)"}</TableCell>
+                    <TableCell className="text-right font-mono">
+                      ${item.total_cost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} className="text-center text-muted-foreground">
+                    {breakdownQuery.isLoading ? "Loading..." : "No cost data for this period"}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Top 10 Resources */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-semibold">
+            Top 10 Most Expensive Resources
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Last {days} days
+          </p>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Resource</TableHead>
+                <TableHead>Service</TableHead>
+                <TableHead>Resource Group</TableHead>
+                <TableHead className="text-right">Total Cost (USD)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {topResourcesQuery.data && topResourcesQuery.data.length > 0 ? (
+                topResourcesQuery.data.map((resource, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell
+                      className="font-medium max-w-[200px] truncate"
+                      title={resource.resource_name}
+                    >
+                      {resource.resource_name || resource.resource_id || "(unknown)"}
+                    </TableCell>
+                    <TableCell>{resource.service_name}</TableCell>
+                    <TableCell>{resource.resource_group}</TableCell>
+                    <TableCell className="text-right font-mono">
+                      ${resource.total_cost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
+                    {topResourcesQuery.isLoading
+                      ? "Loading..."
+                      : "No resource-level data available. Run ingestion to populate resource data."}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

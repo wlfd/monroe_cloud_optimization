@@ -152,7 +152,7 @@ export function IngestionPage() {
   const fetchStatus = useCallback(async () => {
     try {
       const { data } = await api.get<IngestionStatus>('/ingestion/status');
-      setStatus((prev) => {
+      setStatus((_prev) => {
         // Transition: running → idle — refresh runs + alerts
         if (prevRunningRef.current === true && data.running === false) {
           fetchRuns();
