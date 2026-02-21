@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 4 of 7 (Anomaly Detection)
-**Current Plan:** 4
+**Current Plan:** 5
 **Total Plans in Phase:** 5
 **Status:** Ready to execute
 **Last Activity:** 2026-02-21
 
-**Progress:** [█████████░] 89%
+**Progress:** [█████████░] 94%
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 04-anomaly-detection P01 | 7 | 1 tasks | 2 files |
 | Phase 04-anomaly-detection P02 | 6 | 2 tasks | 5 files |
 | Phase 04-anomaly-detection P03 | 1 | 1 tasks | 4 files |
+| Phase 04-anomaly-detection P04 | 12 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,9 @@ Recent decisions affecting current work:
 - [Phase 04-anomaly-detection]: GET /filter-options returns combined {services, resource_groups} dict instead of two separate endpoints — one round-trip for UI dropdowns
 - [Phase 04-anomaly-detection]: Detection accuracy: (total_non_dismissed - expected_count) / total_non_dismissed * 100; returns None when total_detected=0 (same null pattern as mom_delta_pct)
 - [Phase 04-anomaly-detection]: AnomaliesPage.tsx stub created to resolve import before Plan 04 builds full component — avoids TS compilation errors while route is wired
+- [Phase 04-anomaly-detection]: Dual useAnomalies() calls in AnomaliesPage: unfiltered for filter-option derivation, filtered for display — avoids separate API call from page layer
+- [Phase 04-anomaly-detection]: Worst-severity label on Dashboard Active Anomalies card: shows highest-priority count in severity-appropriate color (Critical=red, High=orange, Medium=blue) when active_count > 0
+- [Phase 04-anomaly-detection]: AnomalyCard defined inline in AnomaliesPage.tsx — keeps mutation hooks co-located with render, no prop-drilling
 
 ### Pending Todos
 
@@ -116,6 +120,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T10:03:19.681Z
-**Stopped at:** Completed 04-03-PLAN.md
+**Last session:** 2026-02-21T10:07:28.720Z
+**Stopped at:** Completed 04-04-PLAN.md
 **Resume file:** None
