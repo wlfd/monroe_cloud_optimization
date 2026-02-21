@@ -23,9 +23,9 @@ import { useAnomalySummary } from '@/services/anomaly';
 
 const navItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Attribution', url: '/attribution', icon: Users },
   { title: 'Anomalies', url: '/anomalies', icon: AlertTriangle },
   { title: 'Recommendations', url: '/recommendations', icon: Lightbulb },
-  { title: 'Attribution', url: '/attribution', icon: Users },
   { title: 'Settings', url: '/settings', icon: Settings },
 ];
 
@@ -72,7 +72,7 @@ export function AppSidebar() {
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {index === 0 && user?.role === 'admin' &&
+                  {index === 3 && user?.role === 'admin' &&
                     adminNavItems.map((adminItem) => (
                       <SidebarMenuItem key={adminItem.title}>
                         <SidebarMenuButton asChild>
