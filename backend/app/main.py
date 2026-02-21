@@ -5,7 +5,10 @@ from app.core.config import settings
 from app.api.v1.router import api_router
 from app.core.scheduler import scheduler
 from app.services.ingestion import run_ingestion, recover_stale_runs
+from app.services.recommendation import run_recommendations
 from app.core.database import AsyncSessionLocal
+from apscheduler.triggers.cron import CronTrigger
+import redis.asyncio as aioredis
 
 
 @asynccontextmanager
@@ -14,7 +17,10 @@ async def lifespan(app: FastAPI):
     async with AsyncSessionLocal() as session:
         await recover_stale_runs(session)
 
-    # Register the 4-hour ingestion job and start the scheduler
+    # Initialize Redis client and store on app.state
+    app.state.redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+
+    # Register the 4-hour ingestion job
     scheduler.add_job(
         run_ingestion,
         "interval",
@@ -23,11 +29,26 @@ async def lifespan(app: FastAPI):
         replace_existing=True,
         kwargs={"triggered_by": "scheduler"},
     )
+
+    # Register daily recommendation job at 02:00 UTC (after Azure billing data lands)
+    redis_client = app.state.redis
+
+    async def _scheduled_recommendations():
+        await run_recommendations(redis_client=redis_client)
+
+    scheduler.add_job(
+        _scheduled_recommendations,
+        CronTrigger(hour=2, minute=0, timezone="UTC"),
+        id="recommendation_daily",
+        replace_existing=True,
+    )
+
     scheduler.start()
 
     yield  # Application runs here
 
-    # On shutdown: stop the scheduler cleanly
+    # On shutdown: close Redis, stop scheduler
+    await app.state.redis.aclose()
     scheduler.shutdown(wait=False)
 
 
