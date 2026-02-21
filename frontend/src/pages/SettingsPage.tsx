@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { GripVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -204,51 +204,42 @@ function AllocationRulesTab() {
   const [isAddingRule, setIsAddingRule] = useState(false);
   const [form, setForm] = useState<NewRuleForm>(EMPTY_FORM);
 
-  // Drag state
+  // Drag state — refs hold source/target so the pointerup closure is never stale
+  const dragFromRef = useRef<number | null>(null);
+  const dragToRef = useRef<number | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-  function handleDragStart(e: React.DragEvent, index: number) {
-    e.dataTransfer.effectAllowed = 'move';
-    // Store the dragged index in dataTransfer so the drop handler can read it
-    // even if state updates are batched.
-    e.dataTransfer.setData('text/plain', String(index));
+  function startDrag(e: React.PointerEvent, index: number) {
+    e.preventDefault(); // prevent text selection while dragging
+    dragFromRef.current = index;
+    dragToRef.current = index;
     setDragIndex(index);
-  }
 
-  function handleDragOver(e: React.DragEvent, index: number) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverIndex(index);
-  }
-
-  // Catch-all dragOver on the TableBody so child elements (cells, icons,
-  // buttons) don't swallow the event and prevent the row's onDrop from firing.
-  function handleBodyDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  }
-
-  function handleDrop(e: React.DragEvent, dropIndex: number) {
-    e.preventDefault();
-    // Read from dataTransfer as a fallback in case React state hasn't updated.
-    const fromIndex = dragIndex ?? parseInt(e.dataTransfer.getData('text/plain'), 10);
-    if (isNaN(fromIndex) || fromIndex === dropIndex) {
+    function onPointerUp() {
+      const from = dragFromRef.current;
+      const to = dragToRef.current;
+      if (from !== null && to !== null && from !== to) {
+        const reordered = [...rules];
+        const [moved] = reordered.splice(from, 1);
+        reordered.splice(to, 0, moved);
+        reorderRules.mutate({ rule_ids: reordered.map((r) => r.id) });
+      }
+      dragFromRef.current = null;
+      dragToRef.current = null;
       setDragIndex(null);
       setDragOverIndex(null);
-      return;
+      document.removeEventListener('pointerup', onPointerUp);
     }
-    const reordered = [...rules];
-    const [moved] = reordered.splice(fromIndex, 1);
-    reordered.splice(dropIndex, 0, moved);
-    reorderRules.mutate({ rule_ids: reordered.map((r) => r.id) });
-    setDragIndex(null);
-    setDragOverIndex(null);
+
+    document.addEventListener('pointerup', onPointerUp);
   }
 
-  function handleDragEnd() {
-    setDragIndex(null);
-    setDragOverIndex(null);
+  function handleRowPointerEnter(index: number) {
+    if (dragFromRef.current !== null) {
+      dragToRef.current = index;
+      setDragOverIndex(index);
+    }
   }
 
   function handleDelete(rule: AllocationRule) {
@@ -324,19 +315,18 @@ function AllocationRulesTab() {
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody onDragOver={handleBodyDragOver}>
+        <TableBody>
           {rules.map((rule, index) => (
             <TableRow
               key={rule.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
-              onDragEnd={handleDragEnd}
+              onPointerEnter={() => handleRowPointerEnter(index)}
               className={dragOverIndex === index && dragIndex !== index ? 'border-t-2 border-primary' : ''}
             >
-              <TableCell className="pr-0">
-                <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab active:cursor-grabbing pointer-events-none" />
+              <TableCell
+                className="pr-0 cursor-grab active:cursor-grabbing select-none"
+                onPointerDown={(e) => startDrag(e, index)}
+              >
+                <GripVertical className="h-4 w-4 text-muted-foreground pointer-events-none" />
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">{rule.priority}</TableCell>
               <TableCell className="text-sm">{rule.target_type}</TableCell>
