@@ -33,9 +33,9 @@ Requirements for initial release. Each maps to a roadmap phase.
 
 ### Anomaly Detection
 
-- [ ] **ANOMALY-01**: System detects spending anomalies via 30-day rolling baseline per (service, resource group) pair
-- [ ] **ANOMALY-02**: System assigns severity (Critical/High/Medium) based on estimated monthly dollar impact
-- [ ] **ANOMALY-03**: System calculates estimated monthly dollar impact for each detected anomaly
+- [x] **ANOMALY-01**: System detects spending anomalies via 30-day rolling baseline per (service, resource group) pair
+- [x] **ANOMALY-02**: System assigns severity (Critical/High/Medium) based on estimated monthly dollar impact
+- [x] **ANOMALY-03**: System calculates estimated monthly dollar impact for each detected anomaly
 - [ ] **ANOMALY-04**: User can view a list of anomalies with severity, affected service, and dollar impact
 
 ### AI Recommendations
@@ -138,9 +138,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COST-04 | Phase 3 | Complete |
 | COST-05 | Phase 3 | Complete |
 | COST-06 | Phase 3 | Complete |
-| ANOMALY-01 | Phase 4 | Pending |
-| ANOMALY-02 | Phase 4 | Pending |
-| ANOMALY-03 | Phase 4 | Pending |
+| ANOMALY-01 | Phase 4 | Complete |
+| ANOMALY-02 | Phase 4 | Complete |
+| ANOMALY-03 | Phase 4 | Complete |
 | ANOMALY-04 | Phase 4 | Pending |
 | AI-01 | Phase 5 | Pending |
 | AI-02 | Phase 5 | Pending |
