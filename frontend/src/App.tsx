@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { IngestionPage } from '@/pages/IngestionPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import AnomaliesPage from '@/pages/AnomaliesPage';
 
 const router = createBrowserRouter([
   {
@@ -21,8 +22,8 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: '/dashboard', element: <DashboardPage /> },
       { path: '/ingestion', element: <IngestionPage /> },
+      { path: '/anomalies', element: <AnomaliesPage /> },
       // Phase 3+ routes slot in here:
-      // { path: '/anomalies', element: <AnomaliesPage /> },
       // { path: '/recommendations', element: <RecommendationsPage /> },
       // { path: '/attribution', element: <AttributionPage /> },
       // { path: '/settings', element: <SettingsPage /> },
