@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 **Phase:** 4 of 7 (Anomaly Detection)
 **Current Plan:** 5
 **Total Plans in Phase:** 5
-**Status:** Ready to execute
+**Status:** Phase complete — ready for verification
 **Last Activity:** 2026-02-21
 
-**Progress:** [█████████░] 94%
+**Progress:** [██████████] 100%
 
 ## Performance Metrics
 
@@ -48,6 +48,8 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 04-anomaly-detection P02 | 6 | 2 tasks | 5 files |
 | Phase 04-anomaly-detection P03 | 1 | 1 tasks | 4 files |
 | Phase 04-anomaly-detection P04 | 12 | 2 tasks | 2 files |
+| Phase 04-anomaly-detection P05 | 525598min | 1 tasks | 4 files |
+| Phase 04-anomaly-detection P05 | 15min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -109,6 +111,8 @@ Recent decisions affecting current work:
 - [Phase 04-anomaly-detection]: Dual useAnomalies() calls in AnomaliesPage: unfiltered for filter-option derivation, filtered for display — avoids separate API call from page layer
 - [Phase 04-anomaly-detection]: Worst-severity label on Dashboard Active Anomalies card: shows highest-priority count in severity-appropriate color (Critical=red, High=orange, Medium=blue) when active_count > 0
 - [Phase 04-anomaly-detection]: AnomalyCard defined inline in AnomaliesPage.tsx — keeps mutation hooks co-located with render, no prop-drilling
+- [Phase 04-anomaly-detection]: Context-sensitive action buttons (show/hide by status) preferred over disabled buttons for anomaly card UX
+- [Phase 04-anomaly-detection]: Toggle endpoint for anomaly expected flag: PATCH /{id}/expected accepts {expected: bool} — single endpoint for both mark and unmark
 
 ### Pending Todos
 
@@ -120,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T10:07:28.720Z
-**Stopped at:** Completed 04-04-PLAN.md
+**Last session:** 2026-02-21T10:18:48.783Z
+**Stopped at:** Completed 04-05-PLAN.md
 **Resume file:** None

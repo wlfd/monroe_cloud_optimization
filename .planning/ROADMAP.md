@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Deployable project skeleton with database, auth, and API infrastructure (completed 2026-02-20)
 - [x] **Phase 2: Data Ingestion** - Azure billing pipeline with scheduling, backfill, and reliability guarantees (completed 2026-02-21)
 - [x] **Phase 3: Cost Monitoring** - Dashboard with spend views, trend analysis, breakdowns, and CSV export (completed 2026-02-21)
-- [ ] **Phase 4: Anomaly Detection** - Rolling-baseline anomaly detection with severity and dollar impact
+- [x] **Phase 4: Anomaly Detection** - Rolling-baseline anomaly detection with severity and dollar impact (completed 2026-02-21)
 - [ ] **Phase 5: AI Recommendations** - Daily LLM-powered optimization recommendations with caching and rate limiting
 - [ ] **Phase 6: Multi-Tenant Attribution** - Tag-based tenant cost mapping with allocation rules and per-tenant reporting
 - [ ] **Phase 7: REST API and Audit** - Full authenticated API surface and immutable append-only audit log
@@ -137,7 +137,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation | 4/4 | Complete    | 2026-02-20 |
 | 2. Data Ingestion | 4/4 | Complete   | 2026-02-21 |
 | 3. Cost Monitoring | 5/5 | Complete   | 2026-02-21 |
-| 4. Anomaly Detection | 4/5 | In Progress|  |
+| 4. Anomaly Detection | 5/5 | Complete   | 2026-02-21 |
 | 5. AI Recommendations | 0/TBD | Not started | - |
 | 6. Multi-Tenant Attribution | 0/TBD | Not started | - |
 | 7. REST API and Audit | 0/TBD | Not started | - |
