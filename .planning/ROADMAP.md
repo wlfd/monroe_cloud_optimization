@@ -50,7 +50,13 @@ Plans:
   3. A first-time account setup triggers a 24-month historical backfill that completes without errors
   4. When the Azure Cost Management API fails, the system retries with exponential backoff before alerting
   5. An admin-visible alert appears when an ingestion run fails after all retries are exhausted
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — BillingRecord/IngestionRun/IngestionAlert models, Alembic migration, Azure config settings
+- [ ] 02-02-PLAN.md — Azure client (retry, pagination, mock mode) + ingestion service (delta window, upsert, backfill, alerts)
+- [ ] 02-03-PLAN.md — APScheduler lifespan integration (4-hour job) + ingestion admin API (/run, /status, /runs, /alerts)
+- [ ] 02-04-PLAN.md — Admin ingestion UI (status indicator, Run Now button, alert banner, run history table) + human verify
 
 ### Phase 3: Cost Monitoring
 **Goal**: Users can see total Azure spend, trends, breakdowns, and top-cost resources through a live dashboard
@@ -115,7 +121,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete    | 2026-02-20 |
-| 2. Data Ingestion | 0/TBD | Not started | - |
+| 2. Data Ingestion | 0/4 | Not started | - |
 | 3. Cost Monitoring | 0/TBD | Not started | - |
 | 4. Anomaly Detection | 0/TBD | Not started | - |
 | 5. AI Recommendations | 0/TBD | Not started | - |
