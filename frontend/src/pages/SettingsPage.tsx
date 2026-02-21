@@ -208,24 +208,38 @@ function AllocationRulesTab() {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
-  function handleDragStart(index: number) {
+  function handleDragStart(e: React.DragEvent, index: number) {
+    e.dataTransfer.effectAllowed = 'move';
+    // Store the dragged index in dataTransfer so the drop handler can read it
+    // even if state updates are batched.
+    e.dataTransfer.setData('text/plain', String(index));
     setDragIndex(index);
   }
 
   function handleDragOver(e: React.DragEvent, index: number) {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
     setDragOverIndex(index);
+  }
+
+  // Catch-all dragOver on the TableBody so child elements (cells, icons,
+  // buttons) don't swallow the event and prevent the row's onDrop from firing.
+  function handleBodyDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   }
 
   function handleDrop(e: React.DragEvent, dropIndex: number) {
     e.preventDefault();
-    if (dragIndex === null || dragIndex === dropIndex) {
+    // Read from dataTransfer as a fallback in case React state hasn't updated.
+    const fromIndex = dragIndex ?? parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (isNaN(fromIndex) || fromIndex === dropIndex) {
       setDragIndex(null);
       setDragOverIndex(null);
       return;
     }
     const reordered = [...rules];
-    const [moved] = reordered.splice(dragIndex, 1);
+    const [moved] = reordered.splice(fromIndex, 1);
     reordered.splice(dropIndex, 0, moved);
     reorderRules.mutate({ rule_ids: reordered.map((r) => r.id) });
     setDragIndex(null);
@@ -310,19 +324,19 @@ function AllocationRulesTab() {
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody onDragOver={handleBodyDragOver}>
           {rules.map((rule, index) => (
             <TableRow
               key={rule.id}
               draggable
-              onDragStart={() => handleDragStart(index)}
+              onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
               className={dragOverIndex === index && dragIndex !== index ? 'border-t-2 border-primary' : ''}
             >
               <TableCell className="pr-0">
-                <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab active:cursor-grabbing pointer-events-none" />
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">{rule.priority}</TableCell>
               <TableCell className="text-sm">{rule.target_type}</TableCell>
