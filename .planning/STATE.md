@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 3 of 7 (Cost Monitoring)
-**Current Plan:** 3
+**Current Plan:** 4
 **Total Plans in Phase:** 5
 **Status:** Ready to execute
 **Last Activity:** 2026-02-21
 
-**Progress:** [████████░░] 77%
+**Progress:** [█████████░] 85%
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 02-data-ingestion P04 | 15min | 2 tasks | 3 files |
 | Phase 03-cost-monitoring P01 | 7min | 2 tasks | 4 files |
 | Phase 03-cost-monitoring P02 | 3min | 2 tasks | 4 files |
+| Phase 03-cost-monitoring P03 | 8 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,9 @@ Recent decisions affecting current work:
 - [Phase 03-cost-monitoring]: MoM delta returns None when prior month has zero spend — avoids misleading percentage on first billing period
 - [Phase 03-cost-monitoring]: DIMENSION_MAP in services/cost.py maps string keys to SQLAlchemy column refs — single source of truth for dimension validation
 - [Phase 03-cost-monitoring]: Service layer returns raw result.all() rows; API layer maps to Pydantic models with explicit float() casts — decouples service from response format
+- [Phase 03-cost-monitoring]: satisfies ChartConfig used for type narrowing on chartConfig — IDE autocomplete without widening the type
+- [Phase 03-cost-monitoring]: connectNulls={true} on AreaChart Area component — prevents weekend/no-billing-day gaps in trend line (research pitfall #1)
+- [Phase 03-cost-monitoring]: Tabs onValueChange drives days state -> useSpendTrend queryKey -> TanStack Query refetch — no polling needed
 
 ### Pending Todos
 
@@ -98,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T07:04:27.356Z
-**Stopped at:** Completed 03-02-PLAN.md — cost analytics API (schemas, service layer, 6 endpoints)
+**Last session:** 2026-02-21T07:08:01.887Z
+**Stopped at:** Completed 03-03-PLAN.md — dashboard KPI cards + spend trend AreaChart
 **Resume file:** None
