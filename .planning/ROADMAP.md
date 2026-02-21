@@ -104,7 +104,13 @@ Plans:
   2. Each recommendation shows its category, a plain-language explanation, estimated monthly savings, and a confidence score
   3. Repeated LLM calls for the same resource within 24 hours use cached responses rather than hitting the API again
   4. The system stops generating new LLM calls when the configurable daily limit is reached and resumes the following day
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Recommendation model + Alembic migration + Redis client singleton + config fields
+- [ ] 05-02-PLAN.md — LLM service (Anthropic primary, Azure fallback, Redis cache, daily counter) + FastAPI router + scheduler daily job
+- [ ] 05-03-PLAN.md — Frontend service hooks + RecommendationsPage (card list, filters, summary, limit banner, empty state) + App.tsx route
+- [ ] 05-04-PLAN.md — Human verification checkpoint: all 4 AI requirements verified end-to-end
 
 ### Phase 6: Multi-Tenant Attribution
 **Goal**: Finance and engineering can see infrastructure cost broken down by customer tenant, enabling unit economics reporting for Series A diligence
@@ -138,7 +144,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 2. Data Ingestion | 4/4 | Complete   | 2026-02-21 |
 | 3. Cost Monitoring | 5/5 | Complete   | 2026-02-21 |
 | 4. Anomaly Detection | 5/5 | Complete    | 2026-02-21 |
-| 5. AI Recommendations | 0/TBD | Not started | - |
+| 5. AI Recommendations | 0/4 | Not started | - |
 | 6. Multi-Tenant Attribution | 0/TBD | Not started | - |
 | 7. REST API and Audit | 0/TBD | Not started | - |
 
