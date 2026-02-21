@@ -121,7 +121,13 @@ Plans:
   2. Admin can define how shared or untagged resources are split across tenants (by tenant count, by usage, or by manual percentage)
   3. User can view the monthly infrastructure cost for each of Fileread's ~30 tenants on a single screen
   4. User can export a per-tenant cost report to CSV with each tenant's monthly cost as a separate row
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — TenantProfile, AllocationRule, TenantAttribution models + Alembic migration
+- [ ] 06-02-PLAN.md — Attribution service (run_attribution, CRUD) + Pydantic schemas + attribution and settings API routers + post-ingestion hook
+- [ ] 06-03-PLAN.md — Frontend attribution.ts hooks + AttributionPage (sortable table, expandable rows, month picker, CSV export) + SettingsPage (tabs: tenants + rules) + App.tsx routes
+- [ ] 06-04-PLAN.md — Human verification checkpoint: all 4 ATTR requirements verified end-to-end
 
 ### Phase 7: REST API and Audit
 **Goal**: All platform data is accessible via an authenticated REST API and every user action is captured in an immutable audit trail
@@ -145,7 +151,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Cost Monitoring | 5/5 | Complete   | 2026-02-21 |
 | 4. Anomaly Detection | 5/5 | Complete    | 2026-02-21 |
 | 5. AI Recommendations | 4/4 | Complete    | 2026-02-21 |
-| 6. Multi-Tenant Attribution | 0/TBD | Not started | - |
+| 6. Multi-Tenant Attribution | 0/4 | Not started | - |
 | 7. REST API and Audit | 0/TBD | Not started | - |
 
 ---
