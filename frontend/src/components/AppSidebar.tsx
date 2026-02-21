@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +29,7 @@ const navItems = [
   { title: 'Settings', url: '/settings', icon: Settings },
 ];
 
+// Admin-only items rendered inline after Dashboard
 const adminNavItems = [
   { title: 'Ingestion', url: '/ingestion', icon: Database },
 ];
@@ -50,29 +52,9 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      className={({ isActive }) =>
-                        isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
-                      }
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                      {item.title === 'Anomalies' && anomalyCount > 0 && (
-                        <span className={`ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-white ${anomalyBadgeColor}`}>
-                          {anomalyCount > 99 ? '99+' : anomalyCount}
-                        </span>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              {user?.role === 'admin' &&
-                adminNavItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
+              {navItems.map((item, index) => (
+                <React.Fragment key={item.title}>
+                  <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <NavLink
                         to={item.url}
@@ -82,10 +64,32 @@ export function AppSidebar() {
                       >
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
+                        {item.title === 'Anomalies' && anomalyCount > 0 && (
+                          <span className={`ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-white ${anomalyBadgeColor}`}>
+                            {anomalyCount > 99 ? '99+' : anomalyCount}
+                          </span>
+                        )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                  {index === 0 && user?.role === 'admin' &&
+                    adminNavItems.map((adminItem) => (
+                      <SidebarMenuItem key={adminItem.title}>
+                        <SidebarMenuButton asChild>
+                          <NavLink
+                            to={adminItem.url}
+                            className={({ isActive }) =>
+                              isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
+                            }
+                          >
+                            <adminItem.icon className="h-4 w-4" />
+                            <span>{adminItem.title}</span>
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                </React.Fragment>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
