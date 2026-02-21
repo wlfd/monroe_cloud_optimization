@@ -50,7 +50,7 @@ Requirements for initial release. Each maps to a roadmap phase.
 - [x] **ATTR-01**: System maps Azure resources to tenants via `tenant_id` resource tag on a daily schedule
 - [x] **ATTR-02**: Admin can define shared/untagged resource allocation rules (by-tenant-count, by-usage, or manual percentage splits)
 - [x] **ATTR-03**: User can view monthly infrastructure cost per tenant
-- [ ] **ATTR-04**: User can export per-tenant cost report to CSV
+- [x] **ATTR-04**: User can export per-tenant cost report to CSV
 
 ### REST API
 
@@ -149,7 +149,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ATTR-01 | Phase 6 | Complete |
 | ATTR-02 | Phase 6 | Complete |
 | ATTR-03 | Phase 6 | Complete |
-| ATTR-04 | Phase 6 | Pending |
+| ATTR-04 | Phase 6 | Complete |
 | API-01 | Phase 7 | Pending |
 | AUDIT-01 | Phase 7 | Pending |
 | AUDIT-02 | Phase 7 | Pending |

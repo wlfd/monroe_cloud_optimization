@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Cost Monitoring** - Dashboard with spend views, trend analysis, breakdowns, and CSV export (completed 2026-02-21)
 - [x] **Phase 4: Anomaly Detection** - Rolling-baseline anomaly detection with severity and dollar impact (completed 2026-02-21)
 - [x] **Phase 5: AI Recommendations** - Daily LLM-powered optimization recommendations with caching and rate limiting (completed 2026-02-21)
-- [ ] **Phase 6: Multi-Tenant Attribution** - Tag-based tenant cost mapping with allocation rules and per-tenant reporting
+- [x] **Phase 6: Multi-Tenant Attribution** - Tag-based tenant cost mapping with allocation rules and per-tenant reporting (completed 2026-02-21)
 - [ ] **Phase 7: REST API and Audit** - Full authenticated API surface and immutable append-only audit log
 
 ## Phase Details
@@ -151,7 +151,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Cost Monitoring | 5/5 | Complete   | 2026-02-21 |
 | 4. Anomaly Detection | 5/5 | Complete    | 2026-02-21 |
 | 5. AI Recommendations | 4/4 | Complete    | 2026-02-21 |
-| 6. Multi-Tenant Attribution | 3/4 | In Progress|  |
+| 6. Multi-Tenant Attribution | 4/4 | Complete   | 2026-02-21 |
 | 7. REST API and Audit | 0/TBD | Not started | - |
 
 ---
