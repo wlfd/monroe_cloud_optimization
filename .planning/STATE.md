@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 **Phase:** 3 of 7 (Cost Monitoring)
-**Current Plan:** 4
+**Current Plan:** 5
 **Total Plans in Phase:** 5
 **Status:** Ready to execute
 **Last Activity:** 2026-02-21
 
-**Progress:** [█████████░] 85%
+**Progress:** [█████████░] 92%
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 | Phase 03-cost-monitoring P01 | 7min | 2 tasks | 4 files |
 | Phase 03-cost-monitoring P02 | 3min | 2 tasks | 4 files |
 | Phase 03-cost-monitoring P03 | 8 | 2 tasks | 4 files |
+| Phase 03-cost-monitoring P04 | 2 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 03-cost-monitoring]: satisfies ChartConfig used for type narrowing on chartConfig — IDE autocomplete without widening the type
 - [Phase 03-cost-monitoring]: connectNulls={true} on AreaChart Area component — prevents weekend/no-billing-day gaps in trend line (research pitfall #1)
 - [Phase 03-cost-monitoring]: Tabs onValueChange drives days state -> useSpendTrend queryKey -> TanStack Query refetch — no polling needed
+- [Phase 03-cost-monitoring]: Export button placed inline in Cost Breakdown card header (right of Select) — keeps action contextual to the data being viewed
+- [Phase 03-cost-monitoring]: Export uses api singleton directly (not a hook) — one-time action, not server state; hooks are for queries not mutations
+- [Phase 03-cost-monitoring]: Blob download pattern: responseType: blob + createObjectURL + link.click() + revokeObjectURL — established for any future CSV/PDF exports
 
 ### Pending Todos
 
@@ -102,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21T07:08:01.887Z
-**Stopped at:** Completed 03-03-PLAN.md — dashboard KPI cards + spend trend AreaChart
+**Last session:** 2026-02-21T07:12:10.901Z
+**Stopped at:** Completed 03-04-PLAN.md — cost breakdown table, top resources table, CSV export
 **Resume file:** None
