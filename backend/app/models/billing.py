@@ -80,3 +80,29 @@ class IngestionAlert(Base):
     __table_args__ = (
         Index("idx_ingestion_alerts_active", "is_active"),
     )
+
+
+class Anomaly(Base):
+    __tablename__ = "anomalies"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    detected_date: Mapped[date] = mapped_column(Date, nullable=False)
+    service_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    resource_group: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    severity: Mapped[str] = mapped_column(String(50), nullable=False)   # 'critical' | 'high' | 'medium'
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="new")  # 'new' | 'investigating' | 'resolved' | 'dismissed'
+    expected: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    baseline_daily_avg: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
+    current_daily_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
+    pct_deviation: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    estimated_monthly_impact: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("service_name", "resource_group", "detected_date", name="uq_anomaly_key"),
+        Index("idx_anomaly_status", "status"),
+        Index("idx_anomaly_severity", "severity"),
+        Index("idx_anomaly_detected_date", "detected_date"),
+    )
