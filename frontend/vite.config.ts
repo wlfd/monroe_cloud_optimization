@@ -21,4 +21,15 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+    css: true,
+    // Point Vitest at the test-specific tsconfig so jest-dom and vitest/globals
+    // types are available without polluting the app build's type surface.
+    typecheck: {
+      tsconfig: './tsconfig.test.json',
+    },
+  },
 })
