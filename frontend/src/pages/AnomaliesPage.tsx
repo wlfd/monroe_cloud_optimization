@@ -43,7 +43,7 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
   const markExpected = useMarkAnomalyExpected();
   const unmarkExpected = useUnmarkAnomalyExpected();
 
-  const detectedDate = new Date(anomaly.detected_date).toLocaleDateString('en-US', {
+  const detectedDate = new Date(anomaly.detected_date + "T00:00:00").toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

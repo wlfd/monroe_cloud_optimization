@@ -332,8 +332,8 @@ export function DashboardPage() {
             </TableHeader>
             <TableBody>
               {breakdownQuery.data && breakdownQuery.data.length > 0 ? (
-                breakdownQuery.data.map((item, idx) => (
-                  <TableRow key={idx}>
+                breakdownQuery.data.map((item) => (
+                  <TableRow key={item.dimension_value ?? "(untagged)"}>
                     <TableCell>{item.dimension_value || "(untagged)"}</TableCell>
                     <TableCell className="text-right font-mono">
                       ${item.total_cost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -374,8 +374,8 @@ export function DashboardPage() {
             </TableHeader>
             <TableBody>
               {topResourcesQuery.data && topResourcesQuery.data.length > 0 ? (
-                topResourcesQuery.data.map((resource, idx) => (
-                  <TableRow key={idx}>
+                topResourcesQuery.data.map((resource) => (
+                  <TableRow key={resource.resource_id || resource.resource_name}>
                     <TableCell
                       className="font-medium max-w-[200px] truncate"
                       title={resource.resource_name}
