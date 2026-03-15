@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: Arial, sans-serif; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 24px;">
+  {% if severity == "critical" %}
+    {% set accent = "#dc2626" %}
+    {% set badge_bg = "#fee2e2" %}
+    {% set badge_color = "#991b1b" %}
+  {% elif severity == "high" %}
+    {% set accent = "#ea580c" %}
+    {% set badge_bg = "#ffedd5" %}
+    {% set badge_color = "#9a3412" %}
+  {% else %}
+    {% set accent = "#d97706" %}
+    {% set badge_bg = "#fef3c7" %}
+    {% set badge_color = "#92400e" %}
+  {% endif %}
+
+  <div style="border-left: 4px solid {{ accent }}; padding-left: 16px; margin-bottom: 24px;">
+    <h2 style="margin: 0 0 4px 0; color: {{ accent }};">Cost Anomaly Detected</h2>
+    <p style="margin: 0; color: #6b7280; font-size: 14px;">CloudCost · {{ detected_date }}</p>
+  </div>
+
+  <p style="font-size: 16px;">
+    An unusual spending pattern has been detected for
+    <strong>{{ service_name }}</strong> in resource group <strong>{{ resource_group }}</strong>.
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <tr style="background: #f9fafb;">
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Severity</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb;">
+        <span style="background: {{ badge_bg }}; color: {{ badge_color }}; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; text-transform: uppercase;">
+          {{ severity }}
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Service</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb;">{{ service_name }}</td>
+    </tr>
+    <tr style="background: #f9fafb;">
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Resource Group</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb;">{{ resource_group }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Deviation</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; color: {{ accent }}; font-weight: bold;">+{{ pct_deviation }}% above baseline</td>
+    </tr>
+    <tr style="background: #f9fafb;">
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Baseline Daily Avg</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb;">${{ "%.2f"|format(baseline_daily_avg) }}/day</td>
+    </tr>
+    <tr>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Current Daily Cost</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb;">${{ "%.2f"|format(current_daily_cost) }}/day</td>
+    </tr>
+    <tr style="background: #fef2f2;">
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Est. Monthly Impact</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; color: #dc2626; font-weight: bold;">${{ "%.2f"|format(estimated_monthly_impact) }}/month excess</td>
+    </tr>
+    <tr>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb; font-weight: bold;">Detected</td>
+      <td style="padding: 10px 14px; border: 1px solid #e5e7eb;">{{ detected_date }}</td>
+    </tr>
+  </table>
+
+  <p style="color: #6b7280; font-size: 13px; border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 24px;">
+    Log in to CloudCost to investigate this anomaly. You can mark it as Expected if this spend is intentional.
+  </p>
+</body>
+</html>

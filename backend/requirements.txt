@@ -13,3 +13,5 @@ azure-identity
 tenacity
 anthropic>=0.40
 redis>=5.0
+aiosmtplib>=3.0
+httpx>=0.27

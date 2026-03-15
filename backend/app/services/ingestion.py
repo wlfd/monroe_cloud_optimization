@@ -21,6 +21,7 @@ from app.models.billing import BillingRecord, IngestionRun, IngestionAlert
 from app.services.anomaly import run_anomaly_detection
 from app.services.attribution import run_attribution
 from app.services.azure_client import fetch_with_retry
+from app.services.notification import notify_ingestion_failed
 
 logger = logging.getLogger(__name__)
 
@@ -365,7 +366,17 @@ async def _do_ingestion(triggered_by: str) -> None:
                     error_detail=str(exc),
                     triggered_by=triggered_by,
                 )
-                await create_ingestion_alert(err_session, error_detail=str(exc), retry_count=3)
+                alert = await create_ingestion_alert(err_session, error_detail=str(exc), retry_count=3)
+                try:
+                    await notify_ingestion_failed(
+                        err_session,
+                        ingestion_alert_id=alert.id,
+                        error_message=str(exc),
+                        retry_count=3,
+                    )
+                    await err_session.commit()
+                except Exception as notify_exc:
+                    logger.error("_do_ingestion: notification failed: %s", notify_exc)
             raise
 
 

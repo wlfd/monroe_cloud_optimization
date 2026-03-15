@@ -20,6 +20,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.billing import Anomaly, BillingRecord
+from app.services.notification import notify_anomaly_detected
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +95,17 @@ async def run_anomaly_detection(session: AsyncSession) -> None:
         return
 
     logger.info("run_anomaly_detection: check_date=%s", check_date)
+
+    # Snapshot which (service, resource_group) pairs already have an open anomaly
+    # on check_date before this run. Used after detection to find newly-created ones.
+    existing_open_stmt = select(Anomaly.service_name, Anomaly.resource_group).where(
+        Anomaly.detected_date == check_date,
+        Anomaly.status.in_(["new", "investigating"]),
+    )
+    existing_open: set[tuple[str, str]] = {
+        (r.service_name, r.resource_group)
+        for r in (await session.execute(existing_open_stmt)).all()
+    }
 
     # Step 4: Fetch current day's spend per (service_name, resource_group)
     current_stmt = (
@@ -173,6 +185,63 @@ async def run_anomaly_detection(session: AsyncSession) -> None:
 
     # Commit all changes once
     await session.commit()
+
+    # Dispatch notifications for anomalies that are new to this run
+    newly_detected = still_active - existing_open
+    if newly_detected:
+        await _notify_new_anomalies(session, check_date, newly_detected)
+        await session.commit()
+
+
+# ---------------------------------------------------------------------------
+# Anomaly notification helper
+# ---------------------------------------------------------------------------
+
+
+async def _notify_new_anomalies(
+    session: AsyncSession,
+    check_date: date,
+    newly_detected: set[tuple[str, str]],
+) -> None:
+    """Dispatch notifications for anomalies that were first detected in this run.
+
+    Queries the just-committed Anomaly rows and calls notify_anomaly_detected
+    for each one. Errors on individual notifications are logged but do not
+    abort the loop.
+    """
+    if not newly_detected:
+        return
+
+    keys = list(newly_detected)
+    for service_name, resource_group in keys:
+        stmt = select(Anomaly).where(
+            Anomaly.service_name == service_name,
+            Anomaly.resource_group == resource_group,
+            Anomaly.detected_date == check_date,
+        )
+        anomaly = (await session.execute(stmt)).scalar_one_or_none()
+        if anomaly is None:
+            continue
+        try:
+            await notify_anomaly_detected(
+                session,
+                anomaly_id=anomaly.id,
+                service_name=anomaly.service_name,
+                resource_group=anomaly.resource_group,
+                severity=anomaly.severity,
+                pct_deviation=float(anomaly.pct_deviation),
+                estimated_monthly_impact=float(anomaly.estimated_monthly_impact),
+                baseline_daily_avg=float(anomaly.baseline_daily_avg),
+                current_daily_cost=float(anomaly.current_daily_cost),
+                detected_date=str(anomaly.detected_date),
+            )
+        except Exception as exc:
+            logger.error(
+                "_notify_new_anomalies: notification failed for %s/%s: %s",
+                service_name,
+                resource_group,
+                exc,
+            )
 
 
 # ---------------------------------------------------------------------------

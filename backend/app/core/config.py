@@ -1,5 +1,7 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
+
+from pydantic import model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -32,6 +34,22 @@ class Settings(BaseSettings):
     AZURE_OPENAI_DEPLOYMENT: str = "gpt-4o"
     LLM_DAILY_CALL_LIMIT: int = 100      # AI-04: configurable cap
     LLM_MIN_MONTHLY_SPEND_THRESHOLD: float = 50.0  # default $50/mo qualifier
+
+    # -- SMTP (generic — works with SendGrid, SES, Azure Comm Services, etc.) --
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = "noreply@cloudcost.local"
+    SMTP_START_TLS: bool = True
+
+    @model_validator(mode="after")
+    def reject_default_secret_in_production(self) -> "Settings":
+        if self.APP_ENV == "production" and self.JWT_SECRET_KEY == "change-me-in-production":
+            raise ValueError(
+                "JWT_SECRET_KEY must be changed from the default value in production"
+            )
+        return self
 
 
 @lru_cache

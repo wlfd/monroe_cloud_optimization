@@ -6,6 +6,8 @@ from app.api.v1.router import api_router
 from app.core.scheduler import scheduler
 from app.services.ingestion import run_ingestion, recover_stale_runs
 from app.services.recommendation import run_recommendations
+from app.services.budget import check_budget_thresholds
+from app.services.notification import retry_failed_deliveries
 from app.core.database import AsyncSessionLocal
 from apscheduler.triggers.cron import CronTrigger
 import redis.asyncio as aioredis
@@ -40,6 +42,27 @@ async def lifespan(app: FastAPI):
         _scheduled_recommendations,
         CronTrigger(hour=2, minute=0, timezone="UTC"),
         id="recommendation_daily",
+        replace_existing=True,
+    )
+
+    # Register budget threshold check job — every 4 hours, 60 min after ingestion
+    # Offset: ingestion runs at T+0h, anomaly at T+0h+30min, budget check at T+1h
+    scheduler.add_job(
+        check_budget_thresholds,
+        "interval",
+        hours=4,
+        minutes=0,
+        start_date="2026-01-01 01:00:00",  # 1-hour offset from ingestion start
+        id="budget_threshold_check",
+        replace_existing=True,
+    )
+
+    # Register webhook retry job — every 15 minutes
+    scheduler.add_job(
+        retry_failed_deliveries,
+        "interval",
+        minutes=15,
+        id="webhook_retry",
         replace_existing=True,
     )
 
