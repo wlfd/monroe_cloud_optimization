@@ -35,7 +35,25 @@ async def login(
     result = await db.execute(select(User).where(User.email == form_data.username))
     user = result.scalar_one_or_none()
 
-    if not user or not verify_password(form_data.password, user.password_hash):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+
+    # Check brute-force lockout before attempting password verification
+    if user.locked_until is not None and user.locked_until > datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Account temporarily locked",
+        )
+
+    if not verify_password(form_data.password, user.password_hash):
+        # Increment failed attempt counter; lock account after 5 failures
+        user.failed_login_attempts = (user.failed_login_attempts or 0) + 1
+        if user.failed_login_attempts >= 5:
+            user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=15)
+        await db.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
@@ -46,6 +64,10 @@ async def login(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is disabled",
         )
+
+    # Successful login: reset lockout counters
+    user.failed_login_attempts = 0
+    user.locked_until = None
 
     # Issue tokens
     access_token = create_access_token({"sub": str(user.id), "role": user.role})
@@ -110,12 +132,13 @@ async def refresh_token(
     except InvalidTokenError:
         raise credentials_error
 
-    # Verify session exists and is not revoked
+    # Verify session exists, is not revoked, and has not expired
     token_hash = hash_token(refresh_token)
     result = await db.execute(
         select(UserSession).where(
             UserSession.token_hash == token_hash,
             UserSession.revoked == False,  # noqa: E712
+            UserSession.expires_at > datetime.now(timezone.utc),
         )
     )
     session = result.scalar_one_or_none()

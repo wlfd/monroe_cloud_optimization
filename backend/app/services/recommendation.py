@@ -290,13 +290,13 @@ async def _run_recommendations_with_session(session: AsyncSession, redis_client,
         logger.error("run_recommendations: redis_client is None — cannot generate recommendations")
         return
 
-    anthropic_client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-
     if not settings.ANTHROPIC_API_KEY:
         logger.warning(
             "run_recommendations: ANTHROPIC_API_KEY not set — skipping generation"
         )
         return
+
+    anthropic_client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
 
     # Qualify resources: resource_name + resource_group with monthly spend >= threshold
     # Use current month billing data, group by resource identity
