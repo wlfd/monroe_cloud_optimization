@@ -1,0 +1,20 @@
+FROM python:3.12-slim
+
+WORKDIR /code
+
+# Install system deps for asyncpg (libpq)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./requirements.txt /code/requirements.txt
+COPY ./requirements-dev.txt /code/requirements-dev.txt
+
+RUN pip install --no-cache-dir --upgrade \
+    -r /code/requirements.txt \
+    -r /code/requirements-dev.txt
+
+COPY ./app /code/app
+COPY ./migrations /code/migrations
+COPY ./alembic.ini /code/alembic.ini
+COPY ./pyproject.toml /code/pyproject.toml

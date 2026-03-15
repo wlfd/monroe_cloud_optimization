@@ -1,0 +1,30 @@
+services:
+  # Backend dev tools (lint, format, test)
+  # Usage: docker compose -f docker-compose.tools.yml run --rm backend-tools <command>
+  backend-tools:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/app:/code/app
+      - ./backend/tests:/code/tests
+      - ./backend/migrations:/code/migrations
+      - ./backend/pyproject.toml:/code/pyproject.toml
+
+  # Frontend dev tools (lint, format, test)
+  # Usage: docker compose -f docker-compose.tools.yml run --rm frontend-tools <command>
+  frontend-tools:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/.prettierrc:/app/.prettierrc
+      - ./frontend/.prettierignore:/app/.prettierignore
+      - ./frontend/eslint.config.js:/app/eslint.config.js
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tsconfig.app.json:/app/tsconfig.app.json
+    environment:
+      NODE_ENV: development
