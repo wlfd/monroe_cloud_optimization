@@ -14,12 +14,13 @@ import csv
 import io
 from datetime import date
 
+_background_tasks: set = set()
+
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.ingestion import require_admin
-from app.core.dependencies import get_current_user, get_db
+from app.core.dependencies import get_current_user, get_db, require_admin
 from app.models.user import User
 from app.schemas.attribution import ServiceBreakdownItem, TenantAttributionResponse
 from app.services.attribution import (
@@ -145,5 +146,7 @@ async def trigger_attribution_run(
     _: User = Depends(require_admin),
 ):
     """Manually trigger an attribution run (admin only). Returns immediately (202)."""
-    asyncio.create_task(_run_attribution_task())
+    task = asyncio.create_task(_run_attribution_task())
+    _background_tasks.add(task)
+    task.add_done_callback(_background_tasks.discard)
     return {"status": "triggered"}

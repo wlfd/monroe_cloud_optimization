@@ -26,6 +26,7 @@ from app.services.anomaly import (
 router = APIRouter(tags=["anomalies"])
 
 _VALID_STATUSES = {"new", "investigating", "resolved", "dismissed"}
+_VALID_SEVERITIES = {"critical", "high", "medium"}
 
 
 @router.get("/", response_model=list[AnomalyResponse])
@@ -38,6 +39,16 @@ async def list_anomalies(
     _: User = Depends(get_current_user),
 ):
     """Return all anomalies (full history) with optional filters."""
+    if status is not None and status not in _VALID_STATUSES:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid status '{status}'. Must be one of: {sorted(_VALID_STATUSES)}",
+        )
+    if severity is not None and severity not in _VALID_SEVERITIES:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid severity '{severity}'. Must be one of: {sorted(_VALID_SEVERITIES)}",
+        )
     rows = await get_anomalies(
         db,
         status=status,

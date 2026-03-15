@@ -18,8 +18,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.ingestion import require_admin
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, require_admin
 from app.models.user import User
 from app.schemas.attribution import (
     AllocationRuleCreate,

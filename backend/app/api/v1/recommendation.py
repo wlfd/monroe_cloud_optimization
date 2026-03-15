@@ -9,11 +9,13 @@ import asyncio
 import logging
 
 import redis.asyncio as aioredis
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.ingestion import require_admin
-from app.core.dependencies import get_db
+_background_tasks: set = set()
+_recommendation_running: bool = False
+
+from app.core.dependencies import get_db, require_admin
 from app.core.redis import get_redis
 from app.models.user import User
 from app.schemas.recommendation import RecommendationOut, RecommendationSummary
@@ -49,6 +51,15 @@ async def recommendation_summary(
     return await get_recommendation_summary(session, redis_client)
 
 
+async def _run_recommendations_tracked(redis_client: aioredis.Redis) -> None:
+    """Wrapper that clears the running flag on completion."""
+    global _recommendation_running
+    try:
+        await run_recommendations(redis_client=redis_client)
+    finally:
+        _recommendation_running = False
+
+
 @router.post("/run", status_code=202)
 async def trigger_recommendations(
     redis_client: aioredis.Redis = Depends(get_redis),
@@ -58,7 +69,17 @@ async def trigger_recommendations(
 
     Returns 202 Accepted. Generation runs in background. Refresh the page
     after a few seconds to see new recommendations.
+    Returns 409 if a generation run is already in progress.
     """
-    asyncio.create_task(run_recommendations(redis_client=redis_client))
+    global _recommendation_running
+    if _recommendation_running:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Recommendation generation already in progress",
+        )
+    _recommendation_running = True
+    task = asyncio.create_task(_run_recommendations_tracked(redis_client=redis_client))
+    _background_tasks.add(task)
+    task.add_done_callback(_background_tasks.discard)
     logger.info("Recommendation generation triggered manually by admin")
     return {"message": "Recommendation generation started"}

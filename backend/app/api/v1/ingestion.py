@@ -1,8 +1,10 @@
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException, status
+
+_background_tasks: set = set()
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.dependencies import get_db, get_current_user
+from app.core.dependencies import get_db, get_current_user, require_admin
 from app.models.user import User
 from app.models.billing import IngestionRun, IngestionAlert
 from app.schemas.ingestion import (
@@ -12,16 +14,6 @@ from app.schemas.ingestion import (
 from app.services.ingestion import run_ingestion, is_ingestion_running
 
 router = APIRouter(prefix="/ingestion", tags=["ingestion"])
-
-
-def require_admin(current_user: User = Depends(get_current_user)) -> User:
-    """Dependency: require user.role == 'admin'."""
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin role required"
-        )
-    return current_user
 
 
 @router.post("/run", response_model=TriggerResponse, status_code=202)
@@ -35,7 +27,9 @@ async def trigger_manual_run(
             detail="Ingestion already in progress"
         )
     # Fire-and-forget — do NOT await (long-running background task)
-    asyncio.create_task(run_ingestion(triggered_by="manual"))
+    task = asyncio.create_task(run_ingestion(triggered_by="manual"))
+    _background_tasks.add(task)
+    task.add_done_callback(_background_tasks.discard)
     return TriggerResponse(status="accepted")
 
 

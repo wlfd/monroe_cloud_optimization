@@ -1,5 +1,5 @@
 from typing import AsyncGenerator
-from fastapi import Depends, Cookie
+from fastapi import Depends, Cookie, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy import select
@@ -40,3 +40,13 @@ async def get_current_user(
     if user is None or not user.is_active:
         raise CredentialsException()
     return user
+
+
+def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Dependency: require user.role == 'admin'."""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin role required",
+        )
+    return current_user

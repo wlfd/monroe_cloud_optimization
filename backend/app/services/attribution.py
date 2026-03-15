@@ -122,13 +122,17 @@ async def run_attribution() -> None:
             )
             await session.execute(upsert_stmt)
 
+        # Build date range for the period (inclusive on both ends)
+        period_start = date(year, month, 1)
+        period_end = date(year, month, calendar.monthrange(year, month)[1])
+
         # Step 4: Compute tagged costs per tenant for this year/month
         tagged_stmt = (
             select(BillingRecord.tag, func.sum(BillingRecord.pre_tax_cost).label("total"))
             .where(
                 BillingRecord.tag != "",
-                func.extract("year", BillingRecord.usage_date) == year,
-                func.extract("month", BillingRecord.usage_date) == month,
+                BillingRecord.usage_date >= period_start,
+                BillingRecord.usage_date <= period_end,
             )
             .group_by(BillingRecord.tag)
         )
@@ -140,8 +144,8 @@ async def run_attribution() -> None:
         # Step 5: Compute total untagged cost for this year/month
         untagged_stmt = select(func.sum(BillingRecord.pre_tax_cost)).where(
             BillingRecord.tag == "",
-            func.extract("year", BillingRecord.usage_date) == year,
-            func.extract("month", BillingRecord.usage_date) == month,
+            BillingRecord.usage_date >= period_start,
+            BillingRecord.usage_date <= period_end,
         )
         untagged_total: Decimal = Decimal(
             str((await session.execute(untagged_stmt)).scalar() or 0)
@@ -161,15 +165,15 @@ async def run_attribution() -> None:
                 rule_cost_stmt = select(func.sum(BillingRecord.pre_tax_cost)).where(
                     BillingRecord.tag == "",
                     BillingRecord.resource_group == rule.target_value,
-                    func.extract("year", BillingRecord.usage_date) == year,
-                    func.extract("month", BillingRecord.usage_date) == month,
+                    BillingRecord.usage_date >= period_start,
+                    BillingRecord.usage_date <= period_end,
                 )
             elif rule.target_type == "service_category":
                 rule_cost_stmt = select(func.sum(BillingRecord.pre_tax_cost)).where(
                     BillingRecord.tag == "",
                     BillingRecord.service_name == rule.target_value,
-                    func.extract("year", BillingRecord.usage_date) == year,
-                    func.extract("month", BillingRecord.usage_date) == month,
+                    BillingRecord.usage_date >= period_start,
+                    BillingRecord.usage_date <= period_end,
                 )
             else:
                 logger.warning(
@@ -299,12 +303,15 @@ async def _get_top_service_category(
     else:
         tag_filter = BillingRecord.tag == tenant_id
 
+    period_start = date(year, month, 1)
+    period_end = date(year, month, calendar.monthrange(year, month)[1])
+
     stmt = (
         select(BillingRecord.service_name, func.sum(BillingRecord.pre_tax_cost).label("svc_cost"))
         .where(
             tag_filter,
-            func.extract("year", BillingRecord.usage_date) == year,
-            func.extract("month", BillingRecord.usage_date) == month,
+            BillingRecord.usage_date >= period_start,
+            BillingRecord.usage_date <= period_end,
         )
         .group_by(BillingRecord.service_name)
         .order_by(func.sum(BillingRecord.pre_tax_cost).desc())
@@ -413,6 +420,9 @@ async def get_attribution_breakdown(
     else:
         tag_filter = BillingRecord.tag == tenant_id
 
+    period_start = date(year, month, 1)
+    period_end = date(year, month, calendar.monthrange(year, month)[1])
+
     stmt = (
         select(
             BillingRecord.service_name,
@@ -420,8 +430,8 @@ async def get_attribution_breakdown(
         )
         .where(
             tag_filter,
-            func.extract("year", BillingRecord.usage_date) == year,
-            func.extract("month", BillingRecord.usage_date) == month,
+            BillingRecord.usage_date >= period_start,
+            BillingRecord.usage_date <= period_end,
         )
         .group_by(BillingRecord.service_name)
         .order_by(func.sum(BillingRecord.pre_tax_cost).desc())

@@ -1,13 +1,9 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import String, Boolean, Integer, DateTime, ForeignKey, Index, Text
 from sqlalchemy.dialects.postgresql import UUID, INET
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.core.database import Base
-
-
-def utcnow():
-    return datetime.now(timezone.utc)
+from app.core.database import Base, utcnow
 
 
 class User(Base):

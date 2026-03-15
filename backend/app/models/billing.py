@@ -1,14 +1,10 @@
 import uuid
-from datetime import datetime, timezone, date
+from datetime import datetime, date
 from decimal import Decimal
 from sqlalchemy import String, DateTime, Date, Numeric, Integer, Boolean, Text, Index, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
-from app.core.database import Base
-
-
-def utcnow():
-    return datetime.now(timezone.utc)
+from app.core.database import Base, utcnow
 
 
 class BillingRecord(Base):
