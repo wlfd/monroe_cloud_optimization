@@ -27,6 +27,7 @@ pip-delete-this-directory.txt
 .coverage
 coverage.xml
 htmlcov/
+*.cover
 *.prof
 
 # ─── Node / Frontend ─────────────────────────────────────────────────────────
@@ -37,12 +38,15 @@ yarn-error.log*
 pnpm-debug.log*
 .pnpm-store/
 *.tsbuildinfo
+frontend/dist/
+frontend/.vite/
 
-# ─── macOS ───────────────────────────────────────────────────────────────────
+# ─── macOS / Windows ─────────────────────────────────────────────────────────
 .DS_Store
 .AppleDouble
 .LSOverride
 ._*
+Thumbs.db
 
 # ─── Editor ──────────────────────────────────────────────────────────────────
 .vscode/*
