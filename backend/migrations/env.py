@@ -1,18 +1,21 @@
 import asyncio
 import os
 from logging.config import fileConfig
-from sqlalchemy.ext.asyncio import async_engine_from_config
-from sqlalchemy import pool
+
 from alembic import context
+from sqlalchemy import pool
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
 # Import app models so autogenerate can see them
 from app.core.database import Base
-from app.models import user  # noqa: F401
-from app.models import billing  # noqa: F401
-from app.models import recommendation  # noqa: F401
-from app.models import attribution  # noqa: F401
-from app.models import notification  # noqa: F401
-from app.models import budget  # noqa: F401
+from app.models import (
+    attribution,  # noqa: F401
+    billing,  # noqa: F401
+    budget,  # noqa: F401
+    notification,  # noqa: F401
+    recommendation,  # noqa: F401
+    user,  # noqa: F401
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,10 +30,7 @@ target_metadata = Base.metadata
 
 
 def get_url():
-    return os.environ.get(
-        "DATABASE_URL",
-        config.get_main_option("sqlalchemy.url")
-    )
+    return os.environ.get("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
 
 
 def run_migrations_offline() -> None:

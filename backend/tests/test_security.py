@@ -10,15 +10,12 @@ Covers:
 - Token type enforcement: access token rejected as refresh, and vice versa
 """
 
-import time
 import uuid
-from datetime import datetime, timedelta, timezone
-from unittest.mock import patch
+from datetime import UTC, datetime, timedelta
 
 import jwt
 import pytest
 from jwt.exceptions import InvalidTokenError
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -66,15 +63,15 @@ def test_create_access_token_contains_sub_and_role():
 
 def test_create_access_token_has_correct_expiry():
     """Access token expires in approximately JWT_ACCESS_TOKEN_EXPIRE_MINUTES minutes."""
-    from app.core.security import create_access_token
     from app.core.config import settings
+    from app.core.security import create_access_token
 
     token = create_access_token({"sub": "test-user"})
     secret = _get_secret()
     payload = jwt.decode(token, secret, algorithms=["HS256"])
 
-    now = datetime.now(timezone.utc)
-    exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    now = datetime.now(UTC)
+    exp = datetime.fromtimestamp(payload["exp"], tz=UTC)
     expected_exp = now + timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
 
     delta = abs((exp - expected_exp).total_seconds())
@@ -111,15 +108,15 @@ def test_create_refresh_token_type_is_refresh():
 
 def test_create_refresh_token_has_7_day_expiry():
     """Refresh token expires in approximately 7 days."""
-    from app.core.security import create_refresh_token
     from app.core.config import settings
+    from app.core.security import create_refresh_token
 
     token = create_refresh_token({"sub": "test-user"})
     secret = _get_secret()
     payload = jwt.decode(token, secret, algorithms=["HS256"])
 
-    now = datetime.now(timezone.utc)
-    exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+    now = datetime.now(UTC)
+    exp = datetime.fromtimestamp(payload["exp"], tz=UTC)
     expected_exp = now + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
 
     delta = abs((exp - expected_exp).total_seconds())
@@ -158,10 +155,10 @@ def test_decode_token_valid_round_trip():
 
 def test_decode_token_expired_raises():
     """decode_token raises InvalidTokenError for an expired token."""
-    from app.core.security import decode_token
     from app.core.config import settings
+    from app.core.security import decode_token
 
-    past_exp = datetime.now(timezone.utc) - timedelta(seconds=1)
+    past_exp = datetime.now(UTC) - timedelta(seconds=1)
     payload = {"sub": "user", "exp": past_exp, "jti": str(uuid.uuid4()), "type": "access"}
     expired_token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
 
@@ -278,6 +275,7 @@ def test_hash_token_different_inputs_different_hashes():
 def test_hash_token_matches_manual_sha256():
     """hash_token result matches manual SHA-256 computation."""
     import hashlib
+
     from app.core.security import hash_token
 
     token = "test-refresh-token"

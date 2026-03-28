@@ -107,6 +107,7 @@ async def create_budget(
         start_date=start_date,
         end_date=end_date,
         created_by=created_by,
+        is_active=True,
     )
     session.add(budget)
     await session.commit()

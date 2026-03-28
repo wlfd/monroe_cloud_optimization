@@ -5,16 +5,17 @@ Revises: 29e392128bad
 Create Date: 2026-03-08 00:00:00.000000
 
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 revision: str = "c8f1a9b3d2e4"
-down_revision: Union[str, Sequence[str], None] = "29e392128bad"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "29e392128bad"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -108,7 +109,9 @@ def upgrade() -> None:
         sa.Column("spend_at_trigger", sa.Numeric(precision=18, scale=2), nullable=False),
         sa.Column("budget_amount", sa.Numeric(precision=18, scale=2), nullable=False),
         sa.Column("threshold_percent", sa.Integer(), nullable=False),
-        sa.Column("delivery_status", sa.String(length=20), nullable=False, server_default="pending"),
+        sa.Column(
+            "delivery_status", sa.String(length=20), nullable=False, server_default="pending"
+        ),
         sa.ForeignKeyConstraint(["budget_id"], ["budgets.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["threshold_id"], ["budget_thresholds.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),

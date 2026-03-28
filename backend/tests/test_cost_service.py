@@ -10,14 +10,13 @@ Covers:
 """
 
 import calendar
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from tests.conftest import make_scalar_result, make_scalars_result
-
+from tests.conftest import make_scalar_result
 
 # ---------------------------------------------------------------------------
 # get_spend_summary — normal month
@@ -257,7 +256,7 @@ async def test_get_breakdown_valid_dimension():
 @pytest.mark.asyncio
 async def test_get_breakdown_all_valid_dimensions():
     """All four valid dimensions (service_name, resource_group, region, tag) work."""
-    from app.services.cost import get_breakdown, DIMENSION_MAP
+    from app.services.cost import DIMENSION_MAP, get_breakdown
 
     session = AsyncMock()
     result = MagicMock()

@@ -12,9 +12,9 @@ Covers:
 """
 
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import date
 from decimal import Decimal
-from unittest.mock import AsyncMock, MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -23,9 +23,7 @@ from tests.conftest import (
     _make_notification_channel,
     _make_threshold,
     make_scalar_result,
-    make_scalars_result,
 )
-
 
 # ---------------------------------------------------------------------------
 # _current_period
@@ -361,6 +359,9 @@ async def test_check_one_budget_fires_when_threshold_crossed():
     thresholds_result.scalars.return_value = thresholds_scalars
 
     channel = _make_notification_channel(channel_type="webhook")
+    # Wire the threshold to the channel so _check_one_budget enters the notify path
+    threshold.notification_channel_id = channel.id
+
     channel_result = MagicMock()
     channel_result.scalar_one_or_none.return_value = channel
 

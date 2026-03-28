@@ -19,23 +19,17 @@ Covers:
 
 import uuid
 from contextlib import asynccontextmanager
-from datetime import date, datetime, timezone
-from decimal import Decimal
-from typing import AsyncGenerator
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
 from tests.conftest import (
     _make_anomaly,
     _make_user,
-    make_scalar_result,
-    make_scalars_result,
     make_access_token,
+    make_scalars_result,
 )
-
 
 # ---------------------------------------------------------------------------
 # No-op lifespan — avoids real Redis and APScheduler startup
@@ -105,9 +99,9 @@ def _make_client(
 @pytest.mark.asyncio
 async def test_login_success():
     """Successful login returns 200 with an access token."""
-    from app.main import app
     from app.core.dependencies import get_db
     from app.core.security import get_password_hash
+    from app.main import app
 
     user = _make_user(role="admin", email="admin@example.com")
     user.password_hash = get_password_hash("AdminPassword1!")
@@ -143,9 +137,9 @@ async def test_login_success():
 @pytest.mark.asyncio
 async def test_login_wrong_password_returns_401():
     """Login with wrong password returns 401 Unauthorized."""
-    from app.main import app
     from app.core.dependencies import get_db
     from app.core.security import get_password_hash
+    from app.main import app
 
     user = _make_user(role="viewer")
     user.password_hash = get_password_hash("CorrectPassword1!")
@@ -175,8 +169,8 @@ async def test_login_wrong_password_returns_401():
 @pytest.mark.asyncio
 async def test_login_unknown_user_returns_401():
     """Login with unknown email returns 401 Unauthorized."""
-    from app.main import app
     from app.core.dependencies import get_db
+    from app.main import app
 
     db_mock = AsyncMock()
     user_result = MagicMock()
@@ -203,9 +197,9 @@ async def test_login_unknown_user_returns_401():
 @pytest.mark.asyncio
 async def test_login_inactive_user_returns_403():
     """Login for a disabled account returns 403 Forbidden."""
-    from app.main import app
     from app.core.dependencies import get_db
     from app.core.security import get_password_hash
+    from app.main import app
 
     user = _make_user(role="viewer")
     user.is_active = False
@@ -241,8 +235,8 @@ async def test_login_inactive_user_returns_403():
 @pytest.mark.asyncio
 async def test_get_me_returns_user_profile():
     """GET /auth/me returns the authenticated user's profile."""
-    from app.main import app
     from app.core.dependencies import get_current_user
+    from app.main import app
 
     user = _make_user(role="admin", email="admin@example.com")
     token = make_access_token(user)
@@ -270,8 +264,8 @@ async def test_get_me_returns_user_profile():
 @pytest.mark.asyncio
 async def test_get_me_without_token_returns_401():
     """GET /auth/me without Bearer token returns 401."""
-    from app.main import app
     from app.core.dependencies import get_db
+    from app.main import app
 
     db_mock = AsyncMock()
     result = MagicMock()
@@ -309,8 +303,8 @@ async def test_get_me_without_token_returns_401():
 )
 async def test_protected_routes_require_token(path: str):
     """Protected routes return 401 when no Authorization header is provided."""
-    from app.main import app
     from app.core.dependencies import get_db
+    from app.main import app
 
     db_mock = AsyncMock()
     result = MagicMock()
@@ -339,8 +333,8 @@ async def test_protected_routes_require_token(path: str):
 @pytest.mark.asyncio
 async def test_trigger_ingestion_as_viewer_returns_403():
     """POST /ingestion/run with viewer role returns 403 Forbidden."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     viewer = _make_user(role="viewer")
     token = make_access_token(viewer)
@@ -371,8 +365,8 @@ async def test_trigger_ingestion_as_viewer_returns_403():
 @pytest.mark.asyncio
 async def test_trigger_ingestion_as_admin_returns_202():
     """POST /ingestion/run with admin role returns 202 Accepted."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     admin = _make_user(role="admin")
     token = make_access_token(admin)
@@ -408,8 +402,8 @@ async def test_trigger_ingestion_as_admin_returns_202():
 @pytest.mark.asyncio
 async def test_trigger_ingestion_already_running_returns_409():
     """POST /ingestion/run returns 409 Conflict when ingestion is already in progress."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     admin = _make_user(role="admin")
     token = make_access_token(admin)
@@ -445,8 +439,8 @@ async def test_trigger_ingestion_already_running_returns_409():
 @pytest.mark.asyncio
 async def test_list_anomalies_returns_200():
     """GET /anomalies/ returns 200 with a list of anomaly objects."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     user = _make_user(role="viewer")
     token = make_access_token(user)
@@ -486,8 +480,8 @@ async def test_list_anomalies_returns_200():
 @pytest.mark.asyncio
 async def test_list_anomalies_empty_returns_empty_list():
     """GET /anomalies/ returns empty list when no anomalies exist."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     user = _make_user(role="viewer")
     token = make_access_token(user)
@@ -523,8 +517,8 @@ async def test_list_anomalies_empty_returns_empty_list():
 @pytest.mark.asyncio
 async def test_anomaly_summary_returns_200():
     """GET /anomalies/summary returns 200 with all expected KPI fields."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     user = _make_user(role="viewer")
     token = make_access_token(user)
@@ -576,8 +570,8 @@ async def test_anomaly_summary_returns_200():
 @pytest.mark.asyncio
 async def test_update_anomaly_status_success():
     """PATCH /anomalies/{id}/status returns 200 with updated anomaly."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     user = _make_user(role="admin")
     token = make_access_token(user)
@@ -617,8 +611,8 @@ async def test_update_anomaly_status_success():
 @pytest.mark.asyncio
 async def test_update_anomaly_status_invalid_value_returns_400():
     """PATCH /anomalies/{id}/status returns 400 for invalid status value."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     user = _make_user(role="admin")
     token = make_access_token(user)
@@ -649,8 +643,8 @@ async def test_update_anomaly_status_invalid_value_returns_400():
 @pytest.mark.asyncio
 async def test_update_anomaly_status_not_found_returns_404():
     """PATCH /anomalies/{id}/status returns 404 when anomaly doesn't exist."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     user = _make_user(role="admin")
     token = make_access_token(user)
@@ -689,8 +683,8 @@ async def test_update_anomaly_status_not_found_returns_404():
 @pytest.mark.asyncio
 async def test_get_ingestion_status_returns_running_false():
     """GET /ingestion/status returns running=false when not currently running."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     admin = _make_user(role="admin")
     token = make_access_token(admin)
@@ -722,8 +716,8 @@ async def test_get_ingestion_status_returns_running_false():
 @pytest.mark.asyncio
 async def test_get_ingestion_status_returns_running_true():
     """GET /ingestion/status returns running=true when an ingestion is active."""
-    from app.main import app
     from app.core.dependencies import get_current_user, get_db
+    from app.main import app
 
     admin = _make_user(role="admin")
     token = make_access_token(admin)
@@ -777,8 +771,8 @@ async def test_health_check_returns_200():
 @pytest.mark.asyncio
 async def test_refresh_token_no_cookie_returns_401():
     """POST /auth/refresh without a refresh_token cookie returns 401."""
-    from app.main import app
     from app.core.dependencies import get_db
+    from app.main import app
 
     db_mock = AsyncMock()
     result = MagicMock()
@@ -802,8 +796,8 @@ async def test_refresh_token_no_cookie_returns_401():
 @pytest.mark.asyncio
 async def test_refresh_token_invalid_cookie_returns_401():
     """POST /auth/refresh with a malformed refresh_token cookie returns 401."""
-    from app.main import app
     from app.core.dependencies import get_db
+    from app.main import app
 
     db_mock = AsyncMock()
     result = MagicMock()

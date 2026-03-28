@@ -10,14 +10,10 @@ Covers:
 """
 
 import uuid
-from datetime import date, datetime, timezone
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-from tests.conftest import make_scalar_result, make_scalars_result
-
 
 # ---------------------------------------------------------------------------
 # apply_allocation_rule — pure function, no DB
@@ -216,8 +212,8 @@ async def test_acknowledge_tenant_not_found():
 @pytest.mark.asyncio
 async def test_create_allocation_rule_assigns_next_priority():
     """create_allocation_rule sets priority = MAX(existing) + 1."""
-    from app.services.attribution import create_allocation_rule
     from app.schemas.attribution import AllocationRuleCreate
+    from app.services.attribution import create_allocation_rule
 
     session = AsyncMock()
     # Max priority query returns 3 → next = 4
@@ -245,8 +241,8 @@ async def test_create_allocation_rule_assigns_next_priority():
 @pytest.mark.asyncio
 async def test_create_allocation_rule_no_existing_starts_at_one():
     """create_allocation_rule starts at priority=1 when no rules exist."""
-    from app.services.attribution import create_allocation_rule
     from app.schemas.attribution import AllocationRuleCreate
+    from app.services.attribution import create_allocation_rule
 
     session = AsyncMock()
     max_priority_result = MagicMock()
@@ -273,8 +269,8 @@ async def test_create_allocation_rule_no_existing_starts_at_one():
 @pytest.mark.asyncio
 async def test_update_allocation_rule_updates_provided_fields():
     """update_allocation_rule updates only fields provided in rule_data."""
-    from app.services.attribution import update_allocation_rule
     from app.schemas.attribution import AllocationRuleUpdate
+    from app.services.attribution import update_allocation_rule
 
     session = AsyncMock()
     existing_rule = MagicMock()
@@ -301,8 +297,8 @@ async def test_update_allocation_rule_updates_provided_fields():
 @pytest.mark.asyncio
 async def test_update_allocation_rule_not_found():
     """update_allocation_rule returns None when rule doesn't exist."""
-    from app.services.attribution import update_allocation_rule
     from app.schemas.attribution import AllocationRuleUpdate
+    from app.services.attribution import update_allocation_rule
 
     session = AsyncMock()
     result = MagicMock()

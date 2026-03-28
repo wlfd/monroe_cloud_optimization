@@ -11,21 +11,14 @@ Covers:
 - retry_failed_deliveries: creates new delivery rows, caps at 3 attempts
 """
 
-import hashlib
-import hmac
-import json
 import uuid
-from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from tests.conftest import (
     _make_notification_channel,
-    make_scalars_result,
-    make_scalar_result,
 )
-
 
 # ---------------------------------------------------------------------------
 # _send_webhook
@@ -388,7 +381,7 @@ async def test_dispatch_to_all_active_channels_continues_on_error():
 
     call_count = 0
 
-    async def dispatch_side_effect(**kwargs):
+    async def dispatch_side_effect(session, **kwargs):
         nonlocal call_count
         call_count += 1
         if call_count == 1:

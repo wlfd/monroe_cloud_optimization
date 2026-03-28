@@ -20,7 +20,6 @@ import pytest
 
 from tests.conftest import make_scalar_result, make_scalars_result
 
-
 # ---------------------------------------------------------------------------
 # Shared resource fixture
 # ---------------------------------------------------------------------------

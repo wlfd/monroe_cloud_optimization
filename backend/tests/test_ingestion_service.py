@@ -12,15 +12,10 @@ Covers:
 - run_ingestion: concurrent guard (skips second call)
 """
 
-import uuid
-from datetime import date, datetime, timedelta, timezone
-from decimal import Decimal
-from unittest.mock import AsyncMock, MagicMock, patch, call
+from datetime import UTC, date, datetime, timedelta
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-from tests.conftest import make_scalar_result, make_scalars_result
-
 
 # ---------------------------------------------------------------------------
 # _parse_usage_date
@@ -142,7 +137,7 @@ async def test_compute_delta_window_no_prior_run():
 
     start, end = await compute_delta_window(session)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     # start should be ~4 hours before now
     assert abs((end - now).total_seconds()) < 5
     assert abs((end - start).total_seconds() - 4 * 3600) < 5
@@ -155,7 +150,7 @@ async def test_compute_delta_window_normal_run():
 
     session = AsyncMock()
     last_run = MagicMock()
-    last_window_end = datetime.now(timezone.utc) - timedelta(hours=2)
+    last_window_end = datetime.now(UTC) - timedelta(hours=2)
     last_run.window_end = last_window_end
     result = MagicMock()
     result.scalar_one_or_none.return_value = last_run
@@ -174,14 +169,14 @@ async def test_compute_delta_window_capped_at_7_days():
 
     session = AsyncMock()
     last_run = MagicMock()
-    last_run.window_end = datetime.now(timezone.utc) - timedelta(days=14)
+    last_run.window_end = datetime.now(UTC) - timedelta(days=14)
     result = MagicMock()
     result.scalar_one_or_none.return_value = last_run
     session.execute.return_value = result
 
     start, end = await compute_delta_window(session)
 
-    cap_start = datetime.now(timezone.utc) - timedelta(days=7)
+    cap_start = datetime.now(UTC) - timedelta(days=7)
     # start should be approximately 7 days ago (not 14 + 1 days)
     assert abs((start - cap_start).total_seconds()) < 10
 
@@ -200,7 +195,7 @@ async def test_compute_delta_window_none_window_end_treated_as_first_run():
 
     start, end = await compute_delta_window(session)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     assert abs((end - start).total_seconds() - 4 * 3600) < 5
 
 
@@ -279,7 +274,7 @@ async def test_log_ingestion_run_creates_row():
     from app.services.ingestion import log_ingestion_run
 
     session = AsyncMock()
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     run = await log_ingestion_run(
         session,
         status="success",
@@ -393,8 +388,8 @@ async def test_recover_stale_runs_no_stale_no_warning():
 
 def test_is_ingestion_running_default_false():
     """is_ingestion_running returns False before any run has started."""
-    from app.services.ingestion import is_ingestion_running
     import app.services.ingestion as svc
+    from app.services.ingestion import is_ingestion_running
 
     svc._ingestion_running = False
     assert is_ingestion_running() is False

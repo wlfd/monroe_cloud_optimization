@@ -12,14 +12,12 @@ Covers:
 """
 
 import uuid
-from datetime import date, datetime, timedelta, timezone
-from decimal import Decimal
-from unittest.mock import AsyncMock, MagicMock, patch, call
+from datetime import date
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from tests.conftest import _make_anomaly, make_scalar_result, make_scalars_result
-
 
 # ---------------------------------------------------------------------------
 # Helpers to build row-like objects returned from DB execute
@@ -122,7 +120,7 @@ async def test_run_anomaly_detection_critical_severity():
 
     captured_severity = []
 
-    async def capture_upsert(**kwargs):
+    async def capture_upsert(session, **kwargs):
         captured_severity.append(kwargs["severity"])
 
     with (
@@ -170,7 +168,7 @@ async def test_run_anomaly_detection_high_severity():
 
     captured_severity = []
 
-    async def capture_upsert(**kwargs):
+    async def capture_upsert(session, **kwargs):
         captured_severity.append(kwargs["severity"])
 
     with (
@@ -217,7 +215,7 @@ async def test_run_anomaly_detection_medium_severity():
 
     captured = []
 
-    async def capture_upsert(**kwargs):
+    async def capture_upsert(session, **kwargs):
         captured.append(kwargs)
 
     with (

@@ -7,17 +7,16 @@ PostgreSQL, Redis, or Azure API calls are made.
 
 import asyncio
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from collections.abc import AsyncGenerator, Generator
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-from typing import AsyncGenerator, Generator
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
-from app.core.security import get_password_hash, create_access_token
-
+from app.core.security import create_access_token, get_password_hash
 
 # ---------------------------------------------------------------------------
 # Event loop
@@ -194,8 +193,8 @@ def _make_billing_record(
     record.resource_name = resource_name
     record.pre_tax_cost = Decimal(str(pre_tax_cost))
     record.currency = "USD"
-    record.ingested_at = datetime.now(timezone.utc)
-    record.updated_at = datetime.now(timezone.utc)
+    record.ingested_at = datetime.now(UTC)
+    record.updated_at = datetime.now(UTC)
     return record
 
 
@@ -251,8 +250,8 @@ def _make_anomaly(
     anomaly.estimated_monthly_impact = Decimal(str(estimated_monthly_impact))
     anomaly.baseline_daily_avg = Decimal(str(baseline_daily_avg))
     anomaly.current_daily_cost = Decimal(str(current_daily_cost))
-    anomaly.created_at = datetime.now(timezone.utc)
-    anomaly.updated_at = datetime.now(timezone.utc)
+    anomaly.created_at = datetime.now(UTC)
+    anomaly.updated_at = datetime.now(UTC)
     return anomaly
 
 
@@ -286,8 +285,8 @@ def _make_budget(
     budget.end_date = None
     budget.is_active = is_active
     budget.created_by = uuid.uuid4()
-    budget.created_at = datetime.now(timezone.utc)
-    budget.updated_at = datetime.now(timezone.utc)
+    budget.created_at = datetime.now(UTC)
+    budget.updated_at = datetime.now(UTC)
     return budget
 
 
@@ -322,7 +321,7 @@ def _make_notification_channel(
         channel.config_json = {"address": "ops@example.com"}
     channel.is_active = True
     channel.owner_user_id = None
-    channel.created_at = datetime.now(timezone.utc)
+    channel.created_at = datetime.now(UTC)
     return channel
 
 
@@ -361,8 +360,8 @@ async def async_client(
     via dependency overrides. Individual tests can swap out current_user by
     re-assigning `app.dependency_overrides[get_current_user]`.
     """
+    from app.core.dependencies import get_current_user, get_db
     from app.main import app
-    from app.core.dependencies import get_db, get_current_user
 
     async def override_get_db():
         session = AsyncMock()
