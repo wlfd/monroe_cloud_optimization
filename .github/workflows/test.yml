@@ -42,6 +42,10 @@ jobs:
           pip install ruff
           ruff check app/
 
+      - name: Check ruff formatting
+        working-directory: backend
+        run: ruff format --check app/ tests/
+
       - name: Run migrations
         working-directory: backend
         env:
@@ -77,3 +81,15 @@ jobs:
       - name: Build
         working-directory: frontend
         run: npm run build
+
+      - name: Run ESLint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        working-directory: frontend
+        run: npm run format:check
+
+      - name: Run Vitest
+        working-directory: frontend
+        run: npx vitest run
