@@ -1,11 +1,10 @@
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
+import { defineConfig as defineTestConfig, mergeConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
-// https://vite.dev/config/
-export default defineConfig({
+const viteConfig = defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -22,15 +21,22 @@ export default defineConfig({
       },
     },
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-    css: true,
-    // Point Vitest at the test-specific tsconfig so jest-dom and vitest/globals
-    // types are available without polluting the app build's type surface.
-    typecheck: {
-      tsconfig: './tsconfig.test.json',
-    },
-  },
 })
+
+// https://vite.dev/config/
+export default mergeConfig(
+  viteConfig,
+  defineTestConfig({
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.ts',
+      css: true,
+      // Point Vitest at the test-specific tsconfig so jest-dom and vitest/globals
+      // types are available without polluting the app build's type surface.
+      typecheck: {
+        tsconfig: './tsconfig.test.json',
+      },
+    },
+  })
+)
