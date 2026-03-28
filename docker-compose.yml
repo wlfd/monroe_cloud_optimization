@@ -39,6 +39,20 @@ services:
         condition: service_healthy
     restart: on-failure
 
+  seed:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python -m app.scripts.seed_admin
+    environment:
+      DATABASE_URL: postgresql+asyncpg://cloudcost:localdev@db:5432/cloudcost
+      FIRST_ADMIN_EMAIL: admin@cloudcost.local
+      FIRST_ADMIN_PASSWORD: admin123
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
   api:
     build:
       context: ./backend
@@ -51,6 +65,9 @@ services:
       DEBUG: "true"
       JWT_SECRET_KEY: dev-secret-change-in-production
       CORS_ORIGINS: '["http://localhost:3000"]'
+      MOCK_AZURE: "true"
+      FIRST_ADMIN_EMAIL: admin@cloudcost.local
+      FIRST_ADMIN_PASSWORD: admin123
     env_file:
       - path: .env.local
         required: false
@@ -60,7 +77,7 @@ services:
       - ./backend/app:/code/app
       - ./backend/migrations:/code/migrations
     depends_on:
-      migrate:
+      seed:
         condition: service_completed_successfully
       redis:
         condition: service_healthy

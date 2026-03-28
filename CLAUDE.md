@@ -7,10 +7,11 @@ CloudCost is an Azure cloud cost optimization SaaS platform. It ingests Azure bi
 ## Quick Commands
 
 ```bash
-# Dev environment
-docker compose up --build          # Start all services (DB, Redis, migrations, API, frontend)
+# Dev environment — starts DB, Redis, runs migrations, seeds admin user, starts API + frontend
+docker compose up --build          # Start all services
 docker compose down                # Stop all services
 docker compose down -v             # Stop and delete database volume
+# Default login: admin@cloudcost.local / admin123 (auto-seeded on first run)
 
 # Backend (manual)
 cd backend && pip install -r requirements.txt -r requirements-dev.txt
@@ -78,6 +79,7 @@ docker compose exec api python -m app.scripts.seed_admin
 
 - Backend uses `async` everywhere -- don't use sync SQLAlchemy patterns
 - Frontend access tokens are in-memory only (not localStorage) -- cleared on page refresh, refresh token cookie handles re-auth
+- `docker compose up` auto-seeds an admin account (`admin@cloudcost.local` / `admin123`) and enables `MOCK_AZURE` — no external credentials needed
 - `MOCK_AZURE=true` returns synthetic data; set to `false` + provide `AZURE_*` credentials for real data
 - Alembic `env.py` imports all models from `app/models/__init__.py` -- new models must be added there or autogenerate won't detect them
 - The ingestion lock (`_ingestion_lock` in `services/ingestion.py`) is `asyncio.Lock()`, process-local -- doesn't work across multiple instances

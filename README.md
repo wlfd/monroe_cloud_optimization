@@ -120,26 +120,7 @@ git clone <repo-url> monroe_cloud_optimization
 cd monroe_cloud_optimization
 ```
 
-### Step 2: Configure environment
-
-```bash
-cp .env.example .env.local
-```
-
-Open `.env.local` and set at minimum:
-
-```bash
-# Generate a secure secret:  openssl rand -hex 64
-JWT_SECRET_KEY=<your-64-byte-hex-string>
-
-# Bootstrap admin account (used by the seed script below)
-FIRST_ADMIN_EMAIL=admin@yourdomain.com
-FIRST_ADMIN_PASSWORD=<strong-password>
-```
-
-For live Azure data, also fill in the `AZURE_*` variables. Otherwise leave `MOCK_AZURE=false` (the default) or set it to `true`.
-
-### Step 3: Build and start all services
+### Step 2: Build and start all services
 
 ```bash
 docker compose up --build
@@ -148,20 +129,13 @@ docker compose up --build
 Docker Compose will:
 1. Start PostgreSQL 15 and Redis 7
 2. Run Alembic migrations (`alembic upgrade head`) via the `migrate` service
-3. Start the FastAPI backend on port 8000
-4. Start the React frontend dev server on port 3000
+3. Seed a default admin account via the `seed` service
+4. Start the FastAPI backend on port 8000 (with `MOCK_AZURE=true` for synthetic data)
+5. Start the React frontend dev server on port 3000
 
-### Step 4: Seed the first admin user
+No `.env.local` file or external credentials are required for local development.
 
-In a separate terminal, after the `api` service is healthy:
-
-```bash
-FIRST_ADMIN_EMAIL=admin@yourdomain.com \
-FIRST_ADMIN_PASSWORD=YourStrongPassword \
-  docker compose exec api python -m app.scripts.seed_admin
-```
-
-### Step 5: Access the application
+### Step 3: Access the application
 
 | Service | URL |
 |---------|-----|
@@ -169,7 +143,14 @@ FIRST_ADMIN_PASSWORD=YourStrongPassword \
 | API — Swagger UI | http://localhost:8000/api/docs |
 | API — ReDoc | http://localhost:8000/api/redoc |
 
-Log in at the frontend with the credentials you used in Step 4.
+Log in with the default dev credentials:
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@cloudcost.local` |
+| Password | `admin123` |
+
+> **Optional:** To customize credentials or use real Azure data, copy `.env.example` to `.env.local` and fill in the values you need. Settings in `.env.local` override the Docker Compose defaults.
 
 ### Stopping the stack
 

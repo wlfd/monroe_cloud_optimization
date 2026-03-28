@@ -78,7 +78,7 @@ _Generated: 2026-03-27_
 - [ ] Add standalone CONTRIBUTING.md (currently embedded in README)
 - [ ] No Storybook component catalog
 - [ ] No API changelog / versioning strategy beyond `/api/v1`
-- [ ] No automated seed data loading (`make seed`)
+- [x] Auto-seed admin account on `docker compose up` (seed service)
 
 ---
 
