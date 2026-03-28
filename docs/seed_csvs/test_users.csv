@@ -1,0 +1,4 @@
+fixture_name,email,full_name,role,is_active,password,failed_login_attempts,locked_until,last_login
+test_user,viewer@example.com,Test Viewer,viewer,true,TestPassword1!,0,,
+admin_user,admin@example.com,Test Admin,admin,true,TestPassword1!,0,,
+devops_user,devops@example.com,Test Devops,devops,true,TestPassword1!,0,,

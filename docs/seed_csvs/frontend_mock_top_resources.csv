@@ -1,0 +1,3 @@
+resource_id,resource_name,service_name,resource_group,total_cost_usd
+res-1,vm-prod-web-01,Azure Compute,prod-rg,8200
+res-2,storage-prod-main,Azure Storage,prod-rg,4100

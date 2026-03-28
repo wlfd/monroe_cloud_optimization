@@ -1,0 +1,2 @@
+fixture_name,budget_fixture,threshold_percent,last_triggered_at,last_triggered_period
+test_threshold,test_budget,80,,

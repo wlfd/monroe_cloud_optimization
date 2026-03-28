@@ -1,0 +1,4 @@
+id,detected_date,service_name,resource_group,description,severity,status,expected,pct_deviation,estimated_monthly_impact_usd,baseline_daily_avg_usd,current_daily_cost_usd,created_at,updated_at
+anomaly-1,2026-03-10,Azure Compute,prod-rg,Unusual spike in VM usage detected.,critical,new,false,45,1200,80,116,2026-03-10T08:00:00Z,2026-03-10T08:00:00Z
+anomaly-2,2026-03-11,Azure Storage,dev-rg,Storage egress cost increased.,high,investigating,false,28,600,30,38.4,2026-03-11T09:00:00Z,2026-03-11T09:00:00Z
+anomaly-3,2026-03-12,Azure SQL,prod-rg,Database query costs elevated.,medium,new,false,22,150,20,24.4,2026-03-12T10:00:00Z,2026-03-12T10:00:00Z

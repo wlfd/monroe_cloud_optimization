@@ -1,0 +1,2 @@
+id,email,full_name,role,is_active
+user-1,admin@example.com,Test Admin,admin,true

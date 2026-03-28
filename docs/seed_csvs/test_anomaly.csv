@@ -1,0 +1,2 @@
+fixture_name,service_name,resource_group,severity,status,expected,pct_deviation,estimated_monthly_impact_usd,baseline_daily_avg_usd,current_daily_cost_usd,description
+test_anomaly,Virtual Machines,rg-prod,critical,new,false,150.0,1500.00,100.00,250.00,Spend increased 150% in rg-prod

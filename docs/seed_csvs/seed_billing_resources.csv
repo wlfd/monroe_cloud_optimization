@@ -1,0 +1,12 @@
+resource_group,service_name,meter_category,region,resource_name,resource_id,base_daily_cost_usd,pattern,approx_monthly_usd,subscription_id
+web-rg,Virtual Machines,Compute,eastus,prod-vm-web-frontend,/subscriptions/mock-subscription-id/resourceGroups/web-rg/providers/Microsoft.Compute/virtualMachines/prod-vm-web-frontend,18.50,flat,555,mock-subscription-id
+api-rg,Virtual Machines,Compute,eastus,prod-vm-api-server,/subscriptions/mock-subscription-id/resourceGroups/api-rg/providers/Microsoft.Compute/virtualMachines/prod-vm-api-server,14.20,flat,426,mock-subscription-id
+data-rg,Azure SQL Database,Databases,eastus,prod-sql-app-db,/subscriptions/mock-subscription-id/resourceGroups/data-rg/providers/Microsoft.Sql/servers/prod-sql/databases/prod-sql-app-db,22.00,flat,660,mock-subscription-id
+data-rg,Azure Kubernetes Service,Compute,eastus,prod-aks-data-cluster,/subscriptions/mock-subscription-id/resourceGroups/data-rg/providers/Microsoft.ContainerService/managedClusters/prod-aks-data-cluster,31.00,flat,930,mock-subscription-id
+data-rg,Azure Storage,Storage,eastus,prod-backup-archive,/subscriptions/mock-subscription-id/resourceGroups/data-rg/providers/Microsoft.Storage/storageAccounts/prodbackuparchive,4.80,storage,144,mock-subscription-id
+batch-rg,Virtual Machines,Compute,eastus,prod-vm-batch-processor,/subscriptions/mock-subscription-id/resourceGroups/batch-rg/providers/Microsoft.Compute/virtualMachines/prod-vm-batch-processor,16.00,workday,380,mock-subscription-id
+dev-rg,Virtual Machines,Compute,westus2,dev-vm-build-agent,/subscriptions/mock-subscription-id/resourceGroups/dev-rg/providers/Microsoft.Compute/virtualMachines/dev-vm-build-agent,6.40,dev_idle,192,mock-subscription-id
+dev-rg,Azure Storage,Storage,westus2,dev-old-artifacts,/subscriptions/mock-subscription-id/resourceGroups/dev-rg/providers/Microsoft.Storage/storageAccounts/devoldartifacts,2.50,storage,75,mock-subscription-id
+dev-rg,Azure Functions,Compute,westus2,dev-func-etl-processor,/subscriptions/mock-subscription-id/resourceGroups/dev-rg/providers/Microsoft.Web/sites/dev-func-etl-processor,0.90,flat,27,mock-subscription-id
+shared-rg,Azure CDN,Networking,centralus,global-cdn-profile,/subscriptions/mock-subscription-id/resourceGroups/shared-rg/providers/Microsoft.Cdn/profiles/global-cdn-profile,3.50,flat,105,mock-subscription-id
+shared-rg,Azure Monitor,Management,centralus,prod-app-insights,/subscriptions/mock-subscription-id/resourceGroups/shared-rg/providers/Microsoft.Insights/components/prod-app-insights,2.10,flat,63,mock-subscription-id

@@ -1,0 +1,7 @@
+tenant_id,display_name,subscription_id,approx_monthly_usd,is_new,first_seen_offset_days
+tenant-acme,Acme Corp,sub-acme-0001,3150,false,89
+tenant-stellar,Stellar Labs,sub-stellar-0002,1720,false,89
+tenant-nova,Nova Digital,sub-nova-0003,1430,false,89
+tenant-apex,Apex Retail,sub-apex-0004,1910,false,89
+tenant-cerulean,Cerulean Health,sub-cerulean-0005,2100,false,89
+tenant-ironworks,Ironworks Inc,sub-ironworks-0006,930,false,89

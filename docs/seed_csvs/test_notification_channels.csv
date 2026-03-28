@@ -1,0 +1,3 @@
+fixture_name,name,channel_type,is_active,config_url,config_secret,config_address,owner_user_id
+test_channel_webhook,Test webhook,webhook,true,https://hooks.example.com/test,test-secret,,
+test_channel_email,Test email,email,true,,,ops@example.com,

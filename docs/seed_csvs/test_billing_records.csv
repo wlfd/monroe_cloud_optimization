@@ -1,0 +1,7 @@
+usage_date_offset_days,service_name,meter_category,resource_group,resource_name,subscription_id,region,pre_tax_cost_usd,currency,tag
+0,Virtual Machines,Compute,rg-prod,vm-01,sub-001,eastus,200.00,USD,tenant-a
+0,Storage,Storage,rg-data,storage-01,sub-001,eastus,50.00,USD,tenant-b
+1,Virtual Machines,Compute,rg-prod,vm-01,sub-001,eastus,210.00,USD,tenant-a
+1,Storage,Storage,rg-data,storage-01,sub-001,eastus,55.00,USD,tenant-b
+2,Virtual Machines,Compute,rg-prod,vm-01,sub-001,eastus,220.00,USD,tenant-a
+2,Storage,Storage,rg-data,storage-01,sub-001,eastus,60.00,USD,tenant-b

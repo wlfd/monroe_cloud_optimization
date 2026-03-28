@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=2400">
+  <title>CloudCost ERD</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      padding: 28px 32px 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 11.5px;
+      color: #64748b;
+      margin-bottom: 22px;
+    }
+
+    /* ── WRAPPER ───────────────────────────────────────────────── */
+    #erd-wrapper {
+      position: relative;
+      width: 2198px;
+    }
+
+    #erd-grid {
+      display: grid;
+      grid-template-columns: 1090px 1090px;
+      grid-template-rows: auto auto auto;
+      gap: 18px;
+    }
+
+    /* ── DOMAIN BOX ────────────────────────────────────────────── */
+    .domain {
+      border-radius: 14px;
+      padding: 14px 14px 16px;
+      border: 2px solid;
+      position: relative;
+    }
+    .domain-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .domain-title .icon {
+      font-size: 14px;
+    }
+    .entities-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    /* Domain colour palette */
+    .auth       { background:#eff6ff; border-color:#3b82f6; }
+    .auth       .domain-title { color:#1d4ed8; }
+    .auth       .entity-header { background:#3b82f6; }
+
+    .billing    { background:#fffbeb; border-color:#d97706; }
+    .billing    .domain-title { color:#92400e; }
+    .billing    .entity-header { background:#d97706; }
+
+    .monitoring { background:#f0fdf4; border-color:#16a34a; }
+    .monitoring .domain-title { color:#14532d; }
+    .monitoring .entity-header { background:#16a34a; }
+
+    .attribution{ background:#f5f3ff; border-color:#7c3aed; }
+    .attribution .domain-title { color:#4c1d95; }
+    .attribution .entity-header { background:#7c3aed; }
+
+    .budget     { background:#fff1f2; border-color:#e11d48; }
+    .budget     .domain-title { color:#9f1239; }
+    .budget     .entity-header { background:#e11d48; }
+
+    .notif      { background:#f0f9ff; border-color:#0284c7; }
+    .notif      .domain-title { color:#0c4a6e; }
+    .notif      .entity-header { background:#0284c7; }
+
+    /* ── ENTITY TABLE ──────────────────────────────────────────── */
+    .entity {
+      background: #fff;
+      border-radius: 9px;
+      border: 1.5px solid #e2e8f0;
+      overflow: hidden;
+      min-width: 195px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      flex: 1 1 195px;
+    }
+    .entity-header {
+      padding: 7px 11px;
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+    .entity-fields { padding: 2px 0 3px; }
+
+    .field {
+      padding: 2.5px 11px;
+      font-size: 10.5px;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-bottom: 1px solid #f8fafc;
+      white-space: nowrap;
+    }
+    .field:last-child { border-bottom: none; }
+    .divider { border-top: 1.5px solid #e5e7eb; margin: 2px 0; }
+
+    /* Field-type text colour */
+    .pk-field  { color: #92400e; font-weight: 700; }
+    .fk-field  { color: #1e40af; font-weight: 600; }
+    .uk-field  { color: #065f46; font-weight: 600; }
+
+    /* Badges */
+    .badge {
+      font-size: 8px; font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .pk { background:#fef3c7; color:#92400e; }
+    .fk { background:#dbeafe; color:#1e40af; }
+    .uk { background:#d1fae5; color:#065f46; }
+
+    /* ── SVG CONNECTIONS ───────────────────────────────────────── */
+    #connections {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    /* ── BOTTOM ROW: LEGEND + DESIGN NOTES ────────────────────── */
+    #bottom-row {
+      display: flex;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: flex-start;
+    }
+
+    #legend {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      min-width: 260px;
+    }
+    #legend h3 {
+      font-size: 11px; font-weight: 700; color: #475569;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 10.5px; color: #374151; margin-bottom: 5px;
+    }
+    .legend-swatch {
+      width: 28px; height: 2px; border-radius: 1px; flex-shrink: 0;
+    }
+    .legend-swatch.dashed { border-top: 2px dashed #94a3b8; background: none; height: 0; }
+    .legend-badge-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 10.5px; color: #374151; margin-bottom: 4px;
+    }
+
+    #design-notes {
+      background: #fffbeb;
+      border: 1.5px solid #fbbf24;
+      border-radius: 10px;
+      padding: 12px 16px;
+      flex: 1;
+    }
+    #design-notes h3 {
+      font-size: 11px; font-weight: 700; color: #92400e;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    #design-notes ul {
+      list-style: disc; padding-left: 16px;
+      font-size: 10.5px; color: #374151; line-height: 1.7;
+    }
+
+    #domain-legend {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;
+    }
+    .domain-chip {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600; padding: 3px 8px;
+      border-radius: 20px; border: 1.5px solid;
+    }
+    .chip-dot { width: 8px; height: 8px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+
+<h1>Entity-Relationship Diagram (ERD) — CloudCost</h1>
+<p class="subtitle">Third Normal Form · 13 tables · 6 domains · Generated 2026-03-14</p>
+
+<div id="erd-wrapper">
+  <div id="erd-grid">
+
+    <!-- ══ ROW 1 ══════════════════════════════════════════════════════ -->
+
+    <!-- AUTH DOMAIN -->
+    <div class="domain auth" id="domain-auth">
+      <div class="domain-title"><span class="icon">🔐</span>Auth Domain</div>
+      <div class="entities-row">
+
+        <div class="entity" id="ent-users">
+          <div class="entity-header">users</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field uk-field"><span class="badge uk">UK</span>email VARCHAR(255)</div>
+            <div class="field">password_hash VARCHAR(255)</div>
+            <div class="field">full_name VARCHAR(255)</div>
+            <div class="field">role VARCHAR — admin|devops|finance|viewer</div>
+            <div class="field">is_active BOOLEAN DEFAULT true</div>
+            <div class="field">failed_login_attempts INT DEFAULT 0</div>
+            <div class="field">locked_until TIMESTAMPTZ</div>
+            <div class="field">last_login TIMESTAMPTZ</div>
+            <div class="field">created_at / updated_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-user_sessions">
+          <div class="entity-header">user_sessions</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field fk-field"><span class="badge fk">FK</span>user_id → users (CASCADE)</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>token_hash VARCHAR(255)</div>
+            <div class="field">ip_address INET</div>
+            <div class="field">user_agent TEXT</div>
+            <div class="field">expires_at TIMESTAMPTZ</div>
+            <div class="field">revoked BOOLEAN DEFAULT false</div>
+            <div class="field">revoked_at TIMESTAMPTZ</div>
+            <div class="field">created_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BILLING & INGESTION DOMAIN -->
+    <div class="domain billing" id="domain-billing">
+      <div class="domain-title"><span class="icon">📊</span>Billing &amp; Ingestion Domain</div>
+      <div class="entities-row">
+
+        <div class="entity" id="ent-billing_records">
+          <div class="entity-header">billing_records</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field uk-field"><span class="badge uk">UK</span>usage_date DATE</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>subscription_id VARCHAR(255)</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>resource_group VARCHAR(255)</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>service_name VARCHAR(255)</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>meter_category VARCHAR(255)</div>
+            <div class="field">pre_tax_cost NUMERIC(18,6)</div>
+            <div class="field">currency VARCHAR(10) DEFAULT USD</div>
+            <div class="field">tag VARCHAR(500) — tenant_id value</div>
+            <div class="field">region VARCHAR(100)</div>
+            <div class="field">resource_id / resource_name VARCHAR(500)</div>
+            <div class="field">ingested_at / updated_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-ingestion_runs">
+          <div class="entity-header">ingestion_runs</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field">status — running|success|failed|interrupted</div>
+            <div class="field">triggered_by — scheduler|manual|backfill</div>
+            <div class="field">records_ingested INT DEFAULT 0</div>
+            <div class="field">window_start TIMESTAMPTZ</div>
+            <div class="field">window_end TIMESTAMPTZ</div>
+            <div class="field">retry_count INT DEFAULT 0</div>
+            <div class="field">error_detail TEXT</div>
+            <div class="field">started_at / completed_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-ingestion_alerts">
+          <div class="entity-header">ingestion_alerts</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field">error_message TEXT</div>
+            <div class="field">retry_count INT</div>
+            <div class="field">is_active BOOLEAN DEFAULT true</div>
+            <div class="field">failed_at TIMESTAMPTZ</div>
+            <div class="field">cleared_at TIMESTAMPTZ</div>
+            <div class="field">cleared_by — auto_success|admin</div>
+            <div class="field">created_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- COST MONITORING DOMAIN -->
+    <div class="domain monitoring" id="domain-monitoring">
+      <div class="domain-title"><span class="icon">🔍</span>Cost Monitoring Domain</div>
+      <div class="entities-row">
+
+        <div class="entity" id="ent-anomalies">
+          <div class="entity-header">anomalies</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field uk-field"><span class="badge uk">UK</span>detected_date DATE</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>service_name VARCHAR(255)</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>resource_group VARCHAR(255)</div>
+            <div class="field">severity — critical|high|medium</div>
+            <div class="field">status — new|investigating|resolved|dismissed</div>
+            <div class="field">expected BOOLEAN DEFAULT false</div>
+            <div class="field">baseline_daily_avg NUMERIC(18,6)</div>
+            <div class="field">current_daily_cost NUMERIC(18,6)</div>
+            <div class="field">pct_deviation NUMERIC(10,2)</div>
+            <div class="field">estimated_monthly_impact NUMERIC(18,2)</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-recommendations">
+          <div class="entity-header">recommendations</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field">generated_date DATE</div>
+            <div class="field">resource_name VARCHAR(500)</div>
+            <div class="field">resource_group / subscription_id</div>
+            <div class="field">service_name / meter_category</div>
+            <div class="field">category — right-sizing|idle|reserved|storage</div>
+            <div class="field">explanation VARCHAR(2000)</div>
+            <div class="field">estimated_monthly_savings NUMERIC(18,2)</div>
+            <div class="field">confidence_score INT</div>
+            <div class="field">current_monthly_cost NUMERIC(18,2)</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ ROW 2 ══════════════════════════════════════════════════════ -->
+
+    <!-- MULTI-TENANT ATTRIBUTION DOMAIN -->
+    <div class="domain attribution" id="domain-attribution">
+      <div class="domain-title"><span class="icon">🏢</span>Multi-Tenant Attribution Domain</div>
+      <div class="entities-row">
+
+        <div class="entity" id="ent-tenant_profiles">
+          <div class="entity-header">tenant_profiles</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field uk-field"><span class="badge uk">UK</span>tenant_id VARCHAR(255)</div>
+            <div class="field">display_name VARCHAR(255)</div>
+            <div class="field">is_new BOOLEAN DEFAULT true</div>
+            <div class="field">first_seen DATE</div>
+            <div class="field">acknowledged_at TIMESTAMPTZ</div>
+            <div class="field">created_at / updated_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-allocation_rules">
+          <div class="entity-header">allocation_rules</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field uk-field"><span class="badge uk">UK</span>priority INT</div>
+            <div class="field">target_type — resource_group|service_category</div>
+            <div class="field">target_value VARCHAR(255)</div>
+            <div class="field">method — by_count|by_usage|manual_pct</div>
+            <div class="field">manual_pct JSON — {tenant_id: pct%}</div>
+            <div class="field">created_at / updated_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-tenant_attributions">
+          <div class="entity-header">tenant_attributions</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field uk-field"><span class="badge uk">UK</span>tenant_id VARCHAR(255)</div>
+            <div class="field uk-field"><span class="badge uk">UK</span>year INT, month INT</div>
+            <div class="field">total_cost NUMERIC(18,6) DEFAULT 0</div>
+            <div class="field">pct_of_total NUMERIC(10,4) DEFAULT 0</div>
+            <div class="field">mom_delta_usd NUMERIC(18,6)</div>
+            <div class="field">allocated_cost / tagged_cost NUMERIC</div>
+            <div class="field">top_service_category VARCHAR ⊕ denorm</div>
+            <div class="field">computed_at / updated_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BUDGET & ALERTS DOMAIN -->
+    <div class="domain budget" id="domain-budget">
+      <div class="domain-title"><span class="icon">💰</span>Budget &amp; Alerts Domain</div>
+      <div class="entities-row">
+
+        <div class="entity" id="ent-budgets">
+          <div class="entity-header">budgets</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field fk-field"><span class="badge fk">FK</span>created_by → users (SET NULL)</div>
+            <div class="field">name VARCHAR(255)</div>
+            <div class="field">scope_type — subscription|resource_group|service|tag</div>
+            <div class="field">scope_value VARCHAR(500)</div>
+            <div class="field">amount_usd NUMERIC(18,2)</div>
+            <div class="field">period — monthly|annual</div>
+            <div class="field">start_date DATE / end_date DATE</div>
+            <div class="field">is_active BOOLEAN DEFAULT true</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-budget_thresholds">
+          <div class="entity-header">budget_thresholds</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field fk-field"><span class="badge fk">FK</span>budget_id → budgets (CASCADE)</div>
+            <div class="field fk-field"><span class="badge fk">FK</span>notification_channel_id (SET NULL)</div>
+            <div class="field">threshold_percent INT (1–200)</div>
+            <div class="field">last_triggered_at TIMESTAMPTZ</div>
+            <div class="field">last_triggered_period VARCHAR(7) YYYY-MM</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-alert_events">
+          <div class="entity-header">alert_events</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field fk-field"><span class="badge fk">FK</span>budget_id → budgets (CASCADE)</div>
+            <div class="field fk-field"><span class="badge fk">FK</span>threshold_id → budget_thresholds (SET NULL)</div>
+            <div class="field">billing_period VARCHAR(7) YYYY-MM</div>
+            <div class="field">triggered_at TIMESTAMPTZ</div>
+            <div class="field">spend_at_trigger NUMERIC ★ snapshot</div>
+            <div class="field">budget_amount NUMERIC ★ snapshot</div>
+            <div class="field">threshold_percent INT ★ snapshot</div>
+            <div class="field">delivery_status — pending|delivered|failed|no_channel</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS DOMAIN -->
+    <div class="domain notif" id="domain-notif">
+      <div class="domain-title"><span class="icon">🔔</span>Notifications Domain</div>
+      <div class="entities-row">
+
+        <div class="entity" id="ent-notification_channels">
+          <div class="entity-header">notification_channels</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field fk-field"><span class="badge fk">FK</span>owner_user_id → users (SET NULL)</div>
+            <div class="field">name VARCHAR(255)</div>
+            <div class="field">channel_type — email|webhook</div>
+            <div class="field">config_json JSONB — {address} or {url, secret***}</div>
+            <div class="field">is_active BOOLEAN DEFAULT true</div>
+            <div class="field">created_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+        <div class="entity" id="ent-notification_deliveries">
+          <div class="entity-header">notification_deliveries</div>
+          <div class="entity-fields">
+            <div class="field pk-field"><span class="badge pk">PK</span>id UUID</div>
+            <div class="divider"></div>
+            <div class="field fk-field"><span class="badge fk">FK</span>channel_id → notification_channels (CASCADE)</div>
+            <div class="field">event_type — budget_alert|anomaly_detected|ingestion_failed</div>
+            <div class="field">event_id UUID — polymorphic, no FK</div>
+            <div class="field">payload_json JSONB — stored for retry</div>
+            <div class="field">attempt_number INT DEFAULT 1</div>
+            <div class="field">status — delivered|failed|pending</div>
+            <div class="field">response_code INT</div>
+            <div class="field">attempted_at TIMESTAMPTZ</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end erd-grid -->
+
+  <!-- SVG overlay for relationships -->
+  <svg id="connections" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Arrow markers per domain color -->
+      <marker id="arrow-blue"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+      </marker>
+      <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#d97706"/>
+      </marker>
+      <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#16a34a"/>
+      </marker>
+      <marker id="arrow-violet"markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#7c3aed"/>
+      </marker>
+      <marker id="arrow-red"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#e11d48"/>
+      </marker>
+      <marker id="arrow-sky"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#0284c7"/>
+      </marker>
+      <marker id="arrow-gray"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+      </marker>
+    </defs>
+  </svg>
+
+</div><!-- end erd-wrapper -->
+
+<!-- ── BOTTOM ROW ──────────────────────────────────────────────────── -->
+<div id="bottom-row">
+
+  <div id="legend">
+    <h3>Legend</h3>
+    <div class="legend-item">
+      <svg width="30" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#475569" stroke-width="2" marker-end="url(#arrow-gray-leg)"/>
+        <defs><marker id="arrow-gray-leg" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#475569"/></marker></defs>
+      </svg>
+      <span>Foreign Key (CASCADE / SET NULL)</span>
+    </div>
+    <div class="legend-item">
+      <svg width="30" height="10"><line x1="0" y1="5" x2="28" y2="5" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-gray-leg2)"/>
+        <defs><marker id="arrow-gray-leg2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#94a3b8"/></marker></defs>
+      </svg>
+      <span>Soft Reference (no FK constraint)</span>
+    </div>
+    <div style="margin-top:10px; margin-bottom:6px; font-size:10.5px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Domains</div>
+    <div id="domain-legend">
+      <div class="domain-chip" style="border-color:#3b82f6;color:#1d4ed8;background:#eff6ff"><div class="chip-dot" style="background:#3b82f6"></div>Auth</div>
+      <div class="domain-chip" style="border-color:#d97706;color:#92400e;background:#fffbeb"><div class="chip-dot" style="background:#d97706"></div>Billing</div>
+      <div class="domain-chip" style="border-color:#16a34a;color:#14532d;background:#f0fdf4"><div class="chip-dot" style="background:#16a34a"></div>Monitoring</div>
+      <div class="domain-chip" style="border-color:#7c3aed;color:#4c1d95;background:#f5f3ff"><div class="chip-dot" style="background:#7c3aed"></div>Attribution</div>
+      <div class="domain-chip" style="border-color:#e11d48;color:#9f1239;background:#fff1f2"><div class="chip-dot" style="background:#e11d48"></div>Budget</div>
+      <div class="domain-chip" style="border-color:#0284c7;color:#0c4a6e;background:#f0f9ff"><div class="chip-dot" style="background:#0284c7"></div>Notifications</div>
+    </div>
+    <div style="margin-top:10px; font-size:10.5px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Field Types</div>
+    <div class="legend-badge-row"><span class="badge pk">PK</span> Primary Key (UUID)</div>
+    <div class="legend-badge-row"><span class="badge fk">FK</span> Foreign Key</div>
+    <div class="legend-badge-row"><span class="badge uk">UK</span> Unique Constraint</div>
+    <div style="margin-top:6px;font-size:10px;color:#64748b;">★ Point-in-time snapshot &nbsp;·&nbsp; ⊕ Denormalised for performance</div>
+  </div>
+
+  <div id="design-notes">
+    <h3>Design Highlights</h3>
+    <ul>
+      <li><strong>Idempotent ingestion:</strong> billing_records uses ON CONFLICT DO UPDATE (upsert) keyed on (usage_date, subscription_id, resource_group, service_name, meter_category) — safe to re-run without duplicates.</li>
+      <li><strong>Soft-delete by status:</strong> anomalies and ingestion_alerts use status/is_active fields rather than physical deletes, preserving audit history.</li>
+      <li><strong>Polymorphic event delivery:</strong> notification_deliveries.event_id references alert_events, anomalies, or ingestion_alerts without a FK constraint — event_type discriminates the target table.</li>
+      <li><strong>Point-in-time audit snapshots:</strong> alert_events stores budget_amount and threshold_percent at fire-time — budget edits after the fact cannot alter the historical record.</li>
+      <li><strong>No FK on tenant attribution:</strong> billing_records.tag → tenant_attributions.tenant_id is a soft string-key join. Tenants are auto-discovered from Azure tags, so referential integrity is enforced at the service layer.</li>
+      <li><strong>3NF trade-offs (intentional):</strong> allocation_rules.manual_pct (JSON avoids child table), notification_channels.config_json (polymorphic channel config), tenant_attributions.top_service_category (denorm for O(1) dashboard reads).</li>
+      <li><strong>UUID primary keys throughout:</strong> All 13 tables use UUID PKs — safe for distributed generation and merge-safe across environments.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  // ── Connection definitions ────────────────────────────────────────────
+  // Each entry: { from, fromAnchor, to, toAnchor, color, marker, dashed, label }
+  // anchor: 'top'|'bottom'|'left'|'right'|'top-left'|'top-right'|'bottom-left'|'bottom-right'
+  const CONNECTIONS = [
+    // Auth domain — internal
+    { from:'ent-users',          fromA:'right',  to:'ent-user_sessions',          toA:'left',   color:'#3b82f6', marker:'blue',   dashed:false, label:'1:N' },
+    // Auth → Budget (created_by)
+    { from:'ent-users',          fromA:'bottom', to:'ent-budgets',                 toA:'top',    color:'#94a3b8', marker:'gray',   dashed:false, label:'created_by' },
+    // Auth → Notifications (owner)
+    { from:'ent-users',          fromA:'bottom', to:'ent-notification_channels',   toA:'top',    color:'#94a3b8', marker:'gray',   dashed:false, label:'owns' },
+    // Billing → Monitoring (soft ref — source data)
+    { from:'ent-billing_records', fromA:'right', to:'ent-anomalies',              toA:'left',   color:'#94a3b8', marker:'gray',   dashed:true,  label:'source data' },
+    { from:'ent-billing_records', fromA:'right', to:'ent-recommendations',        toA:'left',   color:'#94a3b8', marker:'gray',   dashed:true,  label:'source data' },
+    // Billing → Attribution (soft ref via tag)
+    { from:'ent-billing_records', fromA:'bottom',to:'ent-tenant_attributions',    toA:'top',    color:'#94a3b8', marker:'gray',   dashed:true,  label:'aggregated by tag' },
+    // Budget domain — internal
+    { from:'ent-budgets',         fromA:'right', to:'ent-budget_thresholds',      toA:'left',   color:'#e11d48', marker:'red',    dashed:false, label:'1:N' },
+    { from:'ent-budgets',         fromA:'right', to:'ent-alert_events',           toA:'left',   color:'#e11d48', marker:'red',    dashed:false, label:'1:N' },
+    { from:'ent-budget_thresholds',fromA:'bottom',to:'ent-alert_events',          toA:'top',    color:'#e11d48', marker:'red',    dashed:false, label:'1:N' },
+    // Budget → Notifications (threshold → channel)
+    { from:'ent-budget_thresholds',fromA:'right', to:'ent-notification_channels', toA:'left',   color:'#0284c7', marker:'sky',    dashed:false, label:'notifies via' },
+    // Notifications domain — internal
+    { from:'ent-notification_channels',fromA:'right',to:'ent-notification_deliveries',toA:'left',color:'#0284c7',marker:'sky',  dashed:false, label:'1:N' },
+  ];
+
+  function getAnchor(el, anchor, wrapper) {
+    const r = el.getBoundingClientRect();
+    const w = wrapper.getBoundingClientRect();
+    const x = r.left - w.left, y = r.top - w.top;
+    const cx = x + r.width / 2, cy = y + r.height / 2;
+    switch (anchor) {
+      case 'top':          return [cx,         y];
+      case 'bottom':       return [cx,         y + r.height];
+      case 'left':         return [x,          cy];
+      case 'right':        return [x + r.width,cy];
+      case 'top-left':     return [x,          y + 20];
+      case 'top-right':    return [x + r.width,y + 20];
+      case 'bottom-left':  return [x,          y + r.height - 20];
+      case 'bottom-right': return [x + r.width,y + r.height - 20];
+    }
+  }
+
+  function cubicPath(x1, y1, x2, y2, fromA, toA) {
+    const dx = Math.abs(x2 - x1), dy = Math.abs(y2 - y1);
+    const tension = Math.min(Math.max(dx, dy) * 0.45, 180);
+    let cx1 = x1, cy1 = y1, cx2 = x2, cy2 = y2;
+    if (fromA === 'right')  cx1 = x1 + tension;
+    if (fromA === 'left')   cx1 = x1 - tension;
+    if (fromA === 'bottom') cy1 = y1 + tension;
+    if (fromA === 'top')    cy1 = y1 - tension;
+    if (toA   === 'left')   cx2 = x2 - tension;
+    if (toA   === 'right')  cx2 = x2 + tension;
+    if (toA   === 'top')    cy2 = y2 - tension;
+    if (toA   === 'bottom') cy2 = y2 + tension;
+    return `M ${x1} ${y1} C ${cx1} ${cy1} ${cx2} ${cy2} ${x2} ${y2}`;
+  }
+
+  function drawConnections() {
+    const svg     = document.getElementById('connections');
+    const wrapper = document.getElementById('erd-wrapper');
+    const wRect   = wrapper.getBoundingClientRect();
+
+    svg.setAttribute('width',  wRect.width);
+    svg.setAttribute('height', wRect.height);
+
+    // Clear old paths (re-entrant)
+    while (svg.children.length > 1) svg.removeChild(svg.lastChild);
+
+    CONNECTIONS.forEach(conn => {
+      const fromEl = document.getElementById(conn.from);
+      const toEl   = document.getElementById(conn.to);
+      if (!fromEl || !toEl) return;
+
+      const [x1, y1] = getAnchor(fromEl, conn.fromA, wrapper);
+      const [x2, y2] = getAnchor(toEl,   conn.toA,   wrapper);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', cubicPath(x1, y1, x2, y2, conn.fromA, conn.toA));
+      path.setAttribute('stroke', conn.color);
+      path.setAttribute('stroke-width', '1.8');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('opacity', '0.8');
+      if (conn.dashed) path.setAttribute('stroke-dasharray', '6,4');
+      path.setAttribute('marker-end', `url(#arrow-${conn.marker})`);
+      svg.appendChild(path);
+
+      // Label at midpoint
+      if (conn.label) {
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2 - 5;
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', mx); text.setAttribute('y', my);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '9');
+        text.setAttribute('font-family', '-apple-system, BlinkMacSystemFont, sans-serif');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('fill', conn.color);
+        // White background rect
+        const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        const tw = conn.label.length * 5.2 + 8;
+        bg.setAttribute('x', mx - tw / 2); bg.setAttribute('y', my - 10);
+        bg.setAttribute('width', tw); bg.setAttribute('height', 12);
+        bg.setAttribute('rx', '3'); bg.setAttribute('fill', 'rgba(255,255,255,0.85)');
+        svg.appendChild(bg);
+        text.textContent = conn.label;
+        svg.appendChild(text);
+      }
+    });
+  }
+
+  window.addEventListener('load', () => {
+    // Small delay to ensure layout is settled
+    setTimeout(drawConnections, 400);
+  });
+</script>
+
+</body>
+</html>
