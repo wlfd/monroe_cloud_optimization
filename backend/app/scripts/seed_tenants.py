@@ -8,6 +8,7 @@ Run with:
 Appends tenant-tagged billing records alongside existing data. Safe to re-run (upserts throughout).
 Does NOT clear existing billing_records.
 """
+
 import asyncio
 import random
 from datetime import UTC, date, datetime, timedelta
@@ -24,6 +25,7 @@ from app.services.attribution import run_attribution
 # ---------------------------------------------------------------------------
 # Cost pattern helper (mirrors seed_billing.py)
 # ---------------------------------------------------------------------------
+
 
 def _daily_cost(base: float, pattern: str, day: date) -> float:
     is_weekend = day.weekday() >= 5
@@ -176,6 +178,7 @@ TENANTS = [
 # Prior-month attribution seeder
 # ---------------------------------------------------------------------------
 
+
 async def _seed_prior_month_attribution(year: int, month: int) -> None:
     """Aggregate tagged billing records for year/month and upsert TenantAttribution rows.
 
@@ -195,7 +198,9 @@ async def _seed_prior_month_attribution(year: int, month: int) -> None:
         tagged_costs: dict[str, Decimal] = {row.tag: Decimal(str(row.total)) for row in tagged_rows}
 
         if not tagged_costs:
-            print(f"  No tagged billing data for {year}-{month:02d} — skipping prior month attribution.")
+            print(
+                f"  No tagged billing data for {year}-{month:02d} — skipping prior month attribution."
+            )
             return
 
         grand_total = sum(float(v) for v in tagged_costs.values())
@@ -255,6 +260,7 @@ async def _seed_prior_month_attribution(year: int, month: int) -> None:
 # Main seed function
 # ---------------------------------------------------------------------------
 
+
 async def seed() -> None:
     today = date.today()
     start = today - timedelta(days=89)  # 90 days inclusive, matching seed_billing.py
@@ -264,24 +270,28 @@ async def seed() -> None:
     current = start
     while current <= today:
         for tenant in TENANTS:
-            for (rg, svc, meter, region, rid, rname, base, pattern) in tenant["resources"]:
-                records_to_insert.append({
-                    "usage_date": current,
-                    "subscription_id": tenant["subscription_id"],
-                    "resource_group": rg,
-                    "service_name": svc,
-                    "meter_category": meter,
-                    "pre_tax_cost": _daily_cost(base, pattern, current),
-                    "currency": "USD",
-                    "region": region,
-                    "tag": tenant["tenant_id"],
-                    "resource_id": f"/subscriptions/{tenant['subscription_id']}/{rid}",
-                    "resource_name": rname,
-                })
+            for rg, svc, meter, region, rid, rname, base, pattern in tenant["resources"]:
+                records_to_insert.append(
+                    {
+                        "usage_date": current,
+                        "subscription_id": tenant["subscription_id"],
+                        "resource_group": rg,
+                        "service_name": svc,
+                        "meter_category": meter,
+                        "pre_tax_cost": _daily_cost(base, pattern, current),
+                        "currency": "USD",
+                        "region": region,
+                        "tag": tenant["tenant_id"],
+                        "resource_id": f"/subscriptions/{tenant['subscription_id']}/{rid}",
+                        "resource_name": rname,
+                    }
+                )
         current += timedelta(days=1)
 
     total_resources = sum(len(t["resources"]) for t in TENANTS)
-    print(f"Generating billing records: {len(TENANTS)} tenants × {total_resources} resources × 90 days …")
+    print(
+        f"Generating billing records: {len(TENANTS)} tenants × {total_resources} resources × 90 days …"
+    )
 
     async with AsyncSessionLocal() as db:
         result = await db.execute(
@@ -338,7 +348,7 @@ async def seed() -> None:
     print("\nTenants seeded (approx monthly spend):")
     for tenant in TENANTS:
         avg_monthly = 0.0
-        for (_, _, _, _, _, _, base, pattern) in tenant["resources"]:
+        for _, _, _, _, _, _, base, pattern in tenant["resources"]:
             avg_factor = 0.79 if pattern == "workday" else 1.0
             avg_monthly += base * avg_factor * 30
         print(f"  {tenant['display_name']:<20} ({tenant['tenant_id']})  ~${avg_monthly:,.0f}/mo")

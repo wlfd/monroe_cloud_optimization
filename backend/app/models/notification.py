@@ -24,7 +24,9 @@ class NotificationChannel(Base):
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
 
     __table_args__ = (Index("idx_notification_channels_active", "is_active"),)
 
@@ -36,7 +38,9 @@ class NotificationDelivery(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     channel_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("notification_channels.id", ondelete="CASCADE"), nullable=False
+        UUID(as_uuid=True),
+        ForeignKey("notification_channels.id", ondelete="CASCADE"),
+        nullable=False,
     )
     event_type: Mapped[str] = mapped_column(String(100), nullable=False)
     # event_type: 'budget_alert' | 'anomaly_detected' | 'ingestion_failed'
@@ -45,7 +49,9 @@ class NotificationDelivery(Base):
     payload_json: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     # Stored for webhook retries; null for email deliveries
     attempt_number: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    attempted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    attempted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
     status: Mapped[str] = mapped_column(String(20), nullable=False)
     # status: 'delivered' | 'failed' | 'pending'
     response_code: Mapped[int | None] = mapped_column(Integer, nullable=True)

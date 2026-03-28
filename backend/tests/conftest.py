@@ -76,7 +76,9 @@ def make_scalar_result(value):
     result = MagicMock()
     result.scalar.return_value = value
     result.scalar_one_or_none.return_value = value
-    result.scalars.return_value = MagicMock(all=MagicMock(return_value=[value] if value is not None else []))
+    result.scalars.return_value = MagicMock(
+        all=MagicMock(return_value=[value] if value is not None else [])
+    )
     return result
 
 
@@ -350,7 +352,9 @@ def test_channel_email() -> MagicMock:
 
 
 @pytest_asyncio.fixture
-async def async_client(test_user: MagicMock, admin_user: MagicMock) -> AsyncGenerator[AsyncClient, None]:
+async def async_client(
+    test_user: MagicMock, admin_user: MagicMock
+) -> AsyncGenerator[AsyncClient, None]:
     """Async HTTP client with DB and auth dependencies mocked.
 
     Provides the app with a mock DB session and a mock current user injected

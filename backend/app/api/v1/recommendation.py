@@ -5,6 +5,7 @@ Endpoints:
   GET  /recommendations/summary  - Summary stats + daily limit status
   POST /recommendations/run      - Admin: trigger generation (fire-and-forget)
 """
+
 import asyncio
 import logging
 

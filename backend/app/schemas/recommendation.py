@@ -1,4 +1,5 @@
 """Pydantic response schemas for recommendations."""
+
 import uuid
 from datetime import date, datetime
 

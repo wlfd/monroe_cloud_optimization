@@ -5,6 +5,7 @@ Admin seed script. Run once after alembic upgrade head:
 Reads FIRST_ADMIN_EMAIL and FIRST_ADMIN_PASSWORD from environment / .env.
 Does nothing if an admin user already exists.
 """
+
 import asyncio
 import sys
 
@@ -24,9 +25,7 @@ async def seed():
         sys.exit(1)
 
     async with AsyncSessionLocal() as db:
-        existing = await db.execute(
-            select(User).where(User.role == "admin").limit(1)
-        )
+        existing = await db.execute(select(User).where(User.role == "admin").limit(1))
         if existing.scalar_one_or_none():
             print("Admin user already exists. Nothing to do.")
             return

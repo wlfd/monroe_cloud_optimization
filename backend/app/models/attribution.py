@@ -6,6 +6,7 @@ Supports Phase 6 multi-tenant cost attribution.
 Follows billing.py pattern: utcnow() defined locally, UUID PK,
 Mapped[] typed columns, __table_args__ for indexes and constraints.
 """
+
 import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
@@ -46,8 +47,12 @@ class TenantProfile(Base):
     is_new: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     first_seen: Mapped[date] = mapped_column(Date, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
 
 
 class AllocationRule(Base):
@@ -65,16 +70,26 @@ class AllocationRule(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     priority: Mapped[int] = mapped_column(Integer, nullable=False)
-    target_type: Mapped[str] = mapped_column(String(50), nullable=False)   # 'resource_group' | 'service_category'
-    target_value: Mapped[str] = mapped_column(String(255), nullable=False)  # e.g. "rg-shared" or "Compute"
-    method: Mapped[str] = mapped_column(String(50), nullable=False)         # 'by_count' | 'by_usage' | 'manual_pct'
-    manual_pct: Mapped[dict | None] = mapped_column(JSON, nullable=True)    # {tenant_id: pct}, only for method='manual_pct'
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow)
-
-    __table_args__ = (
-        UniqueConstraint("priority", name="uq_allocation_rule_priority"),
+    target_type: Mapped[str] = mapped_column(
+        String(50), nullable=False
+    )  # 'resource_group' | 'service_category'
+    target_value: Mapped[str] = mapped_column(
+        String(255), nullable=False
+    )  # e.g. "rg-shared" or "Compute"
+    method: Mapped[str] = mapped_column(
+        String(50), nullable=False
+    )  # 'by_count' | 'by_usage' | 'manual_pct'
+    manual_pct: Mapped[dict | None] = mapped_column(
+        JSON, nullable=True
+    )  # {tenant_id: pct}, only for method='manual_pct'
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
     )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
+
+    __table_args__ = (UniqueConstraint("priority", name="uq_allocation_rule_priority"),)
 
 
 class TenantAttribution(Base):
@@ -95,12 +110,18 @@ class TenantAttribution(Base):
     month: Mapped[int] = mapped_column(Integer, nullable=False)
     total_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False, default=0)
     pct_of_total: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False, default=0)
-    mom_delta_usd: Mapped[Decimal | None] = mapped_column(Numeric(18, 6), nullable=True)   # None if no prior month data
+    mom_delta_usd: Mapped[Decimal | None] = mapped_column(
+        Numeric(18, 6), nullable=True
+    )  # None if no prior month data
     top_service_category: Mapped[str | None] = mapped_column(String(255), nullable=True)
     allocated_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False, default=0)
     tagged_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False, default=0)
-    computed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow)
+    computed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
 
     __table_args__ = (
         UniqueConstraint("tenant_id", "year", "month", name="uq_tenant_attribution_key"),

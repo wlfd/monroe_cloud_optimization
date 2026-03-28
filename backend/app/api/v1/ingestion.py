@@ -27,8 +27,7 @@ async def trigger_manual_run(
     """Trigger an immediate ingestion run. Returns 409 if already running."""
     if is_ingestion_running():
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Ingestion already in progress"
+            status_code=status.HTTP_409_CONFLICT, detail="Ingestion already in progress"
         )
     # Fire-and-forget — do NOT await (long-running background task)
     task = asyncio.create_task(run_ingestion(triggered_by="manual"))
@@ -53,9 +52,7 @@ async def list_ingestion_runs(
 ):
     """Returns last N ingestion runs ordered by most recent first."""
     result = await db.execute(
-        select(IngestionRun)
-        .order_by(desc(IngestionRun.started_at))
-        .limit(limit)
+        select(IngestionRun).order_by(desc(IngestionRun.started_at)).limit(limit)
     )
     runs = result.scalars().all()
     return [IngestionRunResponse.model_validate(r) for r in runs]

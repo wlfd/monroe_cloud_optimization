@@ -321,7 +321,12 @@ async def test_get_or_generate_cache_hit():
     from app.services.recommendation import _get_or_generate
 
     redis = AsyncMock()
-    cached_result = {"category": "idle", "explanation": "VM is idle", "estimated_monthly_savings": 300, "confidence_score": 80}
+    cached_result = {
+        "category": "idle",
+        "explanation": "VM is idle",
+        "estimated_monthly_savings": 300,
+        "confidence_score": 80,
+    }
     redis.get.return_value = json.dumps(cached_result).encode()
 
     anthropic_client = AsyncMock()
@@ -347,7 +352,7 @@ async def test_get_or_generate_cache_miss_calls_llm():
 
     redis = AsyncMock()
     redis.get.return_value = None  # cache miss
-    redis.incr.return_value = 1   # first call, under limit
+    redis.incr.return_value = 1  # first call, under limit
 
     llm_result = {
         "category": "right-sizing",
@@ -359,7 +364,11 @@ async def test_get_or_generate_cache_miss_calls_llm():
     # Mock _call_anthropic
     anthropic_client = AsyncMock()
 
-    with patch("app.services.recommendation._call_anthropic", new_callable=AsyncMock, return_value=llm_result):
+    with patch(
+        "app.services.recommendation._call_anthropic",
+        new_callable=AsyncMock,
+        return_value=llm_result,
+    ):
         result = await _get_or_generate(redis, anthropic_client, SAMPLE_RESOURCE, daily_limit=100)
 
     assert result == llm_result
@@ -380,8 +389,8 @@ async def test_get_or_generate_limit_reached_returns_none():
     from app.services.recommendation import _get_or_generate
 
     redis = AsyncMock()
-    redis.get.return_value = None   # cache miss
-    redis.incr.return_value = 101   # over limit
+    redis.get.return_value = None  # cache miss
+    redis.incr.return_value = 101  # over limit
 
     anthropic_client = AsyncMock()
 

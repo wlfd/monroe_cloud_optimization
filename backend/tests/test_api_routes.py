@@ -298,12 +298,15 @@ async def test_get_me_without_token_returns_401():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("path", [
-    "/api/v1/anomalies/",
-    "/api/v1/anomalies/summary",
-    "/api/v1/ingestion/status",
-    "/api/v1/ingestion/runs",
-])
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/api/v1/anomalies/",
+        "/api/v1/anomalies/summary",
+        "/api/v1/ingestion/status",
+        "/api/v1/ingestion/runs",
+    ],
+)
 async def test_protected_routes_require_token(path: str):
     """Protected routes return 401 when no Authorization header is provided."""
     from app.main import app
@@ -387,8 +390,10 @@ async def test_trigger_ingestion_as_admin_returns_202():
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        with patch("app.api.v1.ingestion.is_ingestion_running", return_value=False), \
-             patch("app.api.v1.ingestion.asyncio.create_task"):
+        with (
+            patch("app.api.v1.ingestion.is_ingestion_running", return_value=False),
+            patch("app.api.v1.ingestion.asyncio.create_task"),
+        ):
             response = await client.post(
                 "/api/v1/ingestion/run",
                 headers={"Authorization": f"Bearer {token}"},

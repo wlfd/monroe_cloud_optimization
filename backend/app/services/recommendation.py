@@ -11,6 +11,7 @@ Implements the daily LLM-powered cost optimization pipeline:
 Query pattern: get_latest_recommendations always queries WHERE generated_date
 = MAX(generated_date) — no DELETE, logical daily replace.
 """
+
 import json
 import logging
 from datetime import UTC, date, datetime, timedelta
@@ -78,16 +79,20 @@ RECOMMENDATION_TOOL = {
 # Cache and counter helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_cache_key(subscription_id: str, resource_group: str, resource_name: str) -> str:
+    """Construct a Redis cache key for daily per-resource recommendation caching."""
     today = date.today().isoformat()
     return f"rec:cache:{subscription_id}:{resource_group}:{resource_name}:{today}"
 
 
 def _daily_counter_key() -> str:
+    """Return the Redis key for today's daily LLM call counter."""
     return f"rec:daily_calls:{date.today().isoformat()}"
 
 
 def _midnight_expiry() -> int:
+    """Calculate the Unix timestamp for midnight UTC tonight."""
     now = datetime.now(UTC)
     midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     return int(midnight.timestamp())
@@ -108,6 +113,7 @@ async def _check_and_increment_counter(redis_client: aioredis.Redis, limit: int)
 
 
 async def _get_calls_used_today(redis_client: aioredis.Redis) -> int:
+    """Retrieve the current count of LLM calls made today from Redis."""
     key = _daily_counter_key()
     val = await redis_client.get(key)
     return int(val) if val else 0
@@ -117,7 +123,9 @@ async def _get_calls_used_today(redis_client: aioredis.Redis) -> int:
 # Prompt builder
 # ---------------------------------------------------------------------------
 
+
 def _build_prompt(resource: dict) -> str:
+    """Construct the user prompt for Claude to analyze a resource's cost history."""
     cost_lines = "\n".join(
         f"  {row['date']}: ${row['cost']:.2f}" for row in resource["cost_history"]
     )
@@ -136,6 +144,7 @@ def _build_prompt(resource: dict) -> str:
 # ---------------------------------------------------------------------------
 # Anthropic LLM call with retry
 # ---------------------------------------------------------------------------
+
 
 @retry(
     wait=wait_exponential(multiplier=1, min=2, max=30),
@@ -162,6 +171,7 @@ async def _call_anthropic(client: anthropic.AsyncAnthropic, resource: dict) -> d
 # ---------------------------------------------------------------------------
 # Azure OpenAI fallback
 # ---------------------------------------------------------------------------
+
 
 async def _call_azure_openai(resource: dict) -> dict | None:
     """Attempt Azure OpenAI fallback. Returns structured dict or None on failure.
@@ -211,6 +221,7 @@ async def _call_azure_openai(resource: dict) -> dict | None:
 # Core get_or_generate with cache
 # ---------------------------------------------------------------------------
 
+
 async def _get_or_generate(
     redis_client: aioredis.Redis,
     anthropic_client: anthropic.AsyncAnthropic,
@@ -238,9 +249,7 @@ async def _get_or_generate(
     # Cache miss: check daily limit before calling LLM
     allowed = await _check_and_increment_counter(redis_client, daily_limit)
     if not allowed:
-        logger.info(
-            "Daily LLM call limit (%d) reached, stopping generation", daily_limit
-        )
+        logger.info("Daily LLM call limit (%d) reached, stopping generation", daily_limit)
         return None
 
     # Attempt Anthropic primary
@@ -248,7 +257,9 @@ async def _get_or_generate(
     try:
         result = await _call_anthropic(anthropic_client, resource)
     except Exception as exc:
-        logger.warning("Anthropic call failed for %s: %s — trying fallback", resource["resource_name"], exc)
+        logger.warning(
+            "Anthropic call failed for %s: %s — trying fallback", resource["resource_name"], exc
+        )
         result = await _call_azure_openai(resource)
 
     if result is None:
@@ -262,6 +273,7 @@ async def _get_or_generate(
 # ---------------------------------------------------------------------------
 # Main run_recommendations function
 # ---------------------------------------------------------------------------
+
 
 async def run_recommendations(redis_client: aioredis.Redis | None = None) -> None:
     """Daily recommendation generation job.
@@ -283,6 +295,7 @@ async def run_recommendations(redis_client: aioredis.Redis | None = None) -> Non
 
 
 async def _run_recommendations_with_session(session: AsyncSession, redis_client, settings) -> None:
+    """Core implementation that qualifies resources, generates LLM recommendations, and upserts results."""
     # If redis_client not provided (e.g., called from scheduler before lifespan),
     # this is a coding error — log and return
     if redis_client is None:
@@ -290,9 +303,7 @@ async def _run_recommendations_with_session(session: AsyncSession, redis_client,
         return
 
     if not settings.ANTHROPIC_API_KEY:
-        logger.warning(
-            "run_recommendations: ANTHROPIC_API_KEY not set — skipping generation"
-        )
+        logger.warning("run_recommendations: ANTHROPIC_API_KEY not set — skipping generation")
         return
 
     anthropic_client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
@@ -395,14 +406,13 @@ async def _run_recommendations_with_session(session: AsyncSession, redis_client,
     # Commit all new rows at once (single transaction, not per-row)
     await session.commit()
 
-    logger.info(
-        "run_recommendations: generated=%d, limit_reached=%s", generated, limit_reached
-    )
+    logger.info("run_recommendations: generated=%d, limit_reached=%s", generated, limit_reached)
 
 
 # ---------------------------------------------------------------------------
 # Query helpers
 # ---------------------------------------------------------------------------
+
 
 async def get_latest_recommendations(
     session: AsyncSession,

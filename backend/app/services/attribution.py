@@ -54,10 +54,7 @@ def apply_allocation_rule(
             # Fall back to by_count when all tagged costs are zero
             per_tenant = float(cost) / len(tenant_costs)
             return dict.fromkeys(tenant_costs, per_tenant)
-        return {
-            t: float(cost) * float(v) / float(total_usage)
-            for t, v in tenant_costs.items()
-        }
+        return {t: float(cost) * float(v) / float(total_usage) for t, v in tenant_costs.items()}
 
     if method == "manual_pct":
         if not manual_pct:
@@ -97,11 +94,7 @@ async def run_attribution() -> None:
         logger.info("run_attribution: computing attribution for %d-%02d", year, month)
 
         # Step 3: Discover tenants — UPSERT into tenant_profiles
-        distinct_tags_stmt = (
-            select(BillingRecord.tag)
-            .where(BillingRecord.tag != "")
-            .distinct()
-        )
+        distinct_tags_stmt = select(BillingRecord.tag).where(BillingRecord.tag != "").distinct()
         distinct_tags = (await session.execute(distinct_tags_stmt)).scalars().all()
 
         for tenant_id in distinct_tags:
@@ -137,9 +130,7 @@ async def run_attribution() -> None:
             .group_by(BillingRecord.tag)
         )
         tagged_rows = (await session.execute(tagged_stmt)).all()
-        tagged_costs: dict[str, Decimal] = {
-            row.tag: Decimal(str(row.total)) for row in tagged_rows
-        }
+        tagged_costs: dict[str, Decimal] = {row.tag: Decimal(str(row.total)) for row in tagged_rows}
 
         # Step 5: Compute total untagged cost for this year/month
         untagged_stmt = select(func.sum(BillingRecord.pre_tax_cost)).where(
@@ -147,9 +138,7 @@ async def run_attribution() -> None:
             BillingRecord.usage_date >= period_start,
             BillingRecord.usage_date <= period_end,
         )
-        untagged_total: Decimal = Decimal(
-            str((await session.execute(untagged_stmt)).scalar() or 0)
-        )
+        untagged_total: Decimal = Decimal(str((await session.execute(untagged_stmt)).scalar() or 0))
 
         # Step 6: Load allocation rules ordered by priority
         rules_stmt = select(AllocationRule).order_by(AllocationRule.priority.asc())
@@ -193,9 +182,7 @@ async def run_attribution() -> None:
             )
 
             for tenant_id, amount in allocations.items():
-                allocated_per_tenant[tenant_id] = (
-                    allocated_per_tenant.get(tenant_id, 0.0) + amount
-                )
+                allocated_per_tenant[tenant_id] = allocated_per_tenant.get(tenant_id, 0.0) + amount
             total_rule_matched += rule_cost
 
         # Remaining unallocated cost
@@ -238,16 +225,10 @@ async def run_attribution() -> None:
 
         for tenant_id, total_cost in total_per_tenant.items():
             pct_of_total = (total_cost / grand_total * 100) if grand_total > 0 else 0.0
-            mom_delta = (
-                total_cost - prior_totals[tenant_id]
-                if tenant_id in prior_totals
-                else None
-            )
+            mom_delta = total_cost - prior_totals[tenant_id] if tenant_id in prior_totals else None
 
             # Compute top_service_category for this tenant
-            top_service_category = await _get_top_service_category(
-                session, tenant_id, year, month
-            )
+            top_service_category = await _get_top_service_category(session, tenant_id, year, month)
 
             tagged_cost_val = float(tagged_costs.get(tenant_id, Decimal("0")))
             allocated_cost_val = allocated_per_tenant.get(tenant_id, 0.0)

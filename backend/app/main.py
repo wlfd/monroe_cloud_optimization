@@ -80,7 +80,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CloudCost API",
     version="1.0.0",
-    docs_url="/api/docs",     # API-03: OpenAPI at /api/docs (NOT via router prefix)
+    docs_url="/api/docs",  # API-03: OpenAPI at /api/docs (NOT via router prefix)
     redoc_url="/api/redoc",
     lifespan=lifespan,
 )
@@ -88,7 +88,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,   # Required for HttpOnly refresh token cookie
+    allow_credentials=True,  # Required for HttpOnly refresh token cookie
     allow_methods=["*"],
     allow_headers=["*"],
 )

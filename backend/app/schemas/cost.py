@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 
 
@@ -10,7 +9,7 @@ class SpendSummaryResponse(BaseModel):
 
 
 class DailySpendResponse(BaseModel):
-    usage_date: str   # ISO date string, e.g. "2026-01-15"
+    usage_date: str  # ISO date string, e.g. "2026-01-15"
     total_cost: float
 
 

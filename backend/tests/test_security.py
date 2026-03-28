@@ -28,6 +28,7 @@ from jwt.exceptions import InvalidTokenError
 def _get_secret() -> str:
     """Return the JWT secret used by the security module."""
     from app.core.config import settings
+
     return settings.JWT_SECRET_KEY
 
 

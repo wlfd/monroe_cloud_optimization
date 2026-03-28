@@ -80,27 +80,31 @@ async def export_anomalies(
     rows = await get_anomalies_for_export(db, severity=severity, service_name=service_name)
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "detected_date",
-        "service_name",
-        "resource_group",
-        "severity",
-        "status",
-        "pct_deviation",
-        "estimated_monthly_impact",
-        "description",
-    ])
+    writer.writerow(
+        [
+            "detected_date",
+            "service_name",
+            "resource_group",
+            "severity",
+            "status",
+            "pct_deviation",
+            "estimated_monthly_impact",
+            "description",
+        ]
+    )
     for row in rows:
-        writer.writerow([
-            str(row.detected_date),
-            row.service_name,
-            row.resource_group,
-            row.severity,
-            row.status,
-            float(row.pct_deviation),
-            float(row.estimated_monthly_impact),
-            row.description,
-        ])
+        writer.writerow(
+            [
+                str(row.detected_date),
+                row.service_name,
+                row.resource_group,
+                row.severity,
+                row.status,
+                float(row.pct_deviation),
+                float(row.estimated_monthly_impact),
+                row.description,
+            ]
+        )
     output.seek(0)
     return StreamingResponse(
         iter([output.getvalue()]),

@@ -76,9 +76,7 @@ async def run_anomaly_detection(session: AsyncSession) -> None:
 
     # Step 2: Guard — if no 30-day baseline data, skip detection
     if not baseline_rows:
-        logger.warning(
-            "run_anomaly_detection: no 30-day baseline data found — skipping detection"
-        )
+        logger.warning("run_anomaly_detection: no 30-day baseline data found — skipping detection")
         return
 
     # Step 3: Find the most recent completed billing day
@@ -86,9 +84,7 @@ async def run_anomaly_detection(session: AsyncSession) -> None:
     check_date: date | None = (await session.execute(max_date_stmt)).scalar()
 
     if check_date is None:
-        logger.warning(
-            "run_anomaly_detection: billing_records table is empty — skipping detection"
-        )
+        logger.warning("run_anomaly_detection: billing_records table is empty — skipping detection")
         return
 
     logger.info("run_anomaly_detection: check_date=%s", check_date)
@@ -118,8 +114,7 @@ async def run_anomaly_detection(session: AsyncSession) -> None:
 
     # Build baseline lookup dict: (service_name, resource_group) -> baseline_avg
     baseline_lookup: dict[tuple[str, str], float] = {
-        (r.service_name, r.resource_group): float(r.baseline_avg_daily)
-        for r in baseline_rows
+        (r.service_name, r.resource_group): float(r.baseline_avg_daily) for r in baseline_rows
     }
 
     # Step 5–8: Compare each pair to baseline; flag anomalies
@@ -452,9 +447,7 @@ async def get_anomaly_summary(session: AsyncSession) -> dict:
     expected_count = int((await session.execute(expected_count_stmt)).scalar() or 0)
 
     if total_detected > 0:
-        detection_accuracy: float | None = (
-            (total_detected - expected_count) / total_detected * 100
-        )
+        detection_accuracy: float | None = (total_detected - expected_count) / total_detected * 100
     else:
         detection_accuracy = None
 

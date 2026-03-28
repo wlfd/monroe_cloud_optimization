@@ -212,8 +212,10 @@ async def test_send_email_success():
     """_send_email returns 'delivered' when aiosmtplib.send succeeds."""
     from app.services.notification import _send_email
 
-    with patch("app.services.notification.settings") as mock_settings, \
-         patch("app.services.notification.aiosmtplib.send", new_callable=AsyncMock) as mock_send:
+    with (
+        patch("app.services.notification.settings") as mock_settings,
+        patch("app.services.notification.aiosmtplib.send", new_callable=AsyncMock) as mock_send,
+    ):
         mock_settings.SMTP_HOST = "smtp.example.com"
         mock_settings.SMTP_PORT = 587
         mock_settings.SMTP_USER = "user"
@@ -233,8 +235,10 @@ async def test_send_email_smtp_exception_returns_failed():
     """_send_email returns 'failed' when aiosmtplib raises."""
     from app.services.notification import _send_email
 
-    with patch("app.services.notification.settings") as mock_settings, \
-         patch("app.services.notification.aiosmtplib.send", side_effect=Exception("SMTP error")):
+    with (
+        patch("app.services.notification.settings") as mock_settings,
+        patch("app.services.notification.aiosmtplib.send", side_effect=Exception("SMTP error")),
+    ):
         mock_settings.SMTP_HOST = "smtp.example.com"
         mock_settings.SMTP_PORT = 587
         mock_settings.SMTP_USER = ""
@@ -390,8 +394,10 @@ async def test_dispatch_to_all_active_channels_continues_on_error():
         if call_count == 1:
             raise Exception("Channel 1 failed")
 
-    with patch("app.services.notification.dispatch_to_channel", side_effect=dispatch_side_effect), \
-         patch("app.services.notification.logger"):
+    with (
+        patch("app.services.notification.dispatch_to_channel", side_effect=dispatch_side_effect),
+        patch("app.services.notification.logger"),
+    ):
         await dispatch_to_all_active_channels(
             session,
             event_type="test",
@@ -423,8 +429,13 @@ async def test_notify_budget_alert_calls_dispatch_to_channel():
 
     dispatch_mock = AsyncMock(return_value=delivery_mock)
 
-    with patch("app.services.notification.dispatch_to_channel", dispatch_mock), \
-         patch("app.services.notification.render_template", return_value=("CloudCost Budget Alert", "<p>Alert</p>")):
+    with (
+        patch("app.services.notification.dispatch_to_channel", dispatch_mock),
+        patch(
+            "app.services.notification.render_template",
+            return_value=("CloudCost Budget Alert", "<p>Alert</p>"),
+        ),
+    ):
         delivery = await notify_budget_alert(
             session,
             alert_event_id=alert_event_id,
@@ -484,8 +495,10 @@ async def test_retry_failed_deliveries_creates_new_delivery_on_success():
     result.all.return_value = [(delivery, channel)]
     mock_session.execute.return_value = result
 
-    with patch("app.services.notification.AsyncSessionLocal", return_value=mock_session), \
-         patch("app.services.notification.httpx.AsyncClient", return_value=mock_http_client):
+    with (
+        patch("app.services.notification.AsyncSessionLocal", return_value=mock_session),
+        patch("app.services.notification.httpx.AsyncClient", return_value=mock_http_client),
+    ):
         await retry_failed_deliveries()
 
     # A new NotificationDelivery row should be added with attempt_number=2
@@ -515,8 +528,10 @@ async def test_retry_failed_deliveries_skips_missing_payload():
     result.all.return_value = [(delivery, channel)]
     mock_session.execute.return_value = result
 
-    with patch("app.services.notification.AsyncSessionLocal", return_value=mock_session), \
-         patch("app.services.notification.logger"):
+    with (
+        patch("app.services.notification.AsyncSessionLocal", return_value=mock_session),
+        patch("app.services.notification.logger"),
+    ):
         await retry_failed_deliveries()
 
     mock_session.add.assert_not_called()

@@ -44,8 +44,6 @@ export const ingestionKeys = {
  * automatically invalidates runs + alerts so they refresh once.
  */
 export function useIngestionStatus() {
-  const queryClient = useQueryClient();
-
   return useQuery<IngestionStatus>({
     queryKey: ingestionKeys.status,
     queryFn: async () => {

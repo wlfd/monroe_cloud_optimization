@@ -375,9 +375,14 @@ async def test_check_one_budget_fires_when_threshold_crossed():
     delivery_mock.status = "delivered"
     notify_mock.return_value = delivery_mock
 
-    with patch("app.services.budget.notify_budget_alert", notify_mock), \
-         patch("app.services.budget._period_date_range", return_value=(date(2026, 3, 1), date(2026, 4, 1))), \
-         patch("app.services.budget._current_period", return_value="2026-03"):
+    with (
+        patch("app.services.budget.notify_budget_alert", notify_mock),
+        patch(
+            "app.services.budget._period_date_range",
+            return_value=(date(2026, 3, 1), date(2026, 4, 1)),
+        ),
+        patch("app.services.budget._current_period", return_value="2026-03"),
+    ):
         await _check_one_budget(session, budget)
 
     session.add.assert_called_once()  # AlertEvent added
@@ -414,9 +419,14 @@ async def test_check_one_budget_skips_already_fired_threshold():
 
     notify_mock = AsyncMock()
 
-    with patch("app.services.budget.notify_budget_alert", notify_mock), \
-         patch("app.services.budget._period_date_range", return_value=(date(2026, 3, 1), date(2026, 4, 1))), \
-         patch("app.services.budget._current_period", return_value="2026-03"):
+    with (
+        patch("app.services.budget.notify_budget_alert", notify_mock),
+        patch(
+            "app.services.budget._period_date_range",
+            return_value=(date(2026, 3, 1), date(2026, 4, 1)),
+        ),
+        patch("app.services.budget._current_period", return_value="2026-03"),
+    ):
         await _check_one_budget(session, budget)
 
     session.add.assert_not_called()
@@ -449,9 +459,14 @@ async def test_check_one_budget_below_threshold_no_alert():
 
     notify_mock = AsyncMock()
 
-    with patch("app.services.budget.notify_budget_alert", notify_mock), \
-         patch("app.services.budget._period_date_range", return_value=(date(2026, 3, 1), date(2026, 4, 1))), \
-         patch("app.services.budget._current_period", return_value="2026-03"):
+    with (
+        patch("app.services.budget.notify_budget_alert", notify_mock),
+        patch(
+            "app.services.budget._period_date_range",
+            return_value=(date(2026, 3, 1), date(2026, 4, 1)),
+        ),
+        patch("app.services.budget._current_period", return_value="2026-03"),
+    ):
         await _check_one_budget(session, budget)
 
     session.add.assert_not_called()
@@ -482,8 +497,13 @@ async def test_check_one_budget_no_channel_sets_no_channel_status():
 
     session.execute.side_effect = [spend_result, thresholds_result]
 
-    with patch("app.services.budget._period_date_range", return_value=(date(2026, 3, 1), date(2026, 4, 1))), \
-         patch("app.services.budget._current_period", return_value="2026-03"):
+    with (
+        patch(
+            "app.services.budget._period_date_range",
+            return_value=(date(2026, 3, 1), date(2026, 4, 1)),
+        ),
+        patch("app.services.budget._current_period", return_value="2026-03"),
+    ):
         await _check_one_budget(session, budget)
 
     added_event = session.add.call_args[0][0]

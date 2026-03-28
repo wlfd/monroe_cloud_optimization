@@ -8,8 +8,8 @@ class IngestionRunResponse(BaseModel):
     id: UUID
     started_at: datetime
     completed_at: datetime | None
-    status: str                   # 'running' | 'success' | 'failed' | 'interrupted'
-    triggered_by: str             # 'scheduler' | 'manual' | 'backfill'
+    status: str  # 'running' | 'success' | 'failed' | 'interrupted'
+    triggered_by: str  # 'scheduler' | 'manual' | 'backfill'
     records_ingested: int
     window_start: datetime | None
     window_end: datetime | None
@@ -37,4 +37,4 @@ class IngestionStatusResponse(BaseModel):
 
 
 class TriggerResponse(BaseModel):
-    status: str   # "accepted"
+    status: str  # "accepted"

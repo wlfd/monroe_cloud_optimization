@@ -29,10 +29,10 @@ class Settings(BaseSettings):
     # -- AI / LLM Recommendations ------------------------------------------
     ANTHROPIC_API_KEY: str = ""
     ANTHROPIC_MODEL: str = "claude-sonnet-4-6"
-    AZURE_OPENAI_ENDPOINT: str = ""      # e.g. https://{resource}.openai.azure.com/
+    AZURE_OPENAI_ENDPOINT: str = ""  # e.g. https://{resource}.openai.azure.com/
     AZURE_OPENAI_API_KEY: str = ""
     AZURE_OPENAI_DEPLOYMENT: str = "gpt-4o"
-    LLM_DAILY_CALL_LIMIT: int = 100      # AI-04: configurable cap
+    LLM_DAILY_CALL_LIMIT: int = 100  # AI-04: configurable cap
     LLM_MIN_MONTHLY_SPEND_THRESHOLD: float = 50.0  # default $50/mo qualifier
 
     # -- SMTP (generic — works with SendGrid, SES, Azure Comm Services, etc.) --
@@ -46,9 +46,7 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def reject_default_secret_in_production(self) -> "Settings":
         if self.APP_ENV == "production" and self.JWT_SECRET_KEY == "change-me-in-production":
-            raise ValueError(
-                "JWT_SECRET_KEY must be changed from the default value in production"
-            )
+            raise ValueError("JWT_SECRET_KEY must be changed from the default value in production")
         return self
 
 

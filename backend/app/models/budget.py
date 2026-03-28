@@ -29,7 +29,9 @@ class Budget(Base):
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
     )
@@ -53,7 +55,9 @@ class BudgetThreshold(Base):
         ForeignKey("notification_channels.id", ondelete="SET NULL"),
         nullable=True,
     )
-    last_triggered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_triggered_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     last_triggered_period: Mapped[str | None] = mapped_column(String(7), nullable=True)
     # last_triggered_period: 'YYYY-MM' for monthly, 'YYYY' for annual
     # Used to prevent re-firing in the same billing period
@@ -73,7 +77,9 @@ class AlertEvent(Base):
     threshold_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("budget_thresholds.id", ondelete="SET NULL"), nullable=True
     )
-    triggered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    triggered_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
     billing_period: Mapped[str] = mapped_column(String(7), nullable=False)
     # billing_period: 'YYYY-MM' for monthly, 'YYYY' for annual
     spend_at_trigger: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)

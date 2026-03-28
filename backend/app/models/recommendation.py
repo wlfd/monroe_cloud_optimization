@@ -7,6 +7,7 @@ always queries WHERE generated_date = MAX(generated_date).
 Follows billing.py pattern: utcnow() defined locally, UUID PK,
 Mapped[] typed columns, __table_args__ for indexes.
 """
+
 import uuid
 from datetime import UTC, date, datetime
 from decimal import Decimal
@@ -25,9 +26,7 @@ def utcnow() -> datetime:
 class Recommendation(Base):
     __tablename__ = "recommendations"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     generated_date: Mapped[date] = mapped_column(Date, nullable=False)
 
     # Resource identity (matches billing_records columns for join)
@@ -42,15 +41,11 @@ class Recommendation(Base):
         String(50), nullable=False
     )  # right-sizing | idle | reserved | storage
     explanation: Mapped[str] = mapped_column(String(2000), nullable=False)
-    estimated_monthly_savings: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2), nullable=False
-    )
+    estimated_monthly_savings: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
     confidence_score: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Stored at generation time from billing_records (30-day average) for UI comparison panel
-    current_monthly_cost: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2), nullable=False
-    )
+    current_monthly_cost: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utcnow

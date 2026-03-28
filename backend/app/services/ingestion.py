@@ -145,7 +145,13 @@ async def upsert_billing_records(session: AsyncSession, records: list[dict]) -> 
 
     stmt = pg_insert(BillingRecord).values(rows)
     stmt = stmt.on_conflict_do_update(
-        index_elements=["usage_date", "subscription_id", "resource_group", "service_name", "meter_category"],
+        index_elements=[
+            "usage_date",
+            "subscription_id",
+            "resource_group",
+            "service_name",
+            "meter_category",
+        ],
         set_={
             "pre_tax_cost": stmt.excluded.pre_tax_cost,
             "currency": stmt.excluded.currency,
@@ -365,7 +371,9 @@ async def _do_ingestion(triggered_by: str) -> None:
                     error_detail=str(exc),
                     triggered_by=triggered_by,
                 )
-                alert = await create_ingestion_alert(err_session, error_detail=str(exc), retry_count=3)
+                alert = await create_ingestion_alert(
+                    err_session, error_detail=str(exc), retry_count=3
+                )
                 try:
                     await notify_ingestion_failed(
                         err_session,

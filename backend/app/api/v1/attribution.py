@@ -102,32 +102,34 @@ async def export_attributions(
     rows = await get_attributions(db, year, month)
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow([
-        "tenant_id",
-        "display_name",
-        "period",
-        "total_cost_usd",
-        "pct_of_total",
-        "mom_delta_usd",
-        "top_service_category",
-    ])
+    writer.writerow(
+        [
+            "tenant_id",
+            "display_name",
+            "period",
+            "total_cost_usd",
+            "pct_of_total",
+            "mom_delta_usd",
+            "top_service_category",
+        ]
+    )
     for row in rows:
-        writer.writerow([
-            row.tenant_id,
-            row.display_name or "",
-            f"{year}-{month:02d}",
-            float(row.total_cost),
-            float(row.pct_of_total),
-            float(row.mom_delta_usd) if row.mom_delta_usd is not None else "",
-            row.top_service_category or "",
-        ])
+        writer.writerow(
+            [
+                row.tenant_id,
+                row.display_name or "",
+                f"{year}-{month:02d}",
+                float(row.total_cost),
+                float(row.pct_of_total),
+                float(row.mom_delta_usd) if row.mom_delta_usd is not None else "",
+                row.top_service_category or "",
+            ]
+        )
     output.seek(0)
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
-        headers={
-            "Content-Disposition": f"attachment; filename=attribution-{year}-{month:02d}.csv"
-        },
+        headers={"Content-Disposition": f"attachment; filename=attribution-{year}-{month:02d}.csv"},
     )
 
 
@@ -137,6 +139,7 @@ async def _run_attribution_task() -> None:
         await run_attribution()
     except Exception as exc:
         import logging
+
         logging.getLogger(__name__).error("Manual attribution run failed: %s", exc)
 
 

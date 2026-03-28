@@ -8,6 +8,7 @@ Usage:
     async def foo(redis: aioredis.Redis = Depends(get_redis)):
         ...
 """
+
 import redis.asyncio as aioredis
 from fastapi import Request
 

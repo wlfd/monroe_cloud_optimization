@@ -97,6 +97,7 @@ async def create_budget(
     end_date: date | None,
     created_by: uuid.UUID | None,
 ) -> Budget:
+    """Create a new Budget row with the given parameters and commit."""
     budget = Budget(
         name=name,
         scope_type=scope_type,
@@ -114,11 +115,13 @@ async def create_budget(
 
 
 async def get_budgets(session: AsyncSession) -> list[Budget]:
+    """Return all active budgets ordered by created_at descending."""
     stmt = select(Budget).where(Budget.is_active == True).order_by(Budget.created_at.desc())  # noqa: E712
     return (await session.execute(stmt)).scalars().all()
 
 
 async def get_budget(session: AsyncSession, budget_id: uuid.UUID) -> Budget | None:
+    """Retrieve a single Budget by primary key, or None if not found."""
     stmt = select(Budget).where(Budget.id == budget_id)
     return (await session.execute(stmt)).scalar_one_or_none()
 
@@ -131,6 +134,7 @@ async def update_budget(
     amount_usd: Decimal | None = None,
     end_date: date | None = None,
 ) -> Budget | None:
+    """Patch name, amount_usd, or end_date on an existing budget."""
     budget = await get_budget(session, budget_id)
     if budget is None:
         return None
@@ -204,6 +208,7 @@ async def remove_threshold(
 
 
 async def get_thresholds(session: AsyncSession, budget_id: uuid.UUID) -> list[BudgetThreshold]:
+    """Return all BudgetThreshold rows for a budget ordered by threshold_percent."""
     stmt = (
         select(BudgetThreshold)
         .where(BudgetThreshold.budget_id == budget_id)
@@ -217,9 +222,8 @@ async def get_thresholds(session: AsyncSession, budget_id: uuid.UUID) -> list[Bu
 # ---------------------------------------------------------------------------
 
 
-async def get_alert_events(
-    session: AsyncSession, budget_id: uuid.UUID
-) -> list[AlertEvent]:
+async def get_alert_events(session: AsyncSession, budget_id: uuid.UUID) -> list[AlertEvent]:
+    """Return all AlertEvent rows for a budget ordered by triggered_at descending."""
     stmt = (
         select(AlertEvent)
         .where(AlertEvent.budget_id == budget_id)
@@ -270,6 +274,7 @@ async def check_budget_thresholds() -> None:
 
 
 async def _check_one_budget(session: AsyncSession, budget: Budget) -> None:
+    """Evaluate one budget's thresholds against current spend and dispatch notifications."""
     current_spend = await get_current_period_spend(session, budget)
     if budget.amount_usd <= 0:
         return

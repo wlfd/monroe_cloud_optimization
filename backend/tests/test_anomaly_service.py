@@ -125,9 +125,11 @@ async def test_run_anomaly_detection_critical_severity():
     async def capture_upsert(**kwargs):
         captured_severity.append(kwargs["severity"])
 
-    with patch("app.services.anomaly.upsert_anomaly", side_effect=capture_upsert), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", side_effect=capture_upsert),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock),
+    ):
         await run_anomaly_detection(session)
 
     assert len(captured_severity) == 1
@@ -171,9 +173,11 @@ async def test_run_anomaly_detection_high_severity():
     async def capture_upsert(**kwargs):
         captured_severity.append(kwargs["severity"])
 
-    with patch("app.services.anomaly.upsert_anomaly", side_effect=capture_upsert), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", side_effect=capture_upsert),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock),
+    ):
         await run_anomaly_detection(session)
 
     assert len(captured_severity) == 1
@@ -216,9 +220,11 @@ async def test_run_anomaly_detection_medium_severity():
     async def capture_upsert(**kwargs):
         captured.append(kwargs)
 
-    with patch("app.services.anomaly.upsert_anomaly", side_effect=capture_upsert), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", side_effect=capture_upsert),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock),
+    ):
         await run_anomaly_detection(session)
 
     assert len(captured) == 1
@@ -261,9 +267,11 @@ async def test_run_anomaly_detection_below_20pct_deviation_skipped():
     ]
 
     upsert_mock = AsyncMock()
-    with patch("app.services.anomaly.upsert_anomaly", upsert_mock), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", upsert_mock),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock),
+    ):
         await run_anomaly_detection(session)
 
     upsert_mock.assert_not_called()
@@ -300,9 +308,11 @@ async def test_run_anomaly_detection_below_100_impact_skipped():
     ]
 
     upsert_mock = AsyncMock()
-    with patch("app.services.anomaly.upsert_anomaly", upsert_mock), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", upsert_mock),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock),
+    ):
         await run_anomaly_detection(session)
 
     upsert_mock.assert_not_called()
@@ -338,9 +348,11 @@ async def test_run_anomaly_detection_zero_baseline_skipped():
     ]
 
     upsert_mock = AsyncMock()
-    with patch("app.services.anomaly.upsert_anomaly", upsert_mock), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", upsert_mock),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", new_callable=AsyncMock),
+    ):
         await run_anomaly_detection(session)
 
     upsert_mock.assert_not_called()
@@ -384,9 +396,11 @@ async def test_run_anomaly_detection_notifies_newly_detected():
     ]
 
     notify_mock = AsyncMock()
-    with patch("app.services.anomaly.upsert_anomaly", new_callable=AsyncMock), \
-         patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock), \
-         patch("app.services.anomaly._notify_new_anomalies", notify_mock):
+    with (
+        patch("app.services.anomaly.upsert_anomaly", new_callable=AsyncMock),
+        patch("app.services.anomaly.auto_resolve_anomalies", new_callable=AsyncMock),
+        patch("app.services.anomaly._notify_new_anomalies", notify_mock),
+    ):
         await run_anomaly_detection(session)
 
     notify_mock.assert_called_once()

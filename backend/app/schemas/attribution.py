@@ -37,9 +37,9 @@ class TenantDisplayNameUpdate(BaseModel):
 class AllocationRuleResponse(BaseModel):
     id: uuid.UUID
     priority: int
-    target_type: str   # 'resource_group' | 'service_category'
+    target_type: str  # 'resource_group' | 'service_category'
     target_value: str
-    method: str        # 'by_count' | 'by_usage' | 'manual_pct'
+    method: str  # 'by_count' | 'by_usage' | 'manual_pct'
     manual_pct: dict[str, float] | None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

@@ -34,13 +34,21 @@ class BillingRecord(Base):
     resource_name: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     pre_tax_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
     currency: Mapped[str] = mapped_column(String(10), nullable=False, default="USD")
-    ingested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow)
+    ingested_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
 
     __table_args__ = (
         UniqueConstraint(
-            "usage_date", "subscription_id", "resource_group", "service_name", "meter_category",
-            name="uq_billing_record_key"
+            "usage_date",
+            "subscription_id",
+            "resource_group",
+            "service_name",
+            "meter_category",
+            name="uq_billing_record_key",
         ),
         Index("idx_billing_usage_date", "usage_date"),
         Index("idx_billing_subscription", "subscription_id"),
@@ -54,7 +62,9 @@ class IngestionRun(Base):
     __tablename__ = "ingestion_runs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[str] = mapped_column(
         String(50), nullable=False
@@ -68,26 +78,26 @@ class IngestionRun(Base):
     retry_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     error_detail: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-    __table_args__ = (
-        Index("idx_ingestion_runs_started_at", "started_at"),
-    )
+    __table_args__ = (Index("idx_ingestion_runs_started_at", "started_at"),)
 
 
 class IngestionAlert(Base):
     __tablename__ = "ingestion_alerts"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
     error_message: Mapped[str] = mapped_column(Text, nullable=False)
     retry_count: Mapped[int] = mapped_column(Integer, nullable=False)
     failed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     cleared_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    cleared_by: Mapped[str | None] = mapped_column(String(50), nullable=True)  # 'auto_success' | 'admin'
+    cleared_by: Mapped[str | None] = mapped_column(
+        String(50), nullable=True
+    )  # 'auto_success' | 'admin'
 
-    __table_args__ = (
-        Index("idx_ingestion_alerts_active", "is_active"),
-    )
+    __table_args__ = (Index("idx_ingestion_alerts_active", "is_active"),)
 
 
 class Anomaly(Base):
@@ -98,15 +108,23 @@ class Anomaly(Base):
     service_name: Mapped[str] = mapped_column(String(255), nullable=False)
     resource_group: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    severity: Mapped[str] = mapped_column(String(50), nullable=False)   # 'critical' | 'high' | 'medium'
-    status: Mapped[str] = mapped_column(String(50), nullable=False, default="new")  # 'new' | 'investigating' | 'resolved' | 'dismissed'
+    severity: Mapped[str] = mapped_column(
+        String(50), nullable=False
+    )  # 'critical' | 'high' | 'medium'
+    status: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="new"
+    )  # 'new' | 'investigating' | 'resolved' | 'dismissed'
     expected: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     baseline_daily_avg: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
     current_daily_cost: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
     pct_deviation: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     estimated_monthly_impact: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
 
     __table_args__ = (
         UniqueConstraint("service_name", "resource_group", "detected_date", name="uq_anomaly_key"),

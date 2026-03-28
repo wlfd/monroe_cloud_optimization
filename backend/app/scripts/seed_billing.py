@@ -13,6 +13,7 @@ Cost patterns (each signals a different recommendation category):
   workday   — high Mon-Fri, ~25% on weekends → right-sizing/scheduling opportunity
   storage   — very flat ±2%, 7 days → lifecycle management candidates
 """
+
 import asyncio
 import random
 from datetime import date, timedelta
@@ -160,7 +161,7 @@ async def seed() -> None:
     records_to_insert = []
     current = start
     while current <= today:
-        for (rg, svc, meter, region, rid_suffix, rname, base_cost, pattern) in RESOURCES:
+        for rg, svc, meter, region, rid_suffix, rname, base_cost, pattern in RESOURCES:
             records_to_insert.append(
                 {
                     "usage_date": current,
@@ -198,14 +199,13 @@ async def seed() -> None:
         )
         await db.commit()
         print(
-            f"Inserted {result.rowcount} billing records "
-            f"({len(RESOURCES)} resources × 90 days).\n"
+            f"Inserted {result.rowcount} billing records ({len(RESOURCES)} resources × 90 days).\n"
         )
 
     # Summary of what qualifies for LLM recommendations ($50/mo threshold)
     print("Resources seeded (approx monthly spend, sorted desc):")
     qualifying = []
-    for (rg, _, _, _, _, rname, base, pattern) in RESOURCES:
+    for rg, _, _, _, _, rname, base, pattern in RESOURCES:
         # workday pattern averages ~(5 + 2*0.25)/7 ≈ 79% of base
         avg_factor = 0.79 if pattern == "workday" else 1.0
         monthly = base * avg_factor * 30
