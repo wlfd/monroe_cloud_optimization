@@ -74,22 +74,12 @@ describe('useAuth — login', () => {
     expect(result.current.user).toEqual(mockUser);
   });
 
-  it('throws when the login endpoint returns 401', async () => {
-    server.use(
-      http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 }))
-    );
-
-    const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-    await expect(
-      act(async () => {
-        await result.current.login({ email: 'bad@example.com', password: 'wrong' });
-      })
-    ).rejects.toThrow();
-  });
-
+  // Run before the rejects.toThrow() test: a thrown act() leaves pending React
+  // async work that prevents the next renderHook from completing its initial
+  // render — keeping this test earlier in the describe avoids that pollution.
   it('sends credentials as application/x-www-form-urlencoded', async () => {
+    setAccessToken(null);
+
     let contentType: string | null = null;
     let bodyText = '';
 
@@ -111,6 +101,21 @@ describe('useAuth — login', () => {
     expect(contentType).toContain('application/x-www-form-urlencoded');
     expect(bodyText).toContain('username=user%40example.com');
     expect(bodyText).toContain('password=pass123');
+  });
+
+  it('throws when the login endpoint returns 401', async () => {
+    server.use(
+      http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 }))
+    );
+
+    const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await expect(
+      act(async () => {
+        await result.current.login({ email: 'bad@example.com', password: 'wrong' });
+      })
+    ).rejects.toThrow();
   });
 });
 
@@ -141,9 +146,14 @@ describe('useAuth — logout', () => {
     const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    // logout uses try/finally so token is cleared regardless of server error
+    // logout uses try/finally: the server error propagates but the token is
+    // still cleared. Catch the error so the test doesn't fail on the throw.
     await act(async () => {
-      await result.current.logout();
+      try {
+        await result.current.logout();
+      } catch {
+        // 500 expected — finally block still cleared the token
+      }
     });
 
     expect(getAccessToken()).toBeNull();

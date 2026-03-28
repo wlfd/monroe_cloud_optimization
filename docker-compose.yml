@@ -63,7 +63,7 @@ services:
       REDIS_URL: redis://redis:6379/0
       APP_ENV: development
       DEBUG: "true"
-      JWT_SECRET_KEY: dev-secret-change-in-production
+      JWT_SECRET_KEY: replace-via-env-local-in-production
       CORS_ORIGINS: '["http://localhost:3000"]'
       MOCK_AZURE: "true"
       FIRST_ADMIN_EMAIL: admin@cloudcost.local

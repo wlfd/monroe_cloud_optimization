@@ -161,9 +161,11 @@ describe('DashboardPage — Cost Breakdown table', () => {
   it('renders breakdown rows with dimension and cost columns', async () => {
     renderDashboardPage();
 
+    // Use getAllByText because 'Azure Compute' also appears in the top-resources
+    // table rendered on the same page.
     await waitFor(() => {
-      expect(screen.getByText('Azure Compute')).toBeInTheDocument();
-      expect(screen.getByText('Azure Storage')).toBeInTheDocument();
+      expect(screen.getAllByText('Azure Compute').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Azure Storage').length).toBeGreaterThan(0);
     });
   });
 

@@ -31,7 +31,7 @@ describe('LoginPage — form rendering', () => {
   it('renders the password input', async () => {
     renderLoginPage();
     await waitFor(() => {
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText('Password')).toBeInTheDocument();
     });
   });
 
@@ -56,7 +56,7 @@ describe('LoginPage — password visibility toggle', () => {
   it('starts with password field masked', async () => {
     renderLoginPage();
     await waitFor(() => {
-      expect(screen.getByLabelText(/password/i)).toHaveAttribute('type', 'password');
+      expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'password');
     });
   });
 
@@ -65,12 +65,12 @@ describe('LoginPage — password visibility toggle', () => {
     renderLoginPage();
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText('Password')).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('button', { name: /show password/i }));
 
-    expect(screen.getByLabelText(/password/i)).toHaveAttribute('type', 'text');
+    expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'text');
   });
 
   it('hides password when the eye button is clicked a second time', async () => {
@@ -78,14 +78,14 @@ describe('LoginPage — password visibility toggle', () => {
     renderLoginPage();
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText('Password')).toBeInTheDocument();
     });
 
     const toggle = screen.getByRole('button', { name: /show password/i });
     await user.click(toggle);
     await user.click(screen.getByRole('button', { name: /hide password/i }));
 
-    expect(screen.getByLabelText(/password/i)).toHaveAttribute('type', 'password');
+    expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'password');
   });
 });
 
@@ -93,6 +93,15 @@ describe('LoginPage — password visibility toggle', () => {
 
 describe('LoginPage — successful login', () => {
   it('calls the login endpoint and shows loading state during submission', async () => {
+    // Slow down the login response so the loading state is visible long enough
+    // to assert — without a delay MSW responds in the same microtask flush.
+    server.use(
+      http.post(`${BASE}/auth/login`, async () => {
+        await new Promise((r) => setTimeout(r, 50));
+        return HttpResponse.json({ access_token: 'mock-access-token' });
+      })
+    );
+
     const user = userEvent.setup();
     renderLoginPage();
 
@@ -101,11 +110,18 @@ describe('LoginPage — successful login', () => {
     });
 
     await user.type(screen.getByLabelText(/email/i), 'admin@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'secret');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText('Password'), 'secret');
+
+    // Start the click but don't await — we need to inspect the loading state
+    // while the (deliberately slow) request is still in flight.
+    const clickDone = user.click(screen.getByRole('button', { name: /sign in/i }));
 
     // Button shows loading text while the request is in flight
-    expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
+    });
+
+    await clickDone;
   });
 
   it('calls the API to fetch the user profile after a successful login', async () => {
@@ -128,7 +144,7 @@ describe('LoginPage — successful login', () => {
     });
 
     await user.type(screen.getByLabelText(/email/i), 'admin@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'secret');
+    await user.type(screen.getByLabelText('Password'), 'secret');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     // Wait for the login flow to complete (loading state clears, no error shown)
@@ -160,7 +176,7 @@ describe('LoginPage — failed login', () => {
     });
 
     await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'wrongpass');
+    await user.type(screen.getByLabelText('Password'), 'wrongpass');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -183,7 +199,7 @@ describe('LoginPage — failed login', () => {
     });
 
     await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'wrong');
+    await user.type(screen.getByLabelText('Password'), 'wrong');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -204,7 +220,7 @@ describe('LoginPage — failed login', () => {
     });
 
     await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'wrong');
+    await user.type(screen.getByLabelText('Password'), 'wrong');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -236,11 +252,11 @@ describe('LoginPage — form field state', () => {
     renderLoginPage();
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+      expect(screen.getByLabelText('Password')).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/password/i), 'mypassword');
-    expect(screen.getByLabelText(/password/i)).toHaveValue('mypassword');
+    await user.type(screen.getByLabelText('Password'), 'mypassword');
+    expect(screen.getByLabelText('Password')).toHaveValue('mypassword');
   });
 
   it('clears the error message when the user starts a new login attempt', async () => {
@@ -257,7 +273,7 @@ describe('LoginPage — form field state', () => {
 
     // First (failed) attempt
     await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'wrong');
+    await user.type(screen.getByLabelText('Password'), 'wrong');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
