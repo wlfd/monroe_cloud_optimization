@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -156,16 +156,6 @@ export function IngestionPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const toastCounterRef = useRef(0);
 
-  // ---- Admin guard ----
-  if (user && user.role !== 'admin') {
-    return (
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Ingestion</h1>
-        <p className="text-muted-foreground">You don't have permission to view this page.</p>
-      </div>
-    );
-  }
-
   // ---- Toast helpers ----
 
   const addToast = useCallback((message: string, variant: 'success' | 'error') => {
@@ -186,11 +176,13 @@ export function IngestionPage() {
   // when a pipeline run completes (running flips from true → false).
   const prevRunningRef = useRef<boolean | null>(null);
   const currentRunning = statusQuery.data?.running ?? null;
-  if (prevRunningRef.current === true && currentRunning === false) {
-    queryClient.invalidateQueries({ queryKey: ingestionKeys.runs });
-    queryClient.invalidateQueries({ queryKey: ingestionKeys.alerts });
-  }
-  prevRunningRef.current = currentRunning;
+  useEffect(() => {
+    if (prevRunningRef.current === true && currentRunning === false) {
+      queryClient.invalidateQueries({ queryKey: ingestionKeys.runs });
+      queryClient.invalidateQueries({ queryKey: ingestionKeys.alerts });
+    }
+    prevRunningRef.current = currentRunning;
+  }, [currentRunning, queryClient]);
 
   // ---- Mutation ----
 
@@ -209,6 +201,16 @@ export function IngestionPage() {
       }
     }
   }, [runNow, addToast]);
+
+  // ---- Admin guard ----
+  if (user && user.role !== 'admin') {
+    return (
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight">Ingestion</h1>
+        <p className="text-muted-foreground">You don't have permission to view this page.</p>
+      </div>
+    );
+  }
 
   // ---- Derived values ----
 

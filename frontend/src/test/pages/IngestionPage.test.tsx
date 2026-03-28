@@ -4,7 +4,6 @@ import { screen, waitFor } from '@testing-library/react';
 import { render } from '../test-utils';
 import { IngestionPage } from '@/pages/IngestionPage';
 import { server } from '../mocks/server';
-import { mockUser } from '../mocks/handlers';
 
 const BASE = 'http://localhost:8000/api/v1';
 

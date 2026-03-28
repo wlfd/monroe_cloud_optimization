@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import userEvent from '@testing-library/user-event';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { render } from '../test-utils';
 import AnomaliesPage from '@/pages/AnomaliesPage';
 import { server } from '../mocks/server';
