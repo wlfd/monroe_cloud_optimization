@@ -1,49 +1,45 @@
-import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from '@/components/ui/card';
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, ArrowRight, Loader2, Lightbulb } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, ArrowRight, Loader2, Lightbulb } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import {
   useRecommendations,
   useRecommendationSummary,
   triggerRecommendations,
   type Recommendation,
   type RecommendationFilters,
-} from '@/services/recommendation';
+} from "@/services/recommendation";
 
 // ── Category badge colors ─────────────────────────────────────────────────────
 
 const CATEGORY_VARIANT: Record<string, string> = {
-  'right-sizing': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  idle: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  reserved: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  storage: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+  "right-sizing": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  idle: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+  reserved: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  storage: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
-  'right-sizing': 'Right-Sizing',
-  idle: 'Idle',
-  reserved: 'Reserved',
-  storage: 'Storage',
+  "right-sizing": "Right-Sizing",
+  idle: "Idle",
+  reserved: "Reserved",
+  storage: "Storage",
 };
 
 function confidenceVariant(score: number): string {
-  if (score >= 80) return 'bg-green-100 text-green-800';
-  if (score >= 60) return 'bg-yellow-100 text-yellow-800';
-  return 'bg-gray-100 text-gray-700';
+  if (score >= 80) return "bg-green-100 text-green-800";
+  if (score >= 60) return "bg-yellow-100 text-yellow-800";
+  return "bg-gray-100 text-gray-700";
 }
 
 // ── RecommendationCard ────────────────────────────────────────────────────────
@@ -61,14 +57,15 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
           </div>
           <div className="flex flex-shrink-0 gap-2 pt-0.5">
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${CATEGORY_VARIANT[rec.category] ?? 'bg-gray-100 text-gray-700'}`}
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${CATEGORY_VARIANT[rec.category] ?? "bg-gray-100 text-gray-700"}`}
             >
               {CATEGORY_LABEL[rec.category] ?? rec.category}
             </span>
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${confidenceVariant(rec.confidence_score)}`}
             >
-              {rec.confidence_score >= 80 ? 'High' : rec.confidence_score >= 60 ? 'Medium' : 'Low'} Confidence
+              {rec.confidence_score >= 80 ? "High" : rec.confidence_score >= 60 ? "Medium" : "Low"}{" "}
+              Confidence
             </span>
           </div>
         </div>
@@ -78,12 +75,18 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
         <div className="flex items-center gap-3 rounded-lg border bg-muted/40 p-3">
           <div className="flex-1 text-center">
             <p className="text-xs text-muted-foreground mb-1">Current</p>
-            <p className="text-lg font-bold">${rec.current_monthly_cost.toFixed(0)}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
+            <p className="text-lg font-bold">
+              ${rec.current_monthly_cost.toFixed(0)}
+              <span className="text-xs font-normal text-muted-foreground">/mo</span>
+            </p>
           </div>
           <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
           <div className="flex-1 text-center">
             <p className="text-xs text-muted-foreground mb-1">Recommended</p>
-            <p className="text-lg font-bold text-green-600">${Math.max(0, recommendedCost).toFixed(0)}<span className="text-xs font-normal text-muted-foreground">/mo</span></p>
+            <p className="text-lg font-bold text-green-600">
+              ${Math.max(0, recommendedCost).toFixed(0)}
+              <span className="text-xs font-normal text-muted-foreground">/mo</span>
+            </p>
           </div>
         </div>
 
@@ -92,9 +95,7 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
           <span className="font-medium text-green-600">
             Est. savings: ${rec.estimated_monthly_savings.toFixed(0)}/mo
           </span>
-          <span className="text-muted-foreground">
-            Confidence: {rec.confidence_score}%
-          </span>
+          <span className="text-muted-foreground">Confidence: {rec.confidence_score}%</span>
         </div>
 
         {/* LLM explanation — always visible */}
@@ -148,8 +149,8 @@ export default function RecommendationsPage() {
       await triggerRecommendations();
       // Refetch after a short delay to allow the background job to start
       setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['recommendations'] });
-        queryClient.invalidateQueries({ queryKey: ['recommendation-summary'] });
+        queryClient.invalidateQueries({ queryKey: ["recommendations"] });
+        queryClient.invalidateQueries({ queryKey: ["recommendation-summary"] });
         setTriggering(false);
       }, 3000);
     } catch {
@@ -175,7 +176,10 @@ export default function RecommendationsPage() {
             <CardContent className="p-4">
               <p className="text-xs text-muted-foreground">Potential Monthly Savings</p>
               <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                ${summaryData.potential_monthly_savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                $
+                {summaryData.potential_monthly_savings.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
               </p>
             </CardContent>
           </Card>
@@ -185,7 +189,7 @@ export default function RecommendationsPage() {
               <p className="text-2xl font-bold">{summaryData.total_count}</p>
             </CardContent>
           </Card>
-          {(['right-sizing', 'idle', 'reserved', 'storage'] as const).map((cat) => (
+          {(["right-sizing", "idle", "reserved", "storage"] as const).map((cat) => (
             <Card key={cat}>
               <CardContent className="p-4">
                 <p className="text-xs text-muted-foreground">{CATEGORY_LABEL[cat]}</p>
@@ -200,15 +204,19 @@ export default function RecommendationsPage() {
       {summaryData?.daily_limit_reached && (
         <div className="flex items-center gap-2 rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
           <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>Daily recommendation limit reached. New recommendations will generate tomorrow.</span>
+          <span>
+            Daily recommendation limit reached. New recommendations will generate tomorrow.
+          </span>
         </div>
       )}
 
       {/* Filter bar */}
       <div className="flex flex-wrap gap-3">
         <Select
-          value={filters.category ?? 'all'}
-          onValueChange={(v) => setFilters((f) => ({ ...f, category: v === 'all' ? undefined : v }))}
+          value={filters.category ?? "all"}
+          onValueChange={(v) =>
+            setFilters((f) => ({ ...f, category: v === "all" ? undefined : v }))
+          }
         >
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Type" />
@@ -223,9 +231,9 @@ export default function RecommendationsPage() {
         </Select>
 
         <Select
-          value={filters.min_savings !== undefined ? String(filters.min_savings) : 'any'}
+          value={filters.min_savings !== undefined ? String(filters.min_savings) : "any"}
           onValueChange={(v) =>
-            setFilters((f) => ({ ...f, min_savings: v === 'any' ? undefined : Number(v) }))
+            setFilters((f) => ({ ...f, min_savings: v === "any" ? undefined : Number(v) }))
           }
         >
           <SelectTrigger className="w-40">
@@ -240,9 +248,9 @@ export default function RecommendationsPage() {
         </Select>
 
         <Select
-          value={filters.min_confidence !== undefined ? String(filters.min_confidence) : 'any'}
+          value={filters.min_confidence !== undefined ? String(filters.min_confidence) : "any"}
           onValueChange={(v) =>
-            setFilters((f) => ({ ...f, min_confidence: v === 'any' ? undefined : Number(v) }))
+            setFilters((f) => ({ ...f, min_confidence: v === "any" ? undefined : Number(v) }))
           }
         >
           <SelectTrigger className="w-44">
@@ -274,7 +282,7 @@ export default function RecommendationsPage() {
                 Recommendations are generated daily at 02:00 UTC. Run manually to generate now.
               </p>
             </div>
-            {user?.role === 'admin' && (
+            {user?.role === "admin" && (
               <Button onClick={handleTrigger} disabled={triggering}>
                 {triggering ? (
                   <>
@@ -282,7 +290,7 @@ export default function RecommendationsPage() {
                     Generating...
                   </>
                 ) : (
-                  'Generate Recommendations'
+                  "Generate Recommendations"
                 )}
               </Button>
             )}
@@ -291,7 +299,7 @@ export default function RecommendationsPage() {
       ) : (
         <div>
           <p className="text-sm text-muted-foreground mb-4">
-            {recs.length} recommendation{recs.length !== 1 ? 's' : ''}
+            {recs.length} recommendation{recs.length !== 1 ? "s" : ""}
           </p>
           {recs.map((rec) => (
             <RecommendationCard key={rec.id} rec={rec} />

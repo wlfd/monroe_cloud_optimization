@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import api from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api";
 
 export interface SpendSummary {
   mtd_total: number;
@@ -28,9 +28,9 @@ export interface TopResource {
 
 export function useSpendSummary() {
   return useQuery<SpendSummary>({
-    queryKey: ['spend-summary'],
+    queryKey: ["spend-summary"],
     queryFn: async () => {
-      const { data } = await api.get<SpendSummary>('/costs/summary');
+      const { data } = await api.get<SpendSummary>("/costs/summary");
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -39,9 +39,9 @@ export function useSpendSummary() {
 
 export function useSpendTrend(days: number) {
   return useQuery<DailySpend[]>({
-    queryKey: ['spend-trend', days],
+    queryKey: ["spend-trend", days],
     queryFn: async () => {
-      const { data } = await api.get<DailySpend[]>('/costs/trend', { params: { days } });
+      const { data } = await api.get<DailySpend[]>("/costs/trend", { params: { days } });
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -50,9 +50,9 @@ export function useSpendTrend(days: number) {
 
 export function useSpendBreakdown(dimension: string, days: number) {
   return useQuery<BreakdownItem[]>({
-    queryKey: ['spend-breakdown', dimension, days],
+    queryKey: ["spend-breakdown", dimension, days],
     queryFn: async () => {
-      const { data } = await api.get<BreakdownItem[]>('/costs/breakdown', {
+      const { data } = await api.get<BreakdownItem[]>("/costs/breakdown", {
         params: { dimension, days },
       });
       return data;
@@ -63,9 +63,9 @@ export function useSpendBreakdown(dimension: string, days: number) {
 
 export function useTopResources(days: number) {
   return useQuery<TopResource[]>({
-    queryKey: ['top-resources', days],
+    queryKey: ["top-resources", days],
     queryFn: async () => {
-      const { data } = await api.get<TopResource[]>('/costs/top-resources', { params: { days } });
+      const { data } = await api.get<TopResource[]>("/costs/top-resources", { params: { days } });
       return data;
     },
     staleTime: 5 * 60 * 1000,

@@ -1,26 +1,26 @@
-import { describe, it, expect } from 'vitest';
-import { http, HttpResponse } from 'msw';
-import userEvent from '@testing-library/user-event';
-import { screen, waitFor } from '@testing-library/react';
-import { render } from '../test-utils';
-import { LoginPage } from '@/pages/LoginPage';
-import { server } from '../mocks/server';
-import { mockUser } from '../mocks/handlers';
+import { describe, it, expect } from "vitest";
+import { http, HttpResponse } from "msw";
+import userEvent from "@testing-library/user-event";
+import { screen, waitFor } from "@testing-library/react";
+import { render } from "../test-utils";
+import { LoginPage } from "@/pages/LoginPage";
+import { server } from "../mocks/server";
+import { mockUser } from "../mocks/handlers";
 
-const BASE = 'http://localhost:8000/api/v1';
+const BASE = "http://localhost:8000/api/v1";
 
 // LoginPage must be rendered inside the auth + router context provided by
 // render() from test-utils so that useAuth and useNavigate work correctly.
 // We use initialEntries=['/login'] to match the route the page lives on.
 
 function renderLoginPage() {
-  return render(<LoginPage />, { initialEntries: ['/login'] });
+  return render(<LoginPage />, { initialEntries: ["/login"] });
 }
 
 // ── Form rendering ────────────────────────────────────────────────────────────
 
-describe('LoginPage — form rendering', () => {
-  it('renders the email input', async () => {
+describe("LoginPage — form rendering", () => {
+  it("renders the email input", async () => {
     renderLoginPage();
     // The AuthProvider makes a /auth/me call that returns 401 (no session)
     await waitFor(() => {
@@ -28,77 +28,77 @@ describe('LoginPage — form rendering', () => {
     });
   });
 
-  it('renders the password input', async () => {
+  it("renders the password input", async () => {
     renderLoginPage();
     await waitFor(() => {
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      expect(screen.getByLabelText("Password")).toBeInTheDocument();
     });
   });
 
-  it('renders the Sign in button', async () => {
+  it("renders the Sign in button", async () => {
     renderLoginPage();
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
     });
   });
 
-  it('renders the CloudCost card heading', async () => {
+  it("renders the CloudCost card heading", async () => {
     renderLoginPage();
     await waitFor(() => {
-      expect(screen.getByText('CloudCost')).toBeInTheDocument();
+      expect(screen.getByText("CloudCost")).toBeInTheDocument();
     });
   });
 });
 
 // ── Password visibility toggle ────────────────────────────────────────────────
 
-describe('LoginPage — password visibility toggle', () => {
-  it('starts with password field masked', async () => {
+describe("LoginPage — password visibility toggle", () => {
+  it("starts with password field masked", async () => {
     renderLoginPage();
     await waitFor(() => {
-      expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'password');
+      expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
     });
   });
 
-  it('shows password when the eye button is clicked', async () => {
+  it("shows password when the eye button is clicked", async () => {
     const user = userEvent.setup();
     renderLoginPage();
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      expect(screen.getByLabelText("Password")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: /show password/i }));
+    await user.click(screen.getByRole("button", { name: /show password/i }));
 
-    expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'text');
+    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "text");
   });
 
-  it('hides password when the eye button is clicked a second time', async () => {
+  it("hides password when the eye button is clicked a second time", async () => {
     const user = userEvent.setup();
     renderLoginPage();
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      expect(screen.getByLabelText("Password")).toBeInTheDocument();
     });
 
-    const toggle = screen.getByRole('button', { name: /show password/i });
+    const toggle = screen.getByRole("button", { name: /show password/i });
     await user.click(toggle);
-    await user.click(screen.getByRole('button', { name: /hide password/i }));
+    await user.click(screen.getByRole("button", { name: /hide password/i }));
 
-    expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'password');
+    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
   });
 });
 
 // ── Successful login ──────────────────────────────────────────────────────────
 
-describe('LoginPage — successful login', () => {
-  it('calls the login endpoint and shows loading state during submission', async () => {
+describe("LoginPage — successful login", () => {
+  it("calls the login endpoint and shows loading state during submission", async () => {
     // Slow down the login response so the loading state is visible long enough
     // to assert — without a delay MSW responds in the same microtask flush.
     server.use(
       http.post(`${BASE}/auth/login`, async () => {
         await new Promise((r) => setTimeout(r, 50));
-        return HttpResponse.json({ access_token: 'mock-access-token' });
+        return HttpResponse.json({ access_token: "mock-access-token" });
       })
     );
 
@@ -109,22 +109,22 @@ describe('LoginPage — successful login', () => {
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/email/i), 'admin@example.com');
-    await user.type(screen.getByLabelText('Password'), 'secret');
+    await user.type(screen.getByLabelText(/email/i), "admin@example.com");
+    await user.type(screen.getByLabelText("Password"), "secret");
 
     // Start the click but don't await — we need to inspect the loading state
     // while the (deliberately slow) request is still in flight.
-    const clickDone = user.click(screen.getByRole('button', { name: /sign in/i }));
+    const clickDone = user.click(screen.getByRole("button", { name: /sign in/i }));
 
     // Button shows loading text while the request is in flight
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
+      expect(screen.getByRole("button", { name: /signing in/i })).toBeDisabled();
     });
 
     await clickDone;
   });
 
-  it('calls the API to fetch the user profile after a successful login', async () => {
+  it("calls the API to fetch the user profile after a successful login", async () => {
     // Verify that the full login flow runs: POST /auth/login → setAccessToken
     // → GET /auth/me to populate the user profile.  We do this by tracking
     // how many times /auth/me is called.
@@ -143,9 +143,9 @@ describe('LoginPage — successful login', () => {
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/email/i), 'admin@example.com');
-    await user.type(screen.getByLabelText('Password'), 'secret');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/email/i), "admin@example.com");
+    await user.type(screen.getByLabelText("Password"), "secret");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     // Wait for the login flow to complete (loading state clears, no error shown)
     await waitFor(() => {
@@ -162,11 +162,9 @@ describe('LoginPage — successful login', () => {
 
 // ── Failed login ──────────────────────────────────────────────────────────────
 
-describe('LoginPage — failed login', () => {
-  it('shows an error message when login returns 401', async () => {
-    server.use(
-      http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 }))
-    );
+describe("LoginPage — failed login", () => {
+  it("shows an error message when login returns 401", async () => {
+    server.use(http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 })));
 
     const user = userEvent.setup();
     renderLoginPage();
@@ -175,21 +173,17 @@ describe('LoginPage — failed login', () => {
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText('Password'), 'wrongpass');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/email/i), "bad@example.com");
+    await user.type(screen.getByLabelText("Password"), "wrongpass");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/invalid email or password/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument();
     });
   });
 
-  it('re-enables the submit button after a failed login', async () => {
-    server.use(
-      http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 }))
-    );
+  it("re-enables the submit button after a failed login", async () => {
+    server.use(http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 })));
 
     const user = userEvent.setup();
     renderLoginPage();
@@ -198,19 +192,17 @@ describe('LoginPage — failed login', () => {
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText('Password'), 'wrong');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/email/i), "bad@example.com");
+    await user.type(screen.getByLabelText("Password"), "wrong");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /sign in/i })).not.toBeDisabled();
+      expect(screen.getByRole("button", { name: /sign in/i })).not.toBeDisabled();
     });
   });
 
-  it('does not navigate away on a failed login', async () => {
-    server.use(
-      http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 }))
-    );
+  it("does not navigate away on a failed login", async () => {
+    server.use(http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 })));
 
     const user = userEvent.setup();
     renderLoginPage();
@@ -219,9 +211,9 @@ describe('LoginPage — failed login', () => {
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText('Password'), 'wrong');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/email/i), "bad@example.com");
+    await user.type(screen.getByLabelText("Password"), "wrong");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument();
@@ -234,8 +226,8 @@ describe('LoginPage — failed login', () => {
 
 // ── Form state management ─────────────────────────────────────────────────────
 
-describe('LoginPage — form field state', () => {
-  it('updates email field value as the user types', async () => {
+describe("LoginPage — form field state", () => {
+  it("updates email field value as the user types", async () => {
     const user = userEvent.setup();
     renderLoginPage();
 
@@ -243,26 +235,24 @@ describe('LoginPage — form field state', () => {
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
-    expect(screen.getByLabelText(/email/i)).toHaveValue('test@example.com');
+    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    expect(screen.getByLabelText(/email/i)).toHaveValue("test@example.com");
   });
 
-  it('updates password field value as the user types', async () => {
+  it("updates password field value as the user types", async () => {
     const user = userEvent.setup();
     renderLoginPage();
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      expect(screen.getByLabelText("Password")).toBeInTheDocument();
     });
 
-    await user.type(screen.getByLabelText('Password'), 'mypassword');
-    expect(screen.getByLabelText('Password')).toHaveValue('mypassword');
+    await user.type(screen.getByLabelText("Password"), "mypassword");
+    expect(screen.getByLabelText("Password")).toHaveValue("mypassword");
   });
 
-  it('clears the error message when the user starts a new login attempt', async () => {
-    server.use(
-      http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 }))
-    );
+  it("clears the error message when the user starts a new login attempt", async () => {
+    server.use(http.post(`${BASE}/auth/login`, () => new HttpResponse(null, { status: 401 })));
 
     const user = userEvent.setup();
     renderLoginPage();
@@ -272,9 +262,9 @@ describe('LoginPage — form field state', () => {
     });
 
     // First (failed) attempt
-    await user.type(screen.getByLabelText(/email/i), 'bad@example.com');
-    await user.type(screen.getByLabelText('Password'), 'wrong');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/email/i), "bad@example.com");
+    await user.type(screen.getByLabelText("Password"), "wrong");
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument();
@@ -285,12 +275,10 @@ describe('LoginPage — form field state', () => {
     server.resetHandlers();
     server.use(
       http.get(`${BASE}/auth/me`, () => HttpResponse.json(mockUser)),
-      http.post(`${BASE}/auth/login`, () =>
-        HttpResponse.json({ access_token: 'good-token' })
-      )
+      http.post(`${BASE}/auth/login`, () => HttpResponse.json({ access_token: "good-token" }))
     );
 
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole("button", { name: /sign in/i }));
 
     // The error message should have disappeared
     await waitFor(() => {

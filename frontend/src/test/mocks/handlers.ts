@@ -1,66 +1,66 @@
-import { http, HttpResponse } from 'msw';
-import type { Anomaly, AnomalySummary } from '@/services/anomaly';
-import type { SpendSummary, DailySpend, BreakdownItem, TopResource } from '@/services/cost';
-import type { User } from '@/types/auth';
+import { http, HttpResponse } from "msw";
+import type { Anomaly, AnomalySummary } from "@/services/anomaly";
+import type { SpendSummary, DailySpend, BreakdownItem, TopResource } from "@/services/cost";
+import type { User } from "@/types/auth";
 
 // ── Shared test fixtures ─────────────────────────────────────────────────────
 
 export const mockUser: User = {
-  id: 'user-1',
-  email: 'admin@example.com',
-  full_name: 'Test Admin',
-  role: 'admin',
+  id: "user-1",
+  email: "admin@example.com",
+  full_name: "Test Admin",
+  role: "admin",
   is_active: true,
 };
 
 export const mockAnomalies: Anomaly[] = [
   {
-    id: 'anomaly-1',
-    detected_date: '2026-03-10',
-    service_name: 'Azure Compute',
-    resource_group: 'prod-rg',
-    description: 'Unusual spike in VM usage detected.',
-    severity: 'critical',
-    status: 'new',
+    id: "anomaly-1",
+    detected_date: "2026-03-10",
+    service_name: "Azure Compute",
+    resource_group: "prod-rg",
+    description: "Unusual spike in VM usage detected.",
+    severity: "critical",
+    status: "new",
     expected: false,
     pct_deviation: 45,
     estimated_monthly_impact: 1200,
     baseline_daily_avg: 80,
     current_daily_cost: 116,
-    created_at: '2026-03-10T08:00:00Z',
-    updated_at: '2026-03-10T08:00:00Z',
+    created_at: "2026-03-10T08:00:00Z",
+    updated_at: "2026-03-10T08:00:00Z",
   },
   {
-    id: 'anomaly-2',
-    detected_date: '2026-03-11',
-    service_name: 'Azure Storage',
-    resource_group: 'dev-rg',
-    description: 'Storage egress cost increased.',
-    severity: 'high',
-    status: 'investigating',
+    id: "anomaly-2",
+    detected_date: "2026-03-11",
+    service_name: "Azure Storage",
+    resource_group: "dev-rg",
+    description: "Storage egress cost increased.",
+    severity: "high",
+    status: "investigating",
     expected: false,
     pct_deviation: 28,
     estimated_monthly_impact: 600,
     baseline_daily_avg: 30,
     current_daily_cost: 38.4,
-    created_at: '2026-03-11T09:00:00Z',
-    updated_at: '2026-03-11T09:00:00Z',
+    created_at: "2026-03-11T09:00:00Z",
+    updated_at: "2026-03-11T09:00:00Z",
   },
   {
-    id: 'anomaly-3',
-    detected_date: '2026-03-12',
-    service_name: 'Azure SQL',
-    resource_group: 'prod-rg',
-    description: 'Database query costs elevated.',
-    severity: 'medium',
-    status: 'new',
+    id: "anomaly-3",
+    detected_date: "2026-03-12",
+    service_name: "Azure SQL",
+    resource_group: "prod-rg",
+    description: "Database query costs elevated.",
+    severity: "medium",
+    status: "new",
     expected: false,
     pct_deviation: 22,
     estimated_monthly_impact: 150,
     baseline_daily_avg: 20,
     current_daily_cost: 24.4,
-    created_at: '2026-03-12T10:00:00Z',
-    updated_at: '2026-03-12T10:00:00Z',
+    created_at: "2026-03-12T10:00:00Z",
+    updated_at: "2026-03-12T10:00:00Z",
   },
 ];
 
@@ -82,30 +82,30 @@ export const mockSpendSummary: SpendSummary = {
 };
 
 export const mockTrendData: DailySpend[] = [
-  { usage_date: '2026-02-12', total_cost: 1800 },
-  { usage_date: '2026-02-13', total_cost: 1950 },
-  { usage_date: '2026-02-14', total_cost: 1750 },
+  { usage_date: "2026-02-12", total_cost: 1800 },
+  { usage_date: "2026-02-13", total_cost: 1950 },
+  { usage_date: "2026-02-14", total_cost: 1750 },
 ];
 
 export const mockBreakdownData: BreakdownItem[] = [
-  { dimension_value: 'Azure Compute', total_cost: 25000 },
-  { dimension_value: 'Azure Storage', total_cost: 10000 },
-  { dimension_value: 'Azure SQL', total_cost: 7750.5 },
+  { dimension_value: "Azure Compute", total_cost: 25000 },
+  { dimension_value: "Azure Storage", total_cost: 10000 },
+  { dimension_value: "Azure SQL", total_cost: 7750.5 },
 ];
 
 export const mockTopResources: TopResource[] = [
   {
-    resource_id: 'res-1',
-    resource_name: 'vm-prod-web-01',
-    service_name: 'Azure Compute',
-    resource_group: 'prod-rg',
+    resource_id: "res-1",
+    resource_name: "vm-prod-web-01",
+    service_name: "Azure Compute",
+    resource_group: "prod-rg",
     total_cost: 8200,
   },
   {
-    resource_id: 'res-2',
-    resource_name: 'storage-prod-main',
-    service_name: 'Azure Storage',
-    resource_group: 'prod-rg',
+    resource_id: "res-2",
+    resource_name: "storage-prod-main",
+    service_name: "Azure Storage",
+    resource_group: "prod-rg",
     total_cost: 4100,
   },
 ];
@@ -115,7 +115,7 @@ export const mockTopResources: TopResource[] = [
 // VITE_API_BASE_URL is not set. MSW intercepts at the network level so we
 // match against the same origin + prefix.
 
-const BASE = 'http://localhost:8000/api/v1';
+const BASE = "http://localhost:8000/api/v1";
 
 // ── Request handlers ─────────────────────────────────────────────────────────
 
@@ -123,14 +123,12 @@ export const handlers = [
   // Auth
   http.get(`${BASE}/auth/me`, () => HttpResponse.json(mockUser)),
 
-  http.post(`${BASE}/auth/login`, () =>
-    HttpResponse.json({ access_token: 'mock-access-token' })
-  ),
+  http.post(`${BASE}/auth/login`, () => HttpResponse.json({ access_token: "mock-access-token" })),
 
   http.post(`${BASE}/auth/logout`, () => new HttpResponse(null, { status: 204 })),
 
   http.post(`${BASE}/auth/refresh`, () =>
-    HttpResponse.json({ access_token: 'mock-refreshed-token' })
+    HttpResponse.json({ access_token: "mock-refreshed-token" })
   ),
 
   // Costs
@@ -142,17 +140,19 @@ export const handlers = [
 
   http.get(`${BASE}/costs/top-resources`, () => HttpResponse.json(mockTopResources)),
 
-  http.get(`${BASE}/costs/export`, () =>
-    new HttpResponse('service,cost\nAzure Compute,25000\n', {
-      headers: { 'Content-Type': 'text/csv' },
-    })
+  http.get(
+    `${BASE}/costs/export`,
+    () =>
+      new HttpResponse("service,cost\nAzure Compute,25000\n", {
+        headers: { "Content-Type": "text/csv" },
+      })
   ),
 
   // Anomalies
   http.get(`${BASE}/anomalies/`, ({ request }) => {
     const url = new URL(request.url);
-    const severity = url.searchParams.get('severity');
-    const serviceName = url.searchParams.get('service_name');
+    const severity = url.searchParams.get("severity");
+    const serviceName = url.searchParams.get("service_name");
 
     let results = [...mockAnomalies];
     if (severity) results = results.filter((a) => a.severity === severity);
@@ -165,22 +165,24 @@ export const handlers = [
 
   http.patch(`${BASE}/anomalies/:id/status`, async ({ request, params }) => {
     const { status } = (await request.json()) as { status: string };
-    const anomaly = mockAnomalies.find((a) => a.id === params['id']);
+    const anomaly = mockAnomalies.find((a) => a.id === params["id"]);
     if (!anomaly) return new HttpResponse(null, { status: 404 });
     return HttpResponse.json({ ...anomaly, status });
   }),
 
   http.patch(`${BASE}/anomalies/:id/expected`, async ({ request, params }) => {
     const { expected } = (await request.json()) as { expected: boolean };
-    const anomaly = mockAnomalies.find((a) => a.id === params['id']);
+    const anomaly = mockAnomalies.find((a) => a.id === params["id"]);
     if (!anomaly) return new HttpResponse(null, { status: 404 });
     return HttpResponse.json({ ...anomaly, expected });
   }),
 
-  http.get(`${BASE}/anomalies/export`, () =>
-    new HttpResponse('id,severity,service_name\nanomal-1,critical,Azure Compute\n', {
-      headers: { 'Content-Type': 'text/csv' },
-    })
+  http.get(
+    `${BASE}/anomalies/export`,
+    () =>
+      new HttpResponse("id,severity,service_name\nanomal-1,critical,Azure Compute\n", {
+        headers: { "Content-Type": "text/csv" },
+      })
   ),
 
   // Recommendations

@@ -1,11 +1,17 @@
-import { useState, useRef } from 'react';
-import { GripVertical } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useRef } from "react";
+import { GripVertical } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -13,7 +19,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   useTenantProfiles,
   useUpdateTenantName,
@@ -24,7 +30,7 @@ import {
   useReorderAllocationRules,
   type TenantProfile,
   type AllocationRule,
-} from '@/services/attribution';
+} from "@/services/attribution";
 
 // ── TenantsTab sub-component ──────────────────────────────────────────────────
 
@@ -35,16 +41,16 @@ function TenantsTab() {
 
   // Map of tenant_id -> editing state
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState('');
+  const [editValue, setEditValue] = useState("");
 
   function startEdit(tenant: TenantProfile) {
     setEditingId(tenant.tenant_id);
-    setEditValue(tenant.display_name ?? '');
+    setEditValue(tenant.display_name ?? "");
   }
 
   function cancelEdit() {
     setEditingId(null);
-    setEditValue('');
+    setEditValue("");
   }
 
   function saveName(tenant_id: string) {
@@ -53,9 +59,9 @@ function TenantsTab() {
       {
         onSuccess: () => {
           setEditingId(null);
-          setEditValue('');
+          setEditValue("");
         },
-      },
+      }
     );
   }
 
@@ -105,8 +111,8 @@ function TenantsTab() {
                       }
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') saveName(tenant.tenant_id);
-                      if (e.key === 'Escape') cancelEdit();
+                      if (e.key === "Enter") saveName(tenant.tenant_id);
+                      if (e.key === "Escape") cancelEdit();
                     }}
                     autoFocus
                   />
@@ -146,10 +152,10 @@ function TenantsTab() {
               )}
             </TableCell>
             <TableCell className="text-sm text-muted-foreground">
-              {new Date(tenant.first_seen).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
+              {new Date(tenant.first_seen).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
               })}
             </TableCell>
             <TableCell>
@@ -181,18 +187,18 @@ function TenantsTab() {
 
 type NewRuleForm = {
   priority: string;
-  target_type: 'resource_group' | 'service_category' | '';
+  target_type: "resource_group" | "service_category" | "";
   target_value: string;
-  method: 'by_count' | 'by_usage' | 'manual_pct' | '';
+  method: "by_count" | "by_usage" | "manual_pct" | "";
   manual_pct: string;
 };
 
 const EMPTY_FORM: NewRuleForm = {
-  priority: '',
-  target_type: '',
-  target_value: '',
-  method: '',
-  manual_pct: '',
+  priority: "",
+  target_type: "",
+  target_value: "",
+  method: "",
+  manual_pct: "",
 };
 
 function AllocationRulesTab() {
@@ -220,12 +226,12 @@ function AllocationRulesTab() {
     function onPointerMove(ev: PointerEvent) {
       // Determine which row the cursor is over by checking bounding rects.
       // This works even when browsers suppress pointerenter on sibling elements.
-      const rows = tbodyRef.current?.querySelectorAll<HTMLElement>('tr[data-rule-index]');
+      const rows = tbodyRef.current?.querySelectorAll<HTMLElement>("tr[data-rule-index]");
       if (!rows) return;
       for (const row of rows) {
         const rect = row.getBoundingClientRect();
         if (ev.clientY >= rect.top && ev.clientY <= rect.bottom) {
-          const i = parseInt(row.dataset.ruleIndex ?? '', 10);
+          const i = parseInt(row.dataset.ruleIndex ?? "", 10);
           if (!isNaN(i) && dragToRef.current !== i) {
             dragToRef.current = i;
             setDragOverIndex(i);
@@ -248,16 +254,16 @@ function AllocationRulesTab() {
       dragToRef.current = null;
       setDragIndex(null);
       setDragOverIndex(null);
-      document.removeEventListener('pointermove', onPointerMove);
-      document.removeEventListener('pointerup', onPointerUp);
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
     }
 
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
   }
 
   function handleDelete(rule: AllocationRule) {
-    if (!window.confirm('Delete this rule?')) return;
+    if (!window.confirm("Delete this rule?")) return;
     deleteRule.mutate({ rule_id: rule.id });
   }
 
@@ -265,21 +271,21 @@ function AllocationRulesTab() {
     if (!form.target_type || !form.method) return;
 
     let manual_pct: Record<string, number> | null = null;
-    if (form.method === 'manual_pct' && form.manual_pct.trim()) {
+    if (form.method === "manual_pct" && form.manual_pct.trim()) {
       try {
         manual_pct = JSON.parse(form.manual_pct);
       } catch {
-        alert('Invalid JSON for manual %');
+        alert("Invalid JSON for manual %");
         return;
       }
     }
 
     createRule.mutate(
       {
-        priority: parseInt(form.priority, 10) || (rules.length + 1),
-        target_type: form.target_type as 'resource_group' | 'service_category',
+        priority: parseInt(form.priority, 10) || rules.length + 1,
+        target_type: form.target_type as "resource_group" | "service_category",
         target_value: form.target_value,
-        method: form.method as 'by_count' | 'by_usage' | 'manual_pct',
+        method: form.method as "by_count" | "by_usage" | "manual_pct",
         manual_pct,
       },
       {
@@ -287,7 +293,7 @@ function AllocationRulesTab() {
           setIsAddingRule(false);
           setForm(EMPTY_FORM);
         },
-      },
+      }
     );
   }
 
@@ -334,7 +340,9 @@ function AllocationRulesTab() {
             <TableRow
               key={rule.id}
               data-rule-index={index}
-              className={dragOverIndex === index && dragIndex !== index ? 'border-t-2 border-primary' : ''}
+              className={
+                dragOverIndex === index && dragIndex !== index ? "border-t-2 border-primary" : ""
+              }
             >
               <TableCell
                 className="pr-0 cursor-grab active:cursor-grabbing select-none"
@@ -347,7 +355,7 @@ function AllocationRulesTab() {
               <TableCell className="text-sm font-mono">{rule.target_value}</TableCell>
               <TableCell className="text-sm">{rule.method}</TableCell>
               <TableCell className="text-sm font-mono text-muted-foreground">
-                {rule.manual_pct ? JSON.stringify(rule.manual_pct) : '—'}
+                {rule.manual_pct ? JSON.stringify(rule.manual_pct) : "—"}
               </TableCell>
               <TableCell className="text-right">
                 <Button
@@ -380,7 +388,7 @@ function AllocationRulesTab() {
                 <Select
                   value={form.target_type}
                   onValueChange={(v) =>
-                    setForm((f) => ({ ...f, target_type: v as NewRuleForm['target_type'] }))
+                    setForm((f) => ({ ...f, target_type: v as NewRuleForm["target_type"] }))
                   }
                 >
                   <SelectTrigger className="h-7 w-36 text-xs">
@@ -404,7 +412,7 @@ function AllocationRulesTab() {
                 <Select
                   value={form.method}
                   onValueChange={(v) =>
-                    setForm((f) => ({ ...f, method: v as NewRuleForm['method'] }))
+                    setForm((f) => ({ ...f, method: v as NewRuleForm["method"] }))
                   }
                 >
                   <SelectTrigger className="h-7 w-36 text-xs">
@@ -418,7 +426,7 @@ function AllocationRulesTab() {
                 </Select>
               </TableCell>
               <TableCell>
-                {form.method === 'manual_pct' ? (
+                {form.method === "manual_pct" ? (
                   <Input
                     placeholder='{"tenant-a": 60, "tenant-b": 40}'
                     className="h-7 w-48 text-xs font-mono"
@@ -459,7 +467,8 @@ function AllocationRulesTab() {
 
       {rules.length === 0 && !isAddingRule && (
         <p className="text-sm text-muted-foreground text-center py-4">
-          No allocation rules defined. Add a rule to control how shared costs are split across tenants.
+          No allocation rules defined. Add a rule to control how shared costs are split across
+          tenants.
         </p>
       )}
     </div>

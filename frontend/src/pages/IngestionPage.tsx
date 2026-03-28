@@ -1,19 +1,19 @@
-import { useRef, useCallback, useState, useEffect } from 'react';
-import { AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@/hooks/useAuth';
-import { useQueryClient } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
+import { useRef, useCallback, useState, useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import {
   useIngestionStatus,
   useIngestionRuns,
   useIngestionAlerts,
   useRunIngestionNow,
   ingestionKeys,
-} from '@/services/ingestion';
-import type { IngestionRun, IngestionAlert } from '@/services/ingestion';
+} from "@/services/ingestion";
+import type { IngestionRun, IngestionAlert } from "@/services/ingestion";
 
 // ---- Helpers ----
 
@@ -22,33 +22,33 @@ function formatLocalDateTime(iso: string): string {
 }
 
 function formatDuration(started: string, completed: string | null): string {
-  if (!completed) return '—';
-  const diff = Math.round(
-    (new Date(completed).getTime() - new Date(started).getTime()) / 1000
-  );
-  if (diff < 0) return '—';
+  if (!completed) return "—";
+  const diff = Math.round((new Date(completed).getTime() - new Date(started).getTime()) / 1000);
+  if (diff < 0) return "—";
   if (diff < 60) return `${diff}s`;
   return `${Math.floor(diff / 60)}m ${diff % 60}s`;
 }
 
 function truncate(text: string | null, maxLen = 60): string {
-  if (!text) return '—';
-  return text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+  if (!text) return "—";
+  return text.length > maxLen ? text.slice(0, maxLen) + "…" : text;
 }
 
 // ---- Status badge ----
 
 const STATUS_STYLES: Record<string, string> = {
-  success: 'bg-green-100 text-green-800',
-  failed: 'bg-red-100 text-red-800',
-  running: 'bg-yellow-100 text-yellow-800',
-  interrupted: 'bg-gray-100 text-gray-600',
+  success: "bg-green-100 text-green-800",
+  failed: "bg-red-100 text-red-800",
+  running: "bg-yellow-100 text-yellow-800",
+  interrupted: "bg-gray-100 text-gray-600",
 };
 
 function StatusBadge({ status }: { status: string }) {
-  const cls = STATUS_STYLES[status] ?? 'bg-gray-100 text-gray-600';
+  const cls = STATUS_STYLES[status] ?? "bg-gray-100 text-gray-600";
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}
+    >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
@@ -57,9 +57,9 @@ function StatusBadge({ status }: { status: string }) {
 // ---- Triggered-by pill ----
 
 const TRIGGER_LABELS: Record<string, string> = {
-  scheduled: 'Scheduled',
-  manual: 'Manual',
-  backfill: 'Backfill',
+  scheduled: "Scheduled",
+  manual: "Manual",
+  backfill: "Backfill",
 };
 
 function TriggerPill({ value }: { value: string }) {
@@ -75,7 +75,7 @@ function TriggerPill({ value }: { value: string }) {
 interface Toast {
   id: number;
   message: string;
-  variant: 'success' | 'error';
+  variant: "success" | "error";
 }
 
 // ---- Sub-components ----
@@ -109,16 +109,11 @@ function RunHistoryTable({ runs }: { runs: IngestionRun[] }) {
               <td className="py-2 pr-4">
                 <TriggerPill value={run.triggered_by} />
               </td>
-              <td className="py-2 pr-4 text-right tabular-nums">
-                {run.records_ingested ?? '—'}
-              </td>
+              <td className="py-2 pr-4 text-right tabular-nums">{run.records_ingested ?? "—"}</td>
               <td className="py-2 pr-4 whitespace-nowrap">
                 {formatDuration(run.started_at, run.completed_at)}
               </td>
-              <td
-                className="py-2 text-muted-foreground"
-                title={run.error_detail ?? undefined}
-              >
+              <td className="py-2 text-muted-foreground" title={run.error_detail ?? undefined}>
                 {truncate(run.error_detail)}
               </td>
             </tr>
@@ -138,7 +133,7 @@ function AlertBanner({ alert }: { alert: IngestionAlert }) {
           <p className="font-semibold">Ingestion Failure</p>
           <p className="text-sm">Error: {alert.error_message}</p>
           <p className="text-xs text-red-700">
-            Retries attempted: {alert.retry_count} | Failed at:{' '}
+            Retries attempted: {alert.retry_count} | Failed at:{" "}
             {formatLocalDateTime(alert.failed_at)}
           </p>
         </div>
@@ -158,7 +153,7 @@ export function IngestionPage() {
 
   // ---- Toast helpers ----
 
-  const addToast = useCallback((message: string, variant: 'success' | 'error') => {
+  const addToast = useCallback((message: string, variant: "success" | "error") => {
     const id = ++toastCounterRef.current;
     setToasts((prev) => [...prev, { id, message, variant }]);
     setTimeout(() => {
@@ -191,19 +186,19 @@ export function IngestionPage() {
   const handleRunNow = useCallback(async () => {
     try {
       await runNow.mutateAsync(undefined);
-      addToast('Ingestion started', 'success');
+      addToast("Ingestion started", "success");
     } catch (err) {
       const axiosErr = err as AxiosError;
       if (axiosErr.response?.status === 409) {
-        addToast('Already running', 'error');
+        addToast("Already running", "error");
       } else {
-        addToast('Failed to trigger ingestion', 'error');
+        addToast("Failed to trigger ingestion", "error");
       }
     }
   }, [runNow, addToast]);
 
   // ---- Admin guard ----
-  if (user && user.role !== 'admin') {
+  if (user && user.role !== "admin") {
     return (
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">Ingestion</h1>
@@ -214,8 +209,7 @@ export function IngestionPage() {
 
   // ---- Derived values ----
 
-  const activeAlert =
-    (alertsQuery.data ?? []).find((a) => a.is_active) ?? null;
+  const activeAlert = (alertsQuery.data ?? []).find((a) => a.is_active) ?? null;
 
   // ---- Render ----
 
@@ -234,9 +228,7 @@ export function IngestionPage() {
             <div
               key={toast.id}
               className={`rounded-md px-4 py-3 text-sm font-medium shadow-lg transition-all ${
-                toast.variant === 'success'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-red-600 text-white'
+                toast.variant === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
               }`}
             >
               {toast.message}
@@ -264,11 +256,11 @@ export function IngestionPage() {
               <div className="flex items-center gap-2">
                 <span
                   className={`h-2.5 w-2.5 rounded-full ${
-                    statusQuery.data?.running ? 'bg-green-500' : 'bg-gray-400'
+                    statusQuery.data?.running ? "bg-green-500" : "bg-gray-400"
                   }`}
                 />
                 <span className="text-sm font-medium">
-                  {statusQuery.data?.running ? 'Running' : 'Idle'}
+                  {statusQuery.data?.running ? "Running" : "Idle"}
                 </span>
               </div>
               <Button

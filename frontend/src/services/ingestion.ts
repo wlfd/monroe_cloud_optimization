@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import api from '@/services/api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import api from "@/services/api";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -11,9 +11,9 @@ export interface IngestionRun {
   id: string;
   started_at: string;
   completed_at: string | null;
-  status: 'success' | 'failed' | 'running' | 'interrupted';
+  status: "success" | "failed" | "running" | "interrupted";
   records_ingested: number | null;
-  triggered_by: 'scheduled' | 'manual' | 'backfill';
+  triggered_by: "scheduled" | "manual" | "backfill";
   error_detail: string | null;
 }
 
@@ -28,9 +28,9 @@ export interface IngestionAlert {
 // ── Query keys ───────────────────────────────────────────────────────────────
 
 export const ingestionKeys = {
-  status: ['ingestion', 'status'] as const,
-  runs: ['ingestion', 'runs'] as const,
-  alerts: ['ingestion', 'alerts'] as const,
+  status: ["ingestion", "status"] as const,
+  runs: ["ingestion", "runs"] as const,
+  alerts: ["ingestion", "alerts"] as const,
 };
 
 // ── Hooks ────────────────────────────────────────────────────────────────────
@@ -47,7 +47,7 @@ export function useIngestionStatus() {
   return useQuery<IngestionStatus>({
     queryKey: ingestionKeys.status,
     queryFn: async () => {
-      const { data } = await api.get<IngestionStatus>('/ingestion/status');
+      const { data } = await api.get<IngestionStatus>("/ingestion/status");
       return data;
     },
     staleTime: 4_000, // treat as fresh for 4 s — slightly under the poll window
@@ -69,7 +69,7 @@ export function useIngestionRuns() {
   return useQuery<IngestionRun[]>({
     queryKey: ingestionKeys.runs,
     queryFn: async () => {
-      const { data } = await api.get<IngestionRun[]>('/ingestion/runs?limit=20');
+      const { data } = await api.get<IngestionRun[]>("/ingestion/runs?limit=20");
       return data;
     },
     staleTime: 60_000,
@@ -84,9 +84,7 @@ export function useIngestionAlerts() {
   return useQuery<IngestionAlert[]>({
     queryKey: ingestionKeys.alerts,
     queryFn: async () => {
-      const { data } = await api.get<IngestionAlert[]>(
-        '/ingestion/alerts?active_only=true'
-      );
+      const { data } = await api.get<IngestionAlert[]>("/ingestion/alerts?active_only=true");
       return data;
     },
     staleTime: 60_000,
@@ -103,7 +101,7 @@ export function useRunIngestionNow() {
 
   return useMutation({
     mutationFn: async () => {
-      await api.post('/ingestion/run');
+      await api.post("/ingestion/run");
     },
     onSuccess: () => {
       // Optimistically mark status as running so the button disables instantly

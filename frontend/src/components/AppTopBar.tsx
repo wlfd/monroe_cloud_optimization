@@ -1,8 +1,8 @@
-import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export function AppTopBar() {
   const { user, logout } = useAuth();
@@ -10,12 +10,17 @@ export function AppTopBar() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const initials = user?.full_name
-    ? user.full_name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
-    : user?.email?.slice(0, 2).toUpperCase() ?? '??';
+    ? user.full_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : (user?.email?.slice(0, 2).toUpperCase() ?? "??");
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-background px-4">

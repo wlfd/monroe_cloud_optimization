@@ -1,8 +1,8 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/AppSidebar';
-import { AppTopBar } from '@/components/AppTopBar';
-import { useAuth } from '@/hooks/useAuth';
+import { Navigate, Outlet } from "react-router-dom";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { AppTopBar } from "@/components/AppTopBar";
+import { useAuth } from "@/hooks/useAuth";
 
 export function AppLayout() {
   const { user, isLoading } = useAuth();

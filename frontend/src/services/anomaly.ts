@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import api from '@/services/api';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import api from "@/services/api";
 
 // ── TypeScript Interfaces ────────────────────────────────────────────────────
 
@@ -9,8 +9,8 @@ export interface Anomaly {
   service_name: string;
   resource_group: string;
   description: string;
-  severity: 'critical' | 'high' | 'medium';
-  status: 'new' | 'investigating' | 'resolved' | 'dismissed';
+  severity: "critical" | "high" | "medium";
+  status: "new" | "investigating" | "resolved" | "dismissed";
   expected: boolean;
   pct_deviation: number;
   estimated_monthly_impact: number;
@@ -41,13 +41,13 @@ export interface AnomalyFilters {
 
 export function useAnomalies(filters: AnomalyFilters = {}) {
   return useQuery<Anomaly[]>({
-    queryKey: ['anomalies', filters],
+    queryKey: ["anomalies", filters],
     queryFn: async () => {
       // Remove undefined/empty values from params
       const params = Object.fromEntries(
-        Object.entries(filters).filter(([, v]) => v !== undefined && v !== '' && v !== 'all')
+        Object.entries(filters).filter(([, v]) => v !== undefined && v !== "" && v !== "all")
       );
-      const { data } = await api.get<Anomaly[]>('/anomalies/', { params });
+      const { data } = await api.get<Anomaly[]>("/anomalies/", { params });
       return data;
     },
     staleTime: 2 * 60 * 1000, // 2 min
@@ -56,9 +56,9 @@ export function useAnomalies(filters: AnomalyFilters = {}) {
 
 export function useAnomalySummary() {
   return useQuery<AnomalySummary>({
-    queryKey: ['anomaly-summary'],
+    queryKey: ["anomaly-summary"],
     queryFn: async () => {
-      const { data } = await api.get<AnomalySummary>('/anomalies/summary');
+      const { data } = await api.get<AnomalySummary>("/anomalies/summary");
       return data;
     },
     staleTime: 2 * 60 * 1000,
@@ -74,8 +74,8 @@ export function useUpdateAnomalyStatus() {
       await api.patch(`/anomalies/${id}/status`, { status });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['anomalies'] });
-      queryClient.invalidateQueries({ queryKey: ['anomaly-summary'] });
+      queryClient.invalidateQueries({ queryKey: ["anomalies"] });
+      queryClient.invalidateQueries({ queryKey: ["anomaly-summary"] });
     },
   });
 }
@@ -87,8 +87,8 @@ export function useMarkAnomalyExpected() {
       await api.patch(`/anomalies/${id}/expected`, { expected: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['anomalies'] });
-      queryClient.invalidateQueries({ queryKey: ['anomaly-summary'] });
+      queryClient.invalidateQueries({ queryKey: ["anomalies"] });
+      queryClient.invalidateQueries({ queryKey: ["anomaly-summary"] });
     },
   });
 }
@@ -100,8 +100,8 @@ export function useUnmarkAnomalyExpected() {
       await api.patch(`/anomalies/${id}/expected`, { expected: false });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['anomalies'] });
-      queryClient.invalidateQueries({ queryKey: ['anomaly-summary'] });
+      queryClient.invalidateQueries({ queryKey: ["anomalies"] });
+      queryClient.invalidateQueries({ queryKey: ["anomaly-summary"] });
     },
   });
 }
@@ -109,19 +109,19 @@ export function useUnmarkAnomalyExpected() {
 // ── One-off Action (not server state, no hook needed) ────────────────────────
 
 export async function exportAnomalies(
-  filters: Pick<AnomalyFilters, 'severity' | 'service_name'> = {}
+  filters: Pick<AnomalyFilters, "severity" | "service_name"> = {}
 ): Promise<void> {
   const params = Object.fromEntries(
-    Object.entries(filters).filter(([, v]) => v !== undefined && v !== '' && v !== 'all')
+    Object.entries(filters).filter(([, v]) => v !== undefined && v !== "" && v !== "all")
   );
-  const response = await api.get('/anomalies/export', {
+  const response = await api.get("/anomalies/export", {
     params,
-    responseType: 'blob',
+    responseType: "blob",
   });
   const url = window.URL.createObjectURL(new Blob([response.data]));
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
-  link.setAttribute('download', 'anomaly-report.csv');
+  link.setAttribute("download", "anomaly-report.csv");
   document.body.appendChild(link);
   link.click();
   link.remove();
