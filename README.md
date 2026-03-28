@@ -39,7 +39,8 @@ CloudCost is a multi-tenant SaaS application that helps engineering and finance 
 
 ### Screenshots
 
-> _Screenshots coming soon. Run the app locally and visit http://localhost:3000._
+> To view the application, run `docker compose up --build` and visit http://localhost:3000.
+> Default login: `admin@cloudcost.local` / `admin123`
 
 ---
 
@@ -682,3 +683,20 @@ chore(deps): upgrade FastAPI to 0.115
 - [ ] Login works with seeded admin credentials
 - [ ] `pytest tests/ -v` passes
 - [ ] `npm test` passes
+
+---
+
+## 16. Additional Documentation
+
+| Document | Description |
+|---|---|
+| [Entity Relationship Diagram](docs/ERD.md) | Full ERD with 3NF analysis and trade-off documentation |
+| [Security Audit](docs/SECURITY_AUDIT.md) | Security review findings and remediation status |
+| [Testing Results](docs/TESTING_RESULTS.md) | Formal test results report (286 tests, 99.7% pass rate) |
+| [Bug List and Resolutions](docs/BUG_LIST.md) | Bug tracking register with root cause analysis |
+| [Error Handling](docs/ERROR_HANDLING.md) | Error handling patterns across the full stack |
+| [Backup and Recovery Plan](docs/BACKUP_RECOVERY.md) | Database backup strategy and disaster recovery runbook |
+| [Presentation Outline](docs/PRESENTATION_OUTLINE.md) | Slide-by-slide presentation outline with speaker notes |
+| [Q&A Preparation Guide](docs/QA_PREPARATION.md) | 30+ pre-answered questions with Mermaid diagrams |
+| [Seed Data Guide](docs/SEED_DATA.md) | Test data seeding instructions and CSV format reference |
+| [Production Readiness](docs/PRODUCTION_READINESS.md) | Production deployment gap analysis and checklist |
