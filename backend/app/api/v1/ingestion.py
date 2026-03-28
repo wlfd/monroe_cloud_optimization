@@ -1,17 +1,21 @@
 import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.dependencies import get_db, require_admin
+from app.models.billing import IngestionAlert, IngestionRun
+from app.models.user import User
+from app.schemas.ingestion import (
+    IngestionAlertResponse,
+    IngestionRunResponse,
+    IngestionStatusResponse,
+    TriggerResponse,
+)
+from app.services.ingestion import is_ingestion_running, run_ingestion
 
 _background_tasks: set = set()
-from sqlalchemy import select, desc
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.dependencies import get_db, get_current_user, require_admin
-from app.models.user import User
-from app.models.billing import IngestionRun, IngestionAlert
-from app.schemas.ingestion import (
-    IngestionRunResponse, IngestionAlertResponse,
-    IngestionStatusResponse, TriggerResponse,
-)
-from app.services.ingestion import run_ingestion, is_ingestion_running
 
 router = APIRouter(prefix="/ingestion", tags=["ingestion"])
 

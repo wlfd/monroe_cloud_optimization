@@ -1,5 +1,6 @@
-from pydantic import BaseModel, EmailStr
 import uuid
+
+from pydantic import BaseModel, EmailStr
 
 
 class LoginRequest(BaseModel):

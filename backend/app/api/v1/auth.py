@@ -1,20 +1,22 @@
-from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException, Response, Request, Cookie, status
+from datetime import UTC, datetime, timedelta
+
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
+from jwt.exceptions import InvalidTokenError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.dependencies import get_db, get_current_user
+
+from app.core.config import settings
+from app.core.dependencies import get_current_user, get_db
 from app.core.security import (
     create_access_token,
     create_refresh_token,
-    verify_password,
     decode_token,
     hash_token,
+    verify_password,
 )
-from app.core.config import settings
 from app.models.user import User, UserSession
 from app.schemas.user import TokenResponse, UserProfile
-from jwt.exceptions import InvalidTokenError
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -42,7 +44,7 @@ async def login(
         )
 
     # Check brute-force lockout before attempting password verification
-    if user.locked_until is not None and user.locked_until > datetime.now(timezone.utc):
+    if user.locked_until is not None and user.locked_until > datetime.now(UTC):
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Account temporarily locked",
@@ -52,7 +54,7 @@ async def login(
         # Increment failed attempt counter; lock account after 5 failures
         user.failed_login_attempts = (user.failed_login_attempts or 0) + 1
         if user.failed_login_attempts >= 5:
-            user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=15)
+            user.locked_until = datetime.now(UTC) + timedelta(minutes=15)
         await db.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -79,12 +81,12 @@ async def login(
         token_hash=hash_token(refresh_token),
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent"),
-        expires_at=datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS),
+        expires_at=datetime.now(UTC) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS),
     )
     db.add(session)
 
     # Update last_login
-    user.last_login = datetime.now(timezone.utc)
+    user.last_login = datetime.now(UTC)
     await db.commit()
 
     # Set refresh token in HttpOnly cookie — never touches JavaScript (XSS protection)
@@ -130,7 +132,7 @@ async def refresh_token(
             raise credentials_error
         user_id: str = payload.get("sub")
     except InvalidTokenError:
-        raise credentials_error
+        raise credentials_error from None
 
     # Verify session exists, is not revoked, and has not expired
     token_hash = hash_token(refresh_token)
@@ -138,7 +140,7 @@ async def refresh_token(
         select(UserSession).where(
             UserSession.token_hash == token_hash,
             UserSession.revoked == False,  # noqa: E712
-            UserSession.expires_at > datetime.now(timezone.utc),
+            UserSession.expires_at > datetime.now(UTC),
         )
     )
     session = result.scalar_one_or_none()
@@ -183,7 +185,7 @@ async def logout(
         session = result.scalar_one_or_none()
         if session:
             session.revoked = True
-            session.revoked_at = datetime.now(timezone.utc)
+            session.revoked_at = datetime.now(UTC)
             await db.commit()
 
     # Clear the cookie

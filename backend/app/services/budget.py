@@ -7,7 +7,7 @@ and dispatches notifications when thresholds are crossed.
 
 import logging
 import uuid
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
 from sqlalchemy import func, select
@@ -140,7 +140,7 @@ async def update_budget(
         budget.amount_usd = amount_usd
     if end_date is not None:
         budget.end_date = end_date
-    budget.updated_at = datetime.now(timezone.utc)
+    budget.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(budget)
     return budget
@@ -152,7 +152,7 @@ async def deactivate_budget(session: AsyncSession, budget_id: uuid.UUID) -> Budg
     if budget is None:
         return None
     budget.is_active = False
-    budget.updated_at = datetime.now(timezone.utc)
+    budget.updated_at = datetime.now(UTC)
     await session.commit()
     return budget
 
@@ -304,7 +304,7 @@ async def _check_one_budget(session: AsyncSession, budget: Budget) -> None:
         await session.flush()  # Populate event.id before passing to notification
 
         # Mark threshold as fired for this period
-        threshold.last_triggered_at = datetime.now(timezone.utc)
+        threshold.last_triggered_at = datetime.now(UTC)
         threshold.last_triggered_period = current_period
 
         # Dispatch notification if a channel is linked

@@ -12,9 +12,6 @@ import redis.asyncio as aioredis
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-_background_tasks: set = set()
-_recommendation_running: bool = False
-
 from app.core.dependencies import get_db, require_admin
 from app.core.redis import get_redis
 from app.models.user import User
@@ -27,6 +24,8 @@ from app.services.recommendation import (
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+_background_tasks: set = set()
+_recommendation_running: bool = False
 
 
 @router.get("/", response_model=list[RecommendationOut])

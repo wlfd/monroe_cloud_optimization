@@ -7,10 +7,20 @@ Follows billing.py pattern: utcnow() defined locally, UUID PK,
 Mapped[] typed columns, __table_args__ for indexes and constraints.
 """
 import uuid
-from datetime import datetime, date, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
-from sqlalchemy import String, Boolean, Integer, Numeric, DateTime, Date, JSON, Index, UniqueConstraint
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Date,
+    DateTime,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -18,7 +28,7 @@ from app.core.database import Base
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class TenantProfile(Base):

@@ -11,10 +11,10 @@ outside request context).
 import calendar
 import logging
 import uuid
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
-from sqlalchemy import func, select, text
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,14 +46,14 @@ def apply_allocation_rule(
 
     if method == "by_count":
         per_tenant = float(cost) / len(tenant_costs)
-        return {t: per_tenant for t in tenant_costs}
+        return dict.fromkeys(tenant_costs, per_tenant)
 
     if method == "by_usage":
         total_usage = sum(tenant_costs.values())
         if total_usage == 0:
             # Fall back to by_count when all tagged costs are zero
             per_tenant = float(cost) / len(tenant_costs)
-            return {t: per_tenant for t in tenant_costs}
+            return dict.fromkeys(tenant_costs, per_tenant)
         return {
             t: float(cost) * float(v) / float(total_usage)
             for t, v in tenant_costs.items()
@@ -109,8 +109,8 @@ async def run_attribution() -> None:
                 tenant_id=tenant_id,
                 is_new=True,
                 first_seen=today,
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
             )
             upsert_stmt = upsert_stmt.on_conflict_do_update(
                 index_elements=["tenant_id"],
@@ -234,7 +234,7 @@ async def run_attribution() -> None:
         }
 
         # Step 11: Upsert TenantAttribution rows
-        computed_at = datetime.now(timezone.utc)
+        computed_at = datetime.now(UTC)
 
         for tenant_id, total_cost in total_per_tenant.items():
             pct_of_total = (total_cost / grand_total * 100) if grand_total > 0 else 0.0
@@ -252,19 +252,19 @@ async def run_attribution() -> None:
             tagged_cost_val = float(tagged_costs.get(tenant_id, Decimal("0")))
             allocated_cost_val = allocated_per_tenant.get(tenant_id, 0.0)
 
-            row_values = dict(
-                tenant_id=tenant_id,
-                year=year,
-                month=month,
-                total_cost=total_cost,
-                pct_of_total=round(pct_of_total, 4),
-                mom_delta_usd=mom_delta,
-                top_service_category=top_service_category,
-                allocated_cost=allocated_cost_val,
-                tagged_cost=tagged_cost_val,
-                computed_at=computed_at,
-                updated_at=computed_at,
-            )
+            row_values = {
+                "tenant_id": tenant_id,
+                "year": year,
+                "month": month,
+                "total_cost": total_cost,
+                "pct_of_total": round(pct_of_total, 4),
+                "mom_delta_usd": mom_delta,
+                "top_service_category": top_service_category,
+                "allocated_cost": allocated_cost_val,
+                "tagged_cost": tagged_cost_val,
+                "computed_at": computed_at,
+                "updated_at": computed_at,
+            }
 
             upsert_stmt = pg_insert(TenantAttribution).values(**row_values)
             upsert_stmt = upsert_stmt.on_conflict_do_update(
@@ -462,7 +462,7 @@ async def update_tenant_display_name(
     if profile is None:
         return None
     profile.display_name = display_name
-    profile.updated_at = datetime.now(timezone.utc)
+    profile.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(profile)
     return profile
@@ -478,8 +478,8 @@ async def acknowledge_tenant(
     if profile is None:
         return None
     profile.is_new = False
-    profile.acknowledged_at = datetime.now(timezone.utc)
-    profile.updated_at = datetime.now(timezone.utc)
+    profile.acknowledged_at = datetime.now(UTC)
+    profile.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(profile)
     return profile
@@ -533,7 +533,7 @@ async def update_allocation_rule(
     if rule_data.manual_pct is not None:
         rule.manual_pct = rule_data.manual_pct
 
-    rule.updated_at = datetime.now(timezone.utc)
+    rule.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(rule)
     return rule
@@ -560,7 +560,7 @@ async def delete_allocation_rule(
     remaining = (await session.execute(remaining_stmt)).scalars().all()
     for i, r in enumerate(remaining, start=1):
         r.priority = i
-        r.updated_at = datetime.now(timezone.utc)
+        r.updated_at = datetime.now(UTC)
 
     await session.commit()
     return True
@@ -579,7 +579,7 @@ async def reorder_allocation_rules(
         rule = (await session.execute(stmt)).scalar_one_or_none()
         if rule is not None:
             rule.priority = i
-            rule.updated_at = datetime.now(timezone.utc)
+            rule.updated_at = datetime.now(UTC)
 
     await session.commit()
     return await list_allocation_rules(session)

@@ -8,12 +8,9 @@ successful upsert. All functions accept an AsyncSession parameter (same session
 pattern as cost.py and ingestion.py).
 """
 
-import csv
-import io
 import logging
 import uuid
-from datetime import date, datetime, timedelta, timezone
-from decimal import Decimal
+from datetime import UTC, date, datetime, timedelta
 
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -270,7 +267,7 @@ async def upsert_anomaly(
 
     Caller is responsible for committing the session.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     stmt = pg_insert(Anomaly).values(
         service_name=service_name,
         resource_group=resource_group,
@@ -331,7 +328,7 @@ async def auto_resolve_anomalies(
         key = (anomaly.service_name, anomaly.resource_group)
         if key not in still_active:
             anomaly.status = "resolved"
-            anomaly.updated_at = datetime.now(timezone.utc)
+            anomaly.updated_at = datetime.now(UTC)
             resolved_count += 1
 
     if resolved_count:
@@ -489,7 +486,7 @@ async def update_anomaly_status(
         return None
 
     anomaly.status = new_status
-    anomaly.updated_at = datetime.now(timezone.utc)
+    anomaly.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(anomaly)
     return anomaly
@@ -513,7 +510,7 @@ async def mark_anomaly_expected(
 
     anomaly.expected = True
     anomaly.status = "dismissed"
-    anomaly.updated_at = datetime.now(timezone.utc)
+    anomaly.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(anomaly)
     return anomaly
@@ -537,7 +534,7 @@ async def unmark_anomaly_expected(
 
     anomaly.expected = False
     anomaly.status = "new"
-    anomaly.updated_at = datetime.now(timezone.utc)
+    anomaly.updated_at = datetime.now(UTC)
     await session.commit()
     await session.refresh(anomaly)
     return anomaly

@@ -9,15 +9,15 @@ outside of request context (Pattern 7 from research).
 
 import asyncio
 import logging
-from datetime import datetime, timedelta, timezone, date
+from datetime import UTC, date, datetime, timedelta
 
 from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.core.database import AsyncSessionLocal
-from app.models.billing import BillingRecord, IngestionRun, IngestionAlert
+from app.models.billing import BillingRecord, IngestionAlert, IngestionRun
 from app.services.anomaly import run_anomaly_detection
 from app.services.attribution import run_attribution
 from app.services.azure_client import fetch_with_retry
@@ -75,7 +75,7 @@ async def compute_delta_window(session: AsyncSession) -> tuple[datetime, datetim
     If no prior successful run exists, returns (now - 4h, now) as the first
     scheduled-run window (backfill is handled separately).
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     last_run = await get_last_successful_run(session)
 
     if last_run is None or last_run.window_end is None:
@@ -104,7 +104,7 @@ def _map_record(raw: dict) -> dict:
     usage_date_raw = raw.get("UsageDate")
     usage_date = _parse_usage_date(int(usage_date_raw)) if usage_date_raw is not None else None
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     # Derive resource_name from the last segment of ResourceId path
     resource_id = raw.get("ResourceId", "")
@@ -183,7 +183,7 @@ async def log_ingestion_run(
         window_start=window_start,
         window_end=window_end,
         retry_count=retry_count,
-        completed_at=datetime.now(timezone.utc),
+        completed_at=datetime.now(UTC),
     )
     session.add(run)
     await session.commit()
@@ -203,7 +203,7 @@ async def create_ingestion_alert(
     retry_count: int = 3,
 ) -> IngestionAlert:
     """Create an active IngestionAlert row recording the failure."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     alert = IngestionAlert(
         error_message=error_detail,
         retry_count=retry_count,
@@ -221,7 +221,7 @@ async def clear_active_alerts(session: AsyncSession) -> None:
 
     Sets is_active=False, cleared_at=utcnow(), cleared_by='auto_success'.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     stmt = (
         update(IngestionAlert)
         .where(IngestionAlert.is_active == True)  # noqa: E712
@@ -245,7 +245,7 @@ async def recover_stale_runs(session: AsyncSession) -> None:
     stmt = (
         update(IngestionRun)
         .where(IngestionRun.status == "running")
-        .values(status="interrupted", completed_at=datetime.now(timezone.utc))
+        .values(status="interrupted", completed_at=datetime.now(UTC))
     )
     result = await session.execute(stmt)
     await session.commit()
@@ -272,7 +272,7 @@ async def run_backfill(session: AsyncSession) -> None:
         return
 
     scope = settings.AZURE_SUBSCRIPTION_SCOPE or f"/subscriptions/{settings.AZURE_SUBSCRIPTION_ID}"
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     chunk_days = 30
 
     logger.info("run_backfill: starting 24-month historical backfill")
@@ -320,7 +320,6 @@ async def _do_ingestion(triggered_by: str) -> None:
     """
     settings = get_settings()
     async with AsyncSessionLocal() as session:
-        run_start = datetime.now(timezone.utc)
         try:
             last_run = await get_last_successful_run(session)
             if last_run is None and triggered_by != "backfill":

@@ -16,7 +16,7 @@ import hmac
 import json
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
@@ -101,7 +101,7 @@ async def _send_webhook(
     payload = {
         "event_type": event_type,
         "event_id": str(event_id),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "data": data,
     }
     body = json.dumps(payload, default=str)

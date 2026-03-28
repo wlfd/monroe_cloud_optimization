@@ -1,9 +1,10 @@
 import hashlib
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 import jwt
-from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
+
 from app.core.config import settings
 
 password_hash_ctx = PasswordHash.recommended()
@@ -11,14 +12,14 @@ password_hash_ctx = PasswordHash.recommended()
 
 def create_access_token(data: dict) -> str:
     """Issue short-lived access token (1 hour). Stored in React memory only."""
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(UTC) + timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {**data, "exp": expire, "jti": str(uuid.uuid4()), "type": "access"}
     return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
 
 
 def create_refresh_token(data: dict) -> str:
     """Issue long-lived refresh token (7 days). Stored in HttpOnly cookie only — never in JS."""
-    expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.now(UTC) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
     payload = {**data, "exp": expire, "jti": str(uuid.uuid4()), "type": "refresh"}
     return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
 

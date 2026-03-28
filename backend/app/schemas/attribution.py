@@ -9,7 +9,6 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-
 # ---------------------------------------------------------------------------
 # Tenant profile schemas
 # ---------------------------------------------------------------------------

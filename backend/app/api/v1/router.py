@@ -1,10 +1,12 @@
 from fastapi import APIRouter
-from app.api.v1 import health, auth, ingestion, cost, anomaly as anomaly_router_module
-from app.api.v1 import recommendation as recommendation_router_module
+
+from app.api.v1 import anomaly as anomaly_router_module
 from app.api.v1 import attribution as attribution_router_module
-from app.api.v1 import settings as settings_router_module
+from app.api.v1 import auth, cost, health, ingestion
 from app.api.v1 import budget as budget_router_module
 from app.api.v1 import notification as notification_router_module
+from app.api.v1 import recommendation as recommendation_router_module
+from app.api.v1 import settings as settings_router_module
 
 api_router = APIRouter()
 api_router.include_router(health.router)

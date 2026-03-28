@@ -4,7 +4,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, field_validator
 
-
 _VALID_SCOPE_TYPES = {"subscription", "resource_group", "service", "tag"}
 _VALID_PERIODS = {"monthly", "annual"}
 

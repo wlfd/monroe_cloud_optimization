@@ -1,9 +1,10 @@
 import calendar
 from datetime import date, timedelta
-from sqlalchemy import select, func, extract
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.billing import BillingRecord
 
+from sqlalchemy import extract, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.billing import BillingRecord
 
 DIMENSION_MAP = {
     "service_name": BillingRecord.service_name,

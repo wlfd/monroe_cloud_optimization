@@ -6,13 +6,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.dependencies import get_db, get_current_user
+from app.core.dependencies import get_current_user, get_db
 from app.models.user import User
 from app.schemas.anomaly import (
     AnomalyMarkExpectedRequest,
     AnomalyResponse,
-    AnomalySummaryResponse,
     AnomalyStatusUpdate,
+    AnomalySummaryResponse,
 )
 from app.services.anomaly import (
     get_anomalies,
@@ -115,7 +115,8 @@ async def filter_options(
     _: User = Depends(get_current_user),
 ):
     """Return distinct service_name and resource_group values for filter dropdowns."""
-    from sqlalchemy import select, distinct
+    from sqlalchemy import distinct, select
+
     from app.models.billing import Anomaly
 
     services_result = await db.execute(

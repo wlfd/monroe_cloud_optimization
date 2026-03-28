@@ -7,11 +7,13 @@ Does nothing if an admin user already exists.
 """
 import asyncio
 import sys
-from sqlalchemy import select
-from app.core.database import AsyncSessionLocal
-from app.core.config import settings
-from app.models.user import User
+
 from pwdlib import PasswordHash
+from sqlalchemy import select
+
+from app.core.config import settings
+from app.core.database import AsyncSessionLocal
+from app.models.user import User
 
 password_hash = PasswordHash.recommended()
 

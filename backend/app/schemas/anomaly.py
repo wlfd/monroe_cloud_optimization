@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -31,7 +30,7 @@ class AnomalySummaryResponse(BaseModel):
     medium_count: int
     total_potential_impact: float
     resolved_this_month: int
-    detection_accuracy: Optional[float] = None
+    detection_accuracy: float | None = None
 
 
 class AnomalyStatusUpdate(BaseModel):

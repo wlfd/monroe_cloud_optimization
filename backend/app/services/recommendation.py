@@ -13,13 +13,12 @@ Query pattern: get_latest_recommendations always queries WHERE generated_date
 """
 import json
 import logging
-import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
 import anthropic
 import redis.asyncio as aioredis
-from sqlalchemy import func, select, text
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tenacity import (
     retry,
@@ -89,7 +88,7 @@ def _daily_counter_key() -> str:
 
 
 def _midnight_expiry() -> int:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     return int(midnight.timestamp())
 

@@ -1,16 +1,18 @@
 from contextlib import asynccontextmanager
+
+import redis.asyncio as aioredis
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
+
 from app.api.v1.router import api_router
-from app.core.scheduler import scheduler
-from app.services.ingestion import run_ingestion, recover_stale_runs
-from app.services.recommendation import run_recommendations
-from app.services.budget import check_budget_thresholds
-from app.services.notification import retry_failed_deliveries
+from app.core.config import settings
 from app.core.database import AsyncSessionLocal
-from apscheduler.triggers.cron import CronTrigger
-import redis.asyncio as aioredis
+from app.core.scheduler import scheduler
+from app.services.budget import check_budget_thresholds
+from app.services.ingestion import recover_stale_runs, run_ingestion
+from app.services.notification import retry_failed_deliveries
+from app.services.recommendation import run_recommendations
 
 
 @asynccontextmanager

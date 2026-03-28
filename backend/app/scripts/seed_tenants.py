@@ -10,17 +10,16 @@ Does NOT clear existing billing_records.
 """
 import asyncio
 import random
-from datetime import date, timedelta, datetime, timezone
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from app.core.database import AsyncSessionLocal
-from app.models.attribution import TenantProfile, TenantAttribution
+from app.models.attribution import TenantAttribution, TenantProfile
 from app.models.billing import BillingRecord
 from app.services.attribution import run_attribution
-
 
 # ---------------------------------------------------------------------------
 # Cost pattern helper (mirrors seed_billing.py)
@@ -200,7 +199,7 @@ async def _seed_prior_month_attribution(year: int, month: int) -> None:
             return
 
         grand_total = sum(float(v) for v in tagged_costs.values())
-        computed_at = datetime.now(timezone.utc)
+        computed_at = datetime.now(UTC)
 
         for tenant_id, tagged_cost in tagged_costs.items():
             total_cost = float(tagged_cost)
@@ -310,8 +309,8 @@ async def seed() -> None:
                 display_name=tenant["display_name"],
                 is_new=False,
                 first_seen=start,
-                created_at=datetime.now(timezone.utc),
-                updated_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
             )
             upsert = upsert.on_conflict_do_update(
                 index_elements=["tenant_id"],

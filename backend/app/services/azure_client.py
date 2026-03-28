@@ -2,24 +2,24 @@ import asyncio
 import logging
 from datetime import datetime
 
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.costmanagement import CostManagementClient
 from azure.mgmt.costmanagement.models import (
-    QueryDefinition,
-    QueryDataset,
-    QueryTimePeriod,
     QueryAggregation,
-    QueryGrouping,
     QueryColumnType,
+    QueryDataset,
+    QueryDefinition,
+    QueryGrouping,
+    QueryTimePeriod,
 )
-from azure.core.exceptions import HttpResponseError
 from tenacity import (
+    before_sleep_log,
     retry,
+    retry_if_exception_type,
     stop_after_attempt,
     wait_chain,
     wait_fixed,
-    retry_if_exception_type,
-    before_sleep_log,
 )
 
 from app.core.config import get_settings
@@ -60,7 +60,7 @@ def _fetch_next_page_sync(
     try:
         import httpx
     except ImportError:
-        raise NotImplementedError("Install httpx for pagination support")
+        raise NotImplementedError("Install httpx for pagination support") from None
 
     headers = {"Authorization": f"Bearer {token}"}
     response = httpx.get(next_url, headers=headers)
@@ -159,7 +159,7 @@ async def fetch_billing_data(
 
     all_records: list[dict] = []
     for row in rows:
-        record = dict(zip(column_names, row))
+        record = dict(zip(column_names, row, strict=False))
         all_records.append(record)
 
     # NOTE: We intentionally do NOT follow next_link for MVP.

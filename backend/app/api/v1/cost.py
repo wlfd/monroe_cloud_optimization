@@ -1,17 +1,24 @@
 import csv
 import io
-from fastapi import APIRouter, Depends, Query, HTTPException
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.dependencies import get_db, get_current_user
+
+from app.core.dependencies import get_current_user, get_db
 from app.models.user import User
 from app.schemas.cost import (
-    SpendSummaryResponse, DailySpendResponse,
-    BreakdownItemResponse, TopResourceResponse,
+    BreakdownItemResponse,
+    DailySpendResponse,
+    SpendSummaryResponse,
+    TopResourceResponse,
 )
 from app.services.cost import (
-    get_spend_summary, get_daily_spend,
-    get_breakdown, get_top_resources, get_breakdown_for_export,
+    get_breakdown,
+    get_breakdown_for_export,
+    get_daily_spend,
+    get_spend_summary,
+    get_top_resources,
 )
 
 router = APIRouter(prefix="/costs", tags=["costs"])
@@ -55,7 +62,7 @@ async def spend_breakdown(
     try:
         rows = await get_breakdown(db, dimension=dimension, days=days)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     return [
         BreakdownItemResponse(
             dimension_value=str(r.dimension_value or ""),

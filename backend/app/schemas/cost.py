@@ -1,12 +1,12 @@
+
 from pydantic import BaseModel
-from typing import Optional
 
 
 class SpendSummaryResponse(BaseModel):
     mtd_total: float
     projected_month_end: float
     prior_month_total: float
-    mom_delta_pct: Optional[float]  # null when prior month has zero spend (first period)
+    mom_delta_pct: float | None  # null when prior month has zero spend (first period)
 
 
 class DailySpendResponse(BaseModel):

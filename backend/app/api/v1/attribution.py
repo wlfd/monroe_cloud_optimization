@@ -14,8 +14,6 @@ import csv
 import io
 from datetime import date
 
-_background_tasks: set = set()
-
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,6 +28,7 @@ from app.services.attribution import (
 )
 
 router = APIRouter(tags=["attribution"])
+_background_tasks: set = set()
 
 _today = date.today
 

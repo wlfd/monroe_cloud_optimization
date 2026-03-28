@@ -8,7 +8,7 @@ Follows billing.py pattern: utcnow() defined locally, UUID PK,
 Mapped[] typed columns, __table_args__ for indexes.
 """
 import uuid
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
 from sqlalchemy import Date, DateTime, Index, Integer, Numeric, String
@@ -19,7 +19,7 @@ from app.core.database import Base
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Recommendation(Base):
