@@ -1,0 +1,462 @@
+<mxfile host="app.diagrams.net" modified="2026-04-10" version="21.0.0">
+  <diagram id="dev-diagram" name="Dev - Docker Compose">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ═══ TITLE ═══ -->
+        <mxCell id="dev-title" value="CloudCost — Development Setup (Docker Compose)" vertex="1" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=20;">
+          <mxGeometry x="380" y="15" width="700" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: Client ═══ -->
+        <mxCell id="dev-zone-client" value="Client" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="30" y="400" width="220" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-browser" value="User&apos;s Browser&#xa;(Chrome / Firefox / Safari)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=0;fontSize=11;">
+          <mxGeometry x="50" y="430" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: Internet ═══ -->
+        <mxCell id="dev-zone-internet" value="Internet" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="290" y="400" width="150" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-internet" value="Internet&#xa;(HTTPS / TLS)" vertex="1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;">
+          <mxGeometry x="310" y="430" width="110" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: Docker Bridge Network ═══ -->
+        <mxCell id="dev-zone-docker" value="Docker Bridge Network: app_network" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="470" y="60" width="700" height="760" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-frontend" value="React Frontend&#xa;(Vite, Port 3000 — exposed)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="510" y="160" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-api" value="FastAPI Backend&#xa;(Uvicorn, Port 8000 — exposed)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="510" y="450" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-postgres" value="PostgreSQL 15&#xa;(Port 5432 — internal only)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;">
+          <mxGeometry x="810" y="280" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-redis" value="Redis 7&#xa;(Port 6379 — internal only)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;">
+          <mxGeometry x="810" y="500" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-migrate" value="Alembic Migrate&#xa;(one-shot on startup)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=2;fontSize=11;">
+          <mxGeometry x="510" y="660" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-seed" value="Seed Admin&#xa;(one-shot on startup)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=2;fontSize=11;">
+          <mxGeometry x="510" y="740" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: External Services ═══ -->
+        <mxCell id="dev-zone-external" value="External Services" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="1200" y="60" width="420" height="760" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-azure-cost" value="Azure Cost&#xa;Management API&#xa;(HTTPS:443)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1220" y="120" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-anthropic" value="Anthropic&#xa;Claude API&#xa;(HTTPS:443)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1220" y="260" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-azure-openai" value="Azure OpenAI API&#xa;(HTTPS:443)&#xa;[fallback]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1220" y="400" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-smtp" value="SMTP Server&#xa;(Port 587 STARTTLS)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1220" y="540" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-webhook" value="Webhook Target URLs&#xa;(HTTPS:443)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1220" y="680" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ CONNECTIONS ═══ -->
+        <!-- Browser → Internet -->
+        <mxCell id="dev-e1" value="HTTPS Request" edge="1" source="dev-browser" target="dev-internet" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Internet → React Frontend -->
+        <mxCell id="dev-e2" value="HTTP:3000&#xa;(dev)" edge="1" source="dev-internet" target="dev-frontend" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Internet → FastAPI Backend -->
+        <mxCell id="dev-e3" value="REST API&#xa;HTTPS:8000" edge="1" source="dev-internet" target="dev-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- React Frontend → FastAPI Backend -->
+        <mxCell id="dev-e4" value="API calls&#xa;(browser → :8000)" edge="1" source="dev-frontend" target="dev-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → PostgreSQL -->
+        <mxCell id="dev-e5" value="SQL / asyncpg&#xa;:5432" edge="1" source="dev-api" target="dev-postgres" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Redis -->
+        <mxCell id="dev-e6" value="Redis commands&#xa;:6379" edge="1" source="dev-api" target="dev-redis" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.65;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Alembic Migrate → PostgreSQL -->
+        <mxCell id="dev-e7" value="DDL migrations&#xa;(one-shot)" edge="1" source="dev-migrate" target="dev-postgres" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.85;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Seed Admin → PostgreSQL -->
+        <mxCell id="dev-e8" value="INSERT admin&#xa;(one-shot)" edge="1" source="dev-seed" target="dev-postgres" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Azure Cost Management API -->
+        <mxCell id="dev-e9" value="HTTPS OAuth2" edge="1" source="dev-api" target="dev-azure-cost" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Anthropic Claude API -->
+        <mxCell id="dev-e10" value="HTTPS API Key" edge="1" source="dev-api" target="dev-anthropic" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Azure OpenAI API -->
+        <mxCell id="dev-e11" value="HTTPS API Key&#xa;[fallback]" edge="1" source="dev-api" target="dev-azure-openai" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → SMTP Server -->
+        <mxCell id="dev-e12" value="SMTP STARTTLS:587" edge="1" source="dev-api" target="dev-smtp" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.65;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Webhook Target URLs -->
+        <mxCell id="dev-e13" value="HTTPS POST&#xa;HMAC-SHA256" edge="1" source="dev-api" target="dev-webhook" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ LEGEND ═══ -->
+        <mxCell id="dev-legend-box" value="Legend" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=12;verticalAlign=top;arcSize=3;">
+          <mxGeometry x="30" y="900" width="400" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-app" value="Application container (implemented)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=10;">
+          <mxGeometry x="50" y="930" width="170" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-db" value="Database (PostgreSQL)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=0;fontSize=10;">
+          <mxGeometry x="240" y="925" width="170" height="38" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-cache" value="Cache (Redis)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=0;fontSize=10;">
+          <mxGeometry x="50" y="975" width="170" height="38" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-ext" value="External service" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=0;fontSize=10;">
+          <mxGeometry x="240" y="978" width="170" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-client" value="Client device / Browser" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=0;fontSize=10;">
+          <mxGeometry x="50" y="1025" width="170" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-oneshot" value="One-shot / utility container" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=2;fontSize=10;">
+          <mxGeometry x="240" y="1020" width="170" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dev-legend-zone" value="Docker bridge network zone" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=0;fontSize=10;">
+          <mxGeometry x="50" y="1068" width="170" height="28" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="prod-diagram" name="Prod - Azure Architecture">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ═══ TITLE ═══ -->
+        <mxCell id="prod-title" value="CloudCost — Production Architecture (Azure) — Components marked [PLANNED] are not yet implemented" vertex="1" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=16;">
+          <mxGeometry x="200" y="10" width="1200" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ROW 1: Client + Internet ═══ -->
+        <mxCell id="prod-browser" value="User&apos;s Browser" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=0;fontSize=11;">
+          <mxGeometry x="30" y="60" width="160" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-internet" value="Internet&#xa;(HTTPS / TLS)" vertex="1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;">
+          <mxGeometry x="240" y="60" width="120" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: EDGE / PUBLIC ZONE ═══ -->
+        <mxCell id="prod-zone-edge" value="EDGE / PUBLIC ZONE" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="400" y="30" width="400" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-frontdoor" value="Azure Front Door&#xa;(CDN + Global Load Balancing)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="420" y="80" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-waf" value="WAF&#xa;(Application Gateway)&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="620" y="80" width="160" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ External APIs top row ═══ -->
+        <mxCell id="prod-azure-cost-api" value="Azure Cost Management API&#xa;(HTTPS:443)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="960" y="30" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-anthropic-api" value="Anthropic Claude API&#xa;(HTTPS:443)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1200" y="30" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-azure-openai-api" value="Azure OpenAI API&#xa;(HTTPS:443)&#xa;[fallback]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1200" y="120" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-smtp-api" value="SMTP Server&#xa;(Port 587 STARTTLS)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="960" y="120" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-webhook-api" value="Webhook Target URLs&#xa;(HTTPS:443)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;">
+          <mxGeometry x="1200" y="210" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: APPLICATION ZONE ═══ -->
+        <mxCell id="prod-zone-app" value="APPLICATION ZONE — Azure Container Apps" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="400" y="260" width="400" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-react" value="React Frontend&#xa;(Container Apps)&#xa;HTTPS:443" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="420" y="310" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-fastapi" value="FastAPI Backend&#xa;(Container Apps)&#xa;HTTPS:443" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="620" y="310" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: DATA ZONE ═══ -->
+        <mxCell id="prod-zone-data" value="DATA ZONE — Azure Managed Services" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="400" y="490" width="400" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-postgres-primary" value="Azure Database for PostgreSQL&#xa;Flexible Server (Primary)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;">
+          <mxGeometry x="420" y="540" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-postgres-replica" value="PostgreSQL Read Replica&#xa;[PLANNED]" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fffde7;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="620" y="540" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-redis" value="Azure Cache for Redis&#xa;(Managed Service)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;">
+          <mxGeometry x="420" y="650" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-acr" value="Azure Container Registry&#xa;(Docker images)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="620" y="650" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: MANAGEMENT AND SECURITY ZONE ═══ -->
+        <mxCell id="prod-zone-mgmt" value="MANAGEMENT &amp; SECURITY ZONE&#xa;[Planned]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="30" y="400" width="330" height="560" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-vpn" value="Azure VPN Gateway&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="50" y="450" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-bastion" value="Azure Bastion&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="50" y="550" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-keyvault" value="Azure Key Vault&#xa;(Secrets management)&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="50" y="650" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-sentinel" value="Microsoft Sentinel&#xa;(SIEM)&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="50" y="750" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-defender" value="Microsoft Defender&#xa;(IDS/IPS)&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="50" y="860" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-monitor" value="Azure Monitor&#xa;(Log Analytics)&#xa;[PLANNED]" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=11;">
+          <mxGeometry x="240" y="750" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ ZONE: CI/CD ═══ -->
+        <mxCell id="prod-zone-cicd" value="CI/CD" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=14;verticalAlign=top;arcSize=2;">
+          <mxGeometry x="850" y="490" width="280" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-github-actions" value="GitHub Actions&#xa;(CI/CD Pipeline)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="870" y="540" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-docker-build" value="Docker Build&#xa;+ Push to Registry" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=11;">
+          <mxGeometry x="870" y="640" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ CONNECTIONS ═══ -->
+        <!-- User Browser → Internet -->
+        <mxCell id="prod-e1" value="HTTPS:443" edge="1" source="prod-browser" target="prod-internet" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Internet → Azure Front Door -->
+        <mxCell id="prod-e2" value="HTTPS:443&#xa;(DNS routing)" edge="1" source="prod-internet" target="prod-frontdoor" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Front Door → WAF -->
+        <mxCell id="prod-e3" value="Traffic inspection&#xa;[PLANNED]" edge="1" source="prod-frontdoor" target="prod-waf" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Front Door → React Frontend -->
+        <mxCell id="prod-e4" value="HTTPS:443&#xa;(static + SPA)" edge="1" source="prod-frontdoor" target="prod-react" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Front Door → FastAPI Backend -->
+        <mxCell id="prod-e5" value="HTTPS:443&#xa;(REST API)" edge="1" source="prod-frontdoor" target="prod-fastapi" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → PostgreSQL Primary -->
+        <mxCell id="prod-e6" value="SQL / asyncpg&#xa;:5432 (internal)" edge="1" source="prod-fastapi" target="prod-postgres-primary" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- PostgreSQL Primary → PostgreSQL Replica -->
+        <mxCell id="prod-e7" value="Streaming replication&#xa;[PLANNED]" edge="1" source="prod-postgres-primary" target="prod-postgres-replica" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Azure Cache for Redis -->
+        <mxCell id="prod-e8" value="Redis commands&#xa;:6379 (internal)" edge="1" source="prod-fastapi" target="prod-redis" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Azure Cost Management API -->
+        <mxCell id="prod-e9" value="HTTPS OAuth2 Bearer" edge="1" source="prod-fastapi" target="prod-azure-cost-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Anthropic Claude API -->
+        <mxCell id="prod-e10" value="HTTPS API Key" edge="1" source="prod-fastapi" target="prod-anthropic-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Azure OpenAI API -->
+        <mxCell id="prod-e11" value="HTTPS API Key [fallback]" edge="1" source="prod-fastapi" target="prod-azure-openai-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → SMTP Server -->
+        <mxCell id="prod-e12" value="SMTP STARTTLS:587" edge="1" source="prod-fastapi" target="prod-smtp-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.65;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FastAPI Backend → Webhook Target URLs -->
+        <mxCell id="prod-e13" value="HTTPS POST&#xa;HMAC-SHA256" edge="1" source="prod-fastapi" target="prod-webhook-api" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Key Vault → FastAPI Backend -->
+        <mxCell id="prod-e14" value="Secrets injection&#xa;[PLANNED]" edge="1" source="prod-keyvault" target="prod-fastapi" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- GitHub Actions → Docker Build -->
+        <mxCell id="prod-e15" value="Build trigger" edge="1" source="prod-github-actions" target="prod-docker-build" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Docker Build → Azure Container Registry -->
+        <mxCell id="prod-e16" value="docker push" edge="1" source="prod-docker-build" target="prod-acr" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Container Registry → React Frontend -->
+        <mxCell id="prod-e17" value="Container image pull" edge="1" source="prod-acr" target="prod-react" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure Container Registry → FastAPI Backend -->
+        <mxCell id="prod-e18" value="Container image pull" edge="1" source="prod-acr" target="prod-fastapi" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.8;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Microsoft Sentinel → FastAPI Backend -->
+        <mxCell id="prod-e19" value="Log collection [PLANNED]" edge="1" source="prod-sentinel" target="prod-fastapi" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Azure VPN Gateway → FastAPI Backend -->
+        <mxCell id="prod-e20" value="Admin access&#xa;[PLANNED]" edge="1" source="prod-vpn" target="prod-fastapi" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.6;entryDx=0;entryDy=0;fontSize=9;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══ LEGEND ═══ -->
+        <mxCell id="prod-legend-box" value="LEGEND" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=1;fontSize=12;verticalAlign=top;arcSize=3;">
+          <mxGeometry x="850" y="750" width="370" height="360" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-impl" value="Solid blue = Implemented component" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;fontSize=10;">
+          <mxGeometry x="870" y="785" width="330" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-planned-blue" value="Dashed blue (italic) = Planned / not yet implemented" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f7ff;strokeColor=#6c8ebf;dashed=1;fontStyle=2;fontSize=10;">
+          <mxGeometry x="870" y="823" width="330" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-planned-orange" value="Orange dashed (italic) = Security component (planned)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=10;">
+          <mxGeometry x="870" y="861" width="330" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-pg" value="Yellow cylinder = PostgreSQL (database)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;">
+          <mxGeometry x="870" y="899" width="330" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-pg-replica" value="Yellow dashed cylinder = DB Read Replica (planned)" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fffde7;strokeColor=#d6b656;dashed=1;fontStyle=2;fontSize=10;">
+          <mxGeometry x="870" y="942" width="330" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-redis" value="Red cylinder = Redis cache" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;">
+          <mxGeometry x="870" y="985" width="330" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-ext" value="Gray rect = External service (internet)" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;">
+          <mxGeometry x="870" y="1030" width="330" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-client" value="Purple rect = Client device" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=0;fontSize=10;">
+          <mxGeometry x="870" y="1068" width="330" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="prod-legend-zone" value="Blue dashed outline = Azure zone / network boundary" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=none;strokeColor=#006EAF;fontStyle=0;fontSize=10;">
+          <mxGeometry x="870" y="1103" width="330" height="28" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

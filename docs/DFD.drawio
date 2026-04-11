@@ -1,0 +1,468 @@
+<mxfile host="app.diagrams.net" modified="2026-04-10" version="21.0.0">
+  <diagram id="ctx-diagram" name="Level 0 - Context">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Page title -->
+        <mxCell id="ctx-title" value="CloudCost Platform — Level 0 Context Diagram" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="427" y="30" width="800" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Central process -->
+        <mxCell id="ctx-p0" value="CloudCost&#xa;Platform" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="627" y="434" width="240" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- External entities -->
+        <mxCell id="ctx-e1" value="E1: Azure Cost&#xa;Management API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="140" y="160" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-e2" value="E2: Admin /&#xa;DevOps User" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="454" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-e3" value="E3: Finance /&#xa;Viewer User" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="140" y="760" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-e4" value="E4: Anthropic Claude /&#xa;Azure OpenAI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="160" width="220" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-e5" value="E5: SMTP Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="454" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-e6" value="E6: Webhook&#xa;Endpoints" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="760" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Data flows: Azure Cost Management API -->
+        <mxCell id="ctx-f1" value="Raw billing records (daily costs)" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" source="ctx-e1" target="ctx-p0" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-f2" value="Billing query (date range, subscription)" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="ctx-p0" target="ctx-e1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Data flows: Admin / DevOps User -->
+        <mxCell id="ctx-f3" value="Login credentials, admin commands, budget config" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.4;entryDx=0;entryDy=0;" edge="1" source="ctx-e2" target="ctx-p0" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-f4" value="Dashboard data, anomaly alerts, ingestion status" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.6;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="ctx-p0" target="ctx-e2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Data flows: Finance / Viewer User -->
+        <mxCell id="ctx-f5" value="Login credentials, filter selections" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" source="ctx-e3" target="ctx-p0" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-f6" value="Cost reports, attribution breakdown, recommendations" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.6;entryDx=0;entryDy=0;" edge="1" source="ctx-p0" target="ctx-e3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Data flows: Anthropic Claude / Azure OpenAI -->
+        <mxCell id="ctx-f7" value="Resource cost context (30-day window)" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" source="ctx-p0" target="ctx-e4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ctx-f8" value="Structured optimization recommendations" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.4;entryDx=0;entryDy=0;" edge="1" source="ctx-e4" target="ctx-p0" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Data flows: SMTP Server -->
+        <mxCell id="ctx-f9" value="Budget / anomaly alert emails" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="ctx-p0" target="ctx-e5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Data flows: Webhook Endpoints -->
+        <mxCell id="ctx-f10" value="HMAC-signed JSON payloads" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="ctx-p0" target="ctx-e6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="l1-diagram" name="Level 1 - DFD">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Page title -->
+        <mxCell id="l1-title" value="CloudCost Platform — Level 1 DFD" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="477" y="20" width="700" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ================================================================
+             EXTERNAL ENTITIES
+        ================================================================ -->
+        <mxCell id="l1-e1" value="E1: Azure Cost&#xa;Management API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="65" width="190" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-e2" value="E2: Admin /&#xa;DevOps User" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="200" width="170" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-e3" value="E3: Finance /&#xa;Viewer User" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="560" width="170" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-e4" value="E4: Anthropic Claude /&#xa;Azure OpenAI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="430" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-e5" value="E5: SMTP Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="730" width="190" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-e6" value="E6: Webhook&#xa;Endpoints" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="880" width="190" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- ================================================================
+             PROCESSES
+        ================================================================ -->
+        <mxCell id="l1-p1" value="P1: Authenticate&#xa;Users" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="195" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p2" value="P2: Ingest&#xa;Billing Data&#xa;(every 4h)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="160" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p3" value="P3: Monitor&#xa;Costs" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="270" y="530" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p4" value="P4: Detect&#xa;Anomalies" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="680" y="420" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p5" value="P5: Generate AI&#xa;Recommendations&#xa;(daily 02:00 UTC)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="410" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p6" value="P6: Attribute&#xa;Tenant Costs" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="680" y="680" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p7" value="P7: Check Budget&#xa;Thresholds&#xa;(every 4h+1h)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="660" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-p8" value="P8: Deliver&#xa;Notifications" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="840" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA STORES
+        ================================================================ -->
+        <mxCell id="l1-d1" value="D1: billing_records" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="310" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-d2" value="D2: users /&#xa;user_sessions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="480" y="195" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-d3" value="D3: anomalies" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="870" y="420" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-d4" value="D4: recommendations&#xa;+ Redis cache" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="310" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-d5" value="D5: tenant_profiles&#xa;allocation_rules&#xa;tenant_attributions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="870" y="670" width="180" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-d6" value="D6: budgets /&#xa;thresholds / alert_events" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="560" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-d7" value="D7: notification_channels&#xa;/ deliveries" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="970" width="180" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Authentication (P1)
+        ================================================================ -->
+        <mxCell id="l1-edge-1" value="Login request" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-e2" target="l1-p1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-2" value="Read/write sessions &amp; tokens" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p1" target="l1-d2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-3" value="Access token + refresh cookie" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p1" target="l1-e2" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="350" y="320"/>
+              <mxPoint x="115" y="320"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Ingestion (P2)
+        ================================================================ -->
+        <mxCell id="l1-edge-4" value="Raw billing data" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-e1" target="l1-p2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-5" value="Billing query (date range)" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p2" target="l1-e1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="155"/>
+              <mxPoint x="625" y="100"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-6" value="Upsert billing records" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p2" target="l1-d1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- P2 triggers P4 (post-ingestion anomaly detection) -->
+        <mxCell id="l1-edge-7" value="Post-ingestion trigger" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="l1-p2" target="l1-p4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- P2 triggers P6 (post-ingestion attribution) -->
+        <mxCell id="l1-edge-8" value="Post-ingestion trigger" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="l1-p2" target="l1-p6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Cost Monitoring (P3)
+        ================================================================ -->
+        <mxCell id="l1-edge-9" value="Aggregate cost queries" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d1" target="l1-p3" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="340"/>
+              <mxPoint x="440" y="340"/>
+              <mxPoint x="440" y="570"/>
+              <mxPoint x="430" y="570"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-10" value="Cost dashboards, trends" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p3" target="l1-e2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-11" value="Cost reports, breakdowns" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p3" target="l1-e3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Anomaly Detection (P4)
+        ================================================================ -->
+        <mxCell id="l1-edge-12" value="30-day rolling window data" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d1" target="l1-p4" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="340"/>
+              <mxPoint x="760" y="340"/>
+              <mxPoint x="760" y="420"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-13" value="Upsert anomalies" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p4" target="l1-d3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-14" value="Read anomaly history" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d3" target="l1-p4" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="465"/>
+              <mxPoint x="960" y="490"/>
+              <mxPoint x="840" y="490"/>
+              <mxPoint x="840" y="460"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-15" value="Anomaly detected event" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p4" target="l1-p8" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="760" y="500"/>
+              <mxPoint x="760" y="880"/>
+              <mxPoint x="1150" y="880"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — AI Recommendations (P5)
+        ================================================================ -->
+        <mxCell id="l1-edge-16" value="30-day resource cost summaries" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d1" target="l1-p5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="340"/>
+              <mxPoint x="1000" y="340"/>
+              <mxPoint x="1000" y="455"/>
+              <mxPoint x="1060" y="455"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-17" value="Cache check + store" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p5" target="l1-d4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-18" value="Cached recommendation" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d4" target="l1-p5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="340"/>
+              <mxPoint x="1280" y="340"/>
+              <mxPoint x="1280" y="390"/>
+              <mxPoint x="1240" y="390"/>
+              <mxPoint x="1240" y="410"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-19" value="LLM API request (resource context)" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p5" target="l1-e4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-20" value="Structured recommendation response" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-e4" target="l1-p5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1390" y="480"/>
+              <mxPoint x="1360" y="480"/>
+              <mxPoint x="1360" y="475"/>
+              <mxPoint x="1240" y="475"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-21" value="Recommendations on dashboard" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p5" target="l1-e2" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="455"/>
+              <mxPoint x="200" y="455"/>
+              <mxPoint x="200" y="235"/>
+              <mxPoint x="200" y="235"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Tenant Attribution (P6)
+        ================================================================ -->
+        <mxCell id="l1-edge-22" value="Billing records by tenant tag" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d1" target="l1-p6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="370"/>
+              <mxPoint x="650" y="720"/>
+              <mxPoint x="680" y="720"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-23" value="Read allocation rules" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d5" target="l1-p6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-24" value="Write tenant attributions" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p6" target="l1-d5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="740"/>
+              <mxPoint x="870" y="740"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Budget Threshold Check (P7)
+        ================================================================ -->
+        <mxCell id="l1-edge-25" value="Active budgets &amp; thresholds" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d6" target="l1-p7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-26" value="Current period spend" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d1" target="l1-p7" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="370"/>
+              <mxPoint x="1000" y="370"/>
+              <mxPoint x="1000" y="705"/>
+              <mxPoint x="1060" y="705"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-27" value="Write alert_events" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p7" target="l1-d6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1150" y="660"/>
+              <mxPoint x="1150" y="620"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-28" value="Budget threshold crossed event" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p7" target="l1-p8" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1150" y="750"/>
+              <mxPoint x="1150" y="840"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ================================================================
+             DATA FLOWS — Notification Delivery (P8)
+        ================================================================ -->
+        <mxCell id="l1-edge-29" value="Notification channels config" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-d7" target="l1-p8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1-edge-30" value="Write delivery records" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p8" target="l1-d7" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="920"/>
+              <mxPoint x="1340" y="920"/>
+              <mxPoint x="1340" y="1000"/>
+              <mxPoint x="1330" y="1000"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-31" value="Email via SMTP" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p8" target="l1-e5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="870"/>
+              <mxPoint x="1360" y="870"/>
+              <mxPoint x="1360" y="765"/>
+              <mxPoint x="1390" y="765"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="l1-edge-32" value="Webhook HTTP POST" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" source="l1-p8" target="l1-e6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="900"/>
+              <mxPoint x="1380" y="900"/>
+              <mxPoint x="1380" y="915"/>
+              <mxPoint x="1390" y="915"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
